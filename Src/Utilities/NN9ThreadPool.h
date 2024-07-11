@@ -33,7 +33,7 @@ namespace nn9 {
 	 */
 	class ThreadPool {
 	public :
-		ThreadPool( size_t _tThreads );         // Constructor: Ccreates a pool with the specified number of threads.
+		ThreadPool( size_t _tThreads );         // Constructor: Creates a pool with the specified number of threads.
 		~ThreadPool();                          // Destructor: Joins all threads.
 
 

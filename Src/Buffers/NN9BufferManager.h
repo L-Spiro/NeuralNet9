@@ -10,6 +10,14 @@
 
 #include "NN9Buffer.h"
 
+#include <mutex>
+
+// Include platform-specific headers
+#if defined( __APPLE__ )
+#include <pthread.h>
+#include <sched.h>
+#endif	// #if defined( __APPLE__ )
+
 
 namespace nn9 {
 
@@ -21,6 +29,13 @@ namespace nn9 {
 	 */
 	class BufferManager {
 	public :
+		static BufferManager					GblBufferManager;						/**< Behind-the-scenes buffer manager. */
+
+
+	protected :
+		std::mutex                              m_mQueueMutex;                          /**< Mutex for synchronizing access to the task queue. */
 	};
+
+	
 
 }	// namespace nn9
