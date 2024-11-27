@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Copyright L. Spiro 2024
  *
  * Written by: Shawn (L. Spiro) Wilcoxen
@@ -141,8 +141,6 @@ namespace nn9 {
 
 #ifdef __AVX512F__
 		/**
-		 * Converts an array of 16 float16 values to float32 values using AVX-512 instructions.
-		 *
 		 * This function loads 16 float16 values from the source array, converts them to float32,
 		 * and stores the results in the destination array.
 		 *
@@ -152,8 +150,6 @@ namespace nn9 {
 		static inline __m512					Convert16Float16ToFloat32( const float16 * _pf16Src );
 
 		/**
-		 * Converts an array of 16 float16 values to float32 values using AVX-512 instructions.
-		 *
 		 * This function loads 16 float16 values from the source array, converts them to float32,
 		 * and stores the results in the destination array.
 		 *
@@ -162,6 +158,53 @@ namespace nn9 {
 		 */
 		static inline __m512					Convert16Float16ToFloat32( const uint16_t * _pui16Src ) {
 			return Convert16Float16ToFloat32( reinterpret_cast<const float16 *>(_pui16Src) );
+		}
+
+		/**
+		 * This function loads 16 float16 values from the source array, converts them to float32,
+		 * and stores the results in the destination array.
+		 *
+		 * \param _pf16Src Pointer to the source array containing 16 uint16_t values representing float16 numbers.
+		 * \param _pfDst Pointer to the destination array where 16 float16 values will be stored as uint16_t.
+		 * \return Returns _pfDst.
+		 */
+		static inline float *					Convert16Float16ToFloat32( const float16 * _pf16Src, float * _pfDst ) {
+			_mm512_storeu_ps( _pfDst, Convert16Float16ToFloat32( _pf16Src ) );
+			return _pfDst;
+		}
+
+		/**
+		 * This function loads 16 float16 values from the source array, converts them to float32,
+		 * and stores the results in the destination array.
+		 *
+		 * \param _pui16Src Pointer to the source array containing 16 uint16_t values representing float16 numbers.
+		 * \param _pfDst Pointer to the destination array where 16 float16 values will be stored as uint16_t.
+		 * \return Returns _pfDst.
+		 */
+		static inline float *					Convert16Float16ToFloat32( const uint16_t * _pui16Src, float * _pfDst ) {
+			return Convert16Float16ToFloat32( reinterpret_cast<const float16 *>(_pui16Src), _pfDst );
+		}
+
+		/**
+		 * This function takes 16 float32 values from the source array, converts them to float16,
+		 * and stores the results in the destination array as uint16_t.
+		 *
+		 * \param _pfSrc Pointer to the source array containing 16 float32 values.
+		 * \return Returns a register with the loaded values.
+		 */
+		static inline __m256i					Convert16Float32ToFloat16( const float * _pfSrc );
+
+		/**
+		 * This function takes 16 float32 values from the source array, converts them to float16,
+		 * and stores the results in the destination array as uint16_t.
+		 *
+		 * \param _pfSrc Pointer to the source array containing 16 float32 values.
+		 * \param _pui16Dst Pointer to the destination array where 16 float16 values will be stored as uint16_t.
+		 * \return Returns _pui16Dst.
+		 */
+		static inline uint16_t *				Convert16Float32ToFloat16( const float * _pfSrc, uint16_t * _pui16Dst ) {
+			_mm256_storeu_si256( reinterpret_cast<__m256i *>(_pui16Dst), Convert16Float32ToFloat16( _pfSrc ) );
+			return _pui16Dst;
 		}
 #endif	// #ifdef __AVX512F__
 
@@ -325,8 +368,6 @@ namespace nn9 {
 
 #ifdef __AVX512F__
 	/**
-	 * Converts an array of 16 float16 values to float32 values using AVX-512 instructions.
-	 *
 	 * This function loads 16 float16 values from the source array, converts them to float32,
 	 * and stores the results in the destination array.
 	 *
@@ -405,28 +446,117 @@ namespace nn9 {
 
 		// Convert to float32.
 		return _mm512_castsi512_ps( mui32Tmp );
-
-		// Store the results.
-		//_mm512_storeu_ps( _pfDst, mResult );
 	}
+
+	/**
+	 * This function takes 16 float32 values from the source array, converts them to float16,
+	 * and stores the results in the destination array as uint16_t.
+	 *
+	 * \param _pfSrc Pointer to the source array containing 16 float32 values.
+	 */
+	inline __m256i float16::Convert16Float32ToFloat16( const float * _pfSrc ) {
+		// Load 16 float32 values.
+		__m512 mf32Val = _mm512_loadu_ps( _pfSrc );
+
+		// Reinterpret as integers and add rounding bias.
+		__m512i mBits = _mm512_castps_si512( mf32Val );
+		__m512i mBitsRounded = _mm512_add_epi32( mBits, _mm512_set1_epi32( 0x00001000 ) );
+
+		// Extract sign, exponent, mantissa.
+		__m512i mSign = _mm512_srli_epi32( _mm512_and_epi32( mBitsRounded, _mm512_set1_epi32( 0x80000000 ) ), 16 );
+		__m512i mExpo = _mm512_srli_epi32( _mm512_and_epi32( mBitsRounded, _mm512_set1_epi32( 0x7F800000 ) ), 23 );
+		__m512i mMant = _mm512_and_epi32( mBitsRounded, _mm512_set1_epi32( 0x007FFFFF ) );
+
+		// Conditions for different cases.
+		__mmask16 mExpoGt112 = _mm512_cmp_epi32_mask( mExpo, _mm512_set1_epi32( 112 ), _MM_CMPINT_GT );
+		//__mmask16 mExpoLt113 = _mm512_cmp_epi32_mask( mExpo, _mm512_set1_epi32( 113 ), _MM_CMPINT_LT );
+		__mmask16 mExpoGt101 = _mm512_cmp_epi32_mask( mExpo, _mm512_set1_epi32( 101 ), _MM_CMPINT_GT );
+		__mmask16 mExpoGt143 = _mm512_cmp_epi32_mask( mExpo, _mm512_set1_epi32( 143 ), _MM_CMPINT_GT );
+		__mmask16 mExpoLe101 = _mm512_cmp_epi32_mask( mExpo, _mm512_set1_epi32( 101 ), _MM_CMPINT_LE );
+		//__mmask16 mExpoEq255 = _mm512_cmp_epi32_mask( mExpo, _mm512_set1_epi32( 255 ), _MM_CMPINT_EQ );
+
+		// NaN detection.
+		__mmask16 mIsNan = _mm512_cmp_ps_mask( mf32Val, mf32Val, _CMP_UNORD_Q );
+
+		// Compute normalized numbers.
+		__m512i mNorm = _mm512_slli_epi32( _mm512_sub_epi32( mExpo, _mm512_set1_epi32( 112 ) ), 10 );
+		mNorm = _mm512_and_epi32( mNorm, _mm512_set1_epi32( 0x7C00 ) );
+		mNorm = _mm512_or_epi32( mNorm, _mm512_srli_epi32( mMant, 13 ) );
+		mNorm = _mm512_or_epi32( mNorm, mSign );
+
+		// Compute subnormal numbers.
+		__m512i mMantSubnorm = _mm512_add_epi32( mMant, _mm512_set1_epi32( 0x007FF000 ) );
+		__m512i mShift = _mm512_sub_epi32( _mm512_set1_epi32( 125 ), mExpo );
+		__m512i mSubnorm = _mm512_srlv_epi32( mMantSubnorm, mShift );
+		mSubnorm = _mm512_srli_epi32( _mm512_add_epi32( mSubnorm, _mm512_set1_epi32( 1 ) ), 1 );
+		mSubnorm = _mm512_and_epi32( mSubnorm, _mm512_set1_epi32( 0x03FF ) );
+		mSubnorm = _mm512_or_epi32( mSubnorm, mSign );
+
+		// Special cases (NaN and Infinity).
+		__m512i mSpecial = _mm512_set1_epi32( 0x7FFF );
+
+		// Initialize result.
+		__m512i mui16Tmp = _mm512_setzero_si512();
+
+		// Apply conditions.
+		// Special cases: Exponent > 143.
+		mui16Tmp = _mm512_mask_mov_epi32(mui16Tmp, mExpoGt143, mSpecial);
+
+		// Normalized numbers: Exponent > 112 and not special case.
+		__mmask16 mNormMask = _mm512_kand( mExpoGt112, _knot_mask16( mExpoGt143 ) );
+		mui16Tmp = _mm512_mask_mov_epi32( mui16Tmp, mNormMask, mNorm );
+
+		// Subnormal numbers: 101 < Exponent < 113.
+		__mmask16 mSubnormMask = _mm512_kand(
+			_mm512_kand( _knot_mask16( mExpoGt112 ), mExpoGt101 ),
+			_knot_mask16( mExpoGt143 )
+		);
+
+		mui16Tmp = _mm512_mask_mov_epi32( mui16Tmp, mSubnormMask, mSubnorm );
+
+		// Zeros: Exponent ≤ 101.
+		mui16Tmp = _mm512_mask_mov_epi32( mui16Tmp, mExpoLe101, mSign );
+
+		// Adjust for Infinity.
+		__mmask16 mIsInfMask = _mm512_kand(
+			_mm512_cmp_epi32_mask( _mm512_and_epi32( mui16Tmp, _mm512_set1_epi32( 0x7C00 ) ), _mm512_set1_epi32( 0x7C00 ), _MM_CMPINT_EQ ),
+			_knot_mask16( mIsNan )
+		);
+
+		mui16Tmp = _mm512_mask_blend_epi32(
+			mIsInfMask,
+			mui16Tmp,
+			_mm512_or_epi32( mSign, _mm512_set1_epi32( 0x7C00 ) )
+		);
+
+		// For NaN, set to 0x7FFF.
+		mui16Tmp = _mm512_mask_mov_epi32( mui16Tmp, mIsNan, _mm512_set1_epi32( 0x7FFF ) );
+
+		// Convert to uint16_t.
+		return _mm512_cvtepi32_epi16( mui16Tmp );
+
+		// Store result.
+		//_mm256_storeu_si256( reinterpret_cast<__m256i *>(_pui16Dst), mf16 );
+	}
+
 #endif	// #ifdef __AVX512F__
 
 }	// namespace nn9
 
 namespace std {
-    template<>
-    struct is_floating_point<nn9::float16> : std::true_type {};
 	template<>
-    struct is_arithmetic<nn9::float16> : std::true_type {};
+	struct is_floating_point<nn9::float16> : std::true_type {};
 	template<>
-    struct is_signed<nn9::float16> : std::true_type {};
+	struct is_arithmetic<nn9::float16> : std::true_type {};
 	template<>
-    struct is_scalar<nn9::float16> : std::true_type {};
+	struct is_signed<nn9::float16> : std::true_type {};
+	template<>
+	struct is_scalar<nn9::float16> : std::true_type {};
 
 	template<>
-    struct is_standard_layout<nn9::float16> : std::true_type {};
-    template<>
-    struct is_trivial<nn9::float16> : std::true_type {};
+	struct is_standard_layout<nn9::float16> : std::true_type {};
+	template<>
+	struct is_trivial<nn9::float16> : std::true_type {};
 
 
 	template<>
@@ -477,32 +607,32 @@ namespace std {
 
 
 	template<>
-    struct is_pod<nn9::float16> : std::true_type {};
+	struct is_pod<nn9::float16> : std::true_type {};
 
 
 	template<>
-    struct common_type<nn9::float16, float> {
+	struct common_type<nn9::float16, float> {
         using type = float;
     };
 
-    template<>
-    struct common_type<float, nn9::float16> {
+	template<>
+	struct common_type<float, nn9::float16> {
         using type = float;
     };
 
-    template<>
-    struct common_type<nn9::float16, double> {
+	template<>
+	struct common_type<nn9::float16, double> {
         using type = double;
     };
 
-    template<>
-    struct common_type<double, nn9::float16> {
+	template<>
+	struct common_type<double, nn9::float16> {
         using type = double;
     };
 
 
 	template<>
-    struct hash<nn9::float16> {
+	struct hash<nn9::float16> {
         std::size_t								operator()( const nn9::float16 &_f16Val ) const noexcept {
             return std::hash<uint16_t>()( _f16Val.ToBits() );
         }
