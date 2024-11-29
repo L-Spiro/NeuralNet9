@@ -164,7 +164,7 @@ namespace nn9 {
 		}
 
 		inline bool								operator != ( const bfloat16 &_fOther ) const {
-			return !((*this) == _fOther);
+			return static_cast<float>((*this)) != static_cast<float>(_fOther);
 		}
 
 		inline bool								operator < ( const bfloat16 &_fOther ) const {

@@ -1,5 +1,5 @@
 // TMP.
-#include <Windows.h>
+//#include <Windows.h>
 
 #include "LSXmlContainer.h"
 #include "LSXmlLexer.h"
@@ -333,17 +333,17 @@ namespace lsx {
 			case LSX_N_DOCUMENT : {
 				if ( nThisNode.u.dDocumentObj.sProlog != size_t( -1 ) ) {
 					sPrintMe = std::format( "{0: >{1}}DOCUMENT PROLOG:\r\n", "", _i32Depth * 5 );
-					::OutputDebugStringA( sPrintMe.c_str() );
+					//::OutputDebugStringA( sPrintMe.c_str() );
 					PrintNode( nThisNode.u.dDocumentObj.sProlog, _i32Depth + 1 );
 				}
 				if ( nThisNode.u.dDocumentObj.sElement != size_t( -1 ) ) {
 					sPrintMe = std::format( "{0: >{1}}DOCUMENT ELEMENT:\r\n", "", _i32Depth * 5 );
-					::OutputDebugStringA( sPrintMe.c_str() );
+					//::OutputDebugStringA( sPrintMe.c_str() );
 					PrintNode( nThisNode.u.dDocumentObj.sElement, _i32Depth + 1 );
 				}
 				if ( nThisNode.u.dDocumentObj.sMiscSeq != size_t( -1 ) ) {
 					sPrintMe = std::format( "{0: >{1}}DOCUMENT MISC:\r\n", "", _i32Depth * 5 );
-					::OutputDebugStringA( sPrintMe.c_str() );
+					//::OutputDebugStringA( sPrintMe.c_str() );
 					PrintNode( nThisNode.u.dDocumentObj.sMiscSeq, _i32Depth + 1 );
 				}
 				break;
@@ -351,29 +351,29 @@ namespace lsx {
 			case LSX_N_PROLOG : {
 				if ( nThisNode.u.pPrologObj.sVersion != size_t( -1 ) ) {
 					sPrintMe = std::format( "{0: >{1}}PROLOG VERSION:\r\n", "", _i32Depth * 5 );
-					::OutputDebugStringA( sPrintMe.c_str() );
+					//::OutputDebugStringA( sPrintMe.c_str() );
 					PrintNode( nThisNode.u.pPrologObj.sVersion, _i32Depth + 1 );
 				}
 				if ( nThisNode.u.pPrologObj.sEncoding != size_t( -1 ) ) {
 					sPrintMe = std::format( "{0: >{1}}PROLOG ENCODING:\r\n", "", _i32Depth * 5 );
-					::OutputDebugStringA( sPrintMe.c_str() );
+					//::OutputDebugStringA( sPrintMe.c_str() );
 					PrintNode( nThisNode.u.pPrologObj.sEncoding, _i32Depth + 1 );
 				}
 				if ( nThisNode.u.pPrologObj.sMiscSeq != size_t( -1 ) ) {
 					sPrintMe = std::format( "{0: >{1}}PROLOG MISC:\r\n", "", _i32Depth * 5 );
-					::OutputDebugStringA( sPrintMe.c_str() );
+					//::OutputDebugStringA( sPrintMe.c_str() );
 					PrintNode( nThisNode.u.pPrologObj.sMiscSeq, _i32Depth + 1 );
 				}
 				break;
 			}
 			case LSX_N_VERSION : {
 				sPrintMe = std::format( "{0: >{1}}VERSION: {2}\r\n", "", _i32Depth * 5, m_vStrings[nThisNode.u.vVersionObj.sVersionStr] );
-				::OutputDebugStringA( sPrintMe.c_str() );
+				//::OutputDebugStringA( sPrintMe.c_str() );
 				break;
 			}
 			case LSX_N_ENCODING : {
 				sPrintMe = std::format( "{0: >{1}}ENCODING: {2}\r\n", "", _i32Depth * 5, m_vStrings[nThisNode.u.eEncodingObj.sEncodingStr] );
-				::OutputDebugStringA( sPrintMe.c_str() );
+				//::OutputDebugStringA( sPrintMe.c_str() );
 				break;
 			}
 			case LSX_N_MISC_SEQ : {
@@ -391,7 +391,7 @@ namespace lsx {
 			}
 			case LSX_N_ELEMENT : {
 				sPrintMe = std::format( "{0: >{1}}ELEMENT ATTRIBUTE: {2}\r\n", "", _i32Depth * 5, m_vStrings[nThisNode.u.eElementObj.sName] );
-				::OutputDebugStringA( sPrintMe.c_str() );
+				//::OutputDebugStringA( sPrintMe.c_str() );
 				PrintNode( nThisNode.u.eElementObj.sAttribute, _i32Depth + 1 );
 				if ( nThisNode.u.eElementObj.sContent != size_t( -1 ) ) {
 					//sPrintMe = std::format( "{0: >{1}}ELEMENT CONTENT:\r\n", "", _i32Depth * 5 );
@@ -408,7 +408,7 @@ namespace lsx {
 				}
 				if ( nThisNode.u.cContentObj.sRight != size_t( -1 ) ) {
 					sPrintMe = std::format( "{0: >{1}}CONTENT RIGHT: {2}\r\n", "", _i32Depth * 5, m_vStrings[nThisNode.u.cContentObj.sRight] );
-					::OutputDebugStringA( sPrintMe.c_str() );
+					//::OutputDebugStringA( sPrintMe.c_str() );
 				}
 				break;
 			}
@@ -446,13 +446,13 @@ namespace lsx {
 				}
 				if ( nThisNode.u.cContentObj.sRight != size_t( -1 ) ) {
 					sPrintMe = std::format( "{0: >{1}}CONTENT DATA RIGHT: {2}\r\n", "", _i32Depth * 5, m_vStrings[nThisNode.u.cContentObj.sRight] );
-					::OutputDebugStringA( sPrintMe.c_str() );
+					//::OutputDebugStringA( sPrintMe.c_str() );
 				}
 				break;
 			}
 			case LSX_N_ATTRIBUTE_DECL : {
 				sPrintMe = std::format( "{0: >{1}}ATTR DECL: {2}\r\n", "", _i32Depth * 5, m_vStrings[nThisNode.u.aAttributeDeclObj.sName] );
-				::OutputDebugStringA( sPrintMe.c_str() );
+				//::OutputDebugStringA( sPrintMe.c_str() );
 				PrintNode( nThisNode.u.aAttributeDeclObj.sList, _i32Depth + 1 );
 				break;
 			}
@@ -472,11 +472,11 @@ namespace lsx {
 			case LSX_N_ATTRIBUTE : {
 				if ( nThisNode.u.aAttributeObj.sValue != size_t( -1 ) ) {
 					sPrintMe = std::format( "{0: >{1}}ATTR: {2} = {3}\r\n", "", _i32Depth * 5, m_vStrings[nThisNode.u.aAttributeObj.sAttribute], m_vStrings[nThisNode.u.aAttributeObj.sValue] );
-					::OutputDebugStringA( sPrintMe.c_str() );
+					//::OutputDebugStringA( sPrintMe.c_str() );
 				}
 				else {
 					sPrintMe = std::format( "{0: >{1}}ATTR: {2}\r\n", "", _i32Depth * 5, m_vStrings[nThisNode.u.aAttributeObj.sAttribute] );
-					::OutputDebugStringA( sPrintMe.c_str() );
+					//::OutputDebugStringA( sPrintMe.c_str() );
 				}
 				break;
 			}
@@ -883,7 +883,7 @@ namespace lsx {
 		std::string sPrintMe;
 		if ( _ptNode->Value().stNameString != size_t( -1 ) ) {
 			sPrintMe = std::format( "{0: >{1}}Node: {2}\r\n", "", _i32Depth * 5, GetString( _ptNode->Value().stNameString ) );
-			::OutputDebugStringA( sPrintMe.c_str() );
+			//::OutputDebugStringA( sPrintMe.c_str() );
 		}
 		for ( size_t I = 0; I < _ptNode->Value().vAttributes.size(); ++I ) {
 			if ( _ptNode->Value().vAttributes[I].stValueString == size_t( -1 ) ) {
@@ -892,11 +892,11 @@ namespace lsx {
 			else {
 				sPrintMe = std::format( "{0: >{1}}{2} = {3}\r\n", "", (_i32Depth + 1) * 5, GetString( _ptNode->Value().vAttributes[I].stNameString ), GetString( _ptNode->Value().vAttributes[I].stValueString ) );
 			}
-			::OutputDebugStringA( sPrintMe.c_str() );
+			//::OutputDebugStringA( sPrintMe.c_str() );
 		}
 		if ( _ptNode->Value().sData.size() ) {
 			sPrintMe = std::format( "{0: >{1}}{2}\r\n", "", (_i32Depth + 1) * 5, _ptNode->Value().sData );
-			::OutputDebugStringA( sPrintMe.c_str() );
+			//::OutputDebugStringA( sPrintMe.c_str() );
 		}
 
 		for ( size_t I = 0; I < _ptNode->Size(); ++I ) {

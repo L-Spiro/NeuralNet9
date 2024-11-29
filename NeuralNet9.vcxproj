@@ -5,6 +5,14 @@
       <Configuration>Debug</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
+    <ProjectConfiguration Include="Final|Win32">
+      <Configuration>Final</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Final|x64">
+      <Configuration>Final</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
     <ProjectConfiguration Include="Release|Win32">
       <Configuration>Release</Configuration>
       <Platform>Win32</Platform>
@@ -39,6 +47,13 @@
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Final|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
@@ -52,8 +67,16 @@
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Final|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\masm.props" />
   </ImportGroup>
   <ImportGroup Label="Shared">
   </ImportGroup>
@@ -63,10 +86,16 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Final|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Final|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
@@ -78,20 +107,31 @@
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Final|Win32'">
+    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(Platform)\$(Configuration)\</IntDir>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>CURL_STATICLIB;CMS_NO_REGISTER_KEYWORD;MINIZ_NO_ZLIB_COMPATIBLE_NAMES;__AVX512BF16__=1;__AVX512BW__=1;__AVX512F__=1;__AVX2__=1;__AVX__=1;__SSE4_1__=1;OPJ_STATIC;LIBRAW_NODLL;FREEIMAGE_LIB;_DEBUG;_CONSOLE;WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)Libs\FreeImage\Source;$(ProjectDir)Libs\FreeImage\Source\ZLib;$(ProjectDir)Libs\LSXML\Src;$(ProjectDir)Libs\LSon\Src;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Libs\FreeImage\Source;$(ProjectDir)Libs\FreeImage\Source\ZLib;$(ProjectDir)Libs\LSXML\Src;$(ProjectDir)Libs\LSon\Src;$(ProjectDir)Libs\curl\libcurl-vc-x86-release-static-ipv6-sspi-schannel\include</AdditionalIncludeDirectories>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>Ws2_32.lib;Advapi32.lib;Crypt32.lib;Wldap32.lib;Normaliz.lib;Kernel32.lib;User32.lib;oldnames.lib;$(SolutionDir)$(Platform)\$(Configuration)\LSXML.lib;$(SolutionDir)$(Platform)\$(Configuration)\LSon.lib;$(ProjectDir)$(Platform)\$(Configuration)\FreeImage.lib;$(ProjectDir)$(Platform)\$(Configuration)\LibJPEG.lib;$(ProjectDir)$(Platform)\$(Configuration)\LibJXR.lib;$(ProjectDir)$(Platform)\$(Configuration)\LibOpenJPEG.lib;$(ProjectDir)$(Platform)\$(Configuration)\LibPNG.lib;$(ProjectDir)$(Platform)\$(Configuration)\LibRaw.lib;$(ProjectDir)$(Platform)\$(Configuration)\LibTIFF4.lib;$(ProjectDir)$(Platform)\$(Configuration)\LibWebP.lib;$(ProjectDir)$(Platform)\$(Configuration)\OpenEXR.lib;$(ProjectDir)$(Platform)\$(Configuration)\ZLib.lib;$(ProjectDir)Libs\curl\libcurl-vc-x86-release-static-ipv6-sspi-schannel\lib\libcurl_a.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalManifestDependencies>%(AdditionalManifestDependencies)</AdditionalManifestDependencies>
     </Link>
+    <Manifest>
+      <AdditionalManifestFiles>"$(ProjectDir)LongPathAware.manifest"</AdditionalManifestFiles>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -101,15 +141,47 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>CURL_STATICLIB;CMS_NO_REGISTER_KEYWORD;MINIZ_NO_ZLIB_COMPATIBLE_NAMES;__AVX512BF16__=1;__AVX512BW__=1;__AVX512F__=1;__AVX2__=1;__AVX__=1;__SSE4_1__=1;OPJ_STATIC;LIBRAW_NODLL;FREEIMAGE_LIB;NDEBUG;_CONSOLE;WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)Libs\FreeImage\Source;$(ProjectDir)Libs\FreeImage\Source\ZLib;$(ProjectDir)Libs\LSXML\Src;$(ProjectDir)Libs\LSon\Src;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Libs\FreeImage\Source;$(ProjectDir)Libs\FreeImage\Source\ZLib;$(ProjectDir)Libs\LSXML\Src;$(ProjectDir)Libs\LSon\Src;$(ProjectDir)Libs\curl\libcurl-vc-x86-release-static-ipv6-sspi-schannel\include</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>Ws2_32.lib;Advapi32.lib;Crypt32.lib;Wldap32.lib;Normaliz.lib;Kernel32.lib;User32.lib;oldnames.lib;$(SolutionDir)$(Platform)\$(Configuration)\LSXML.lib;$(SolutionDir)$(Platform)\$(Configuration)\LSon.lib;$(ProjectDir)$(Platform)\$(Configuration)\FreeImage.lib;$(ProjectDir)$(Platform)\$(Configuration)\LibJPEG.lib;$(ProjectDir)$(Platform)\$(Configuration)\LibJXR.lib;$(ProjectDir)$(Platform)\$(Configuration)\LibOpenJPEG.lib;$(ProjectDir)$(Platform)\$(Configuration)\LibPNG.lib;$(ProjectDir)$(Platform)\$(Configuration)\LibRaw.lib;$(ProjectDir)$(Platform)\$(Configuration)\LibTIFF4.lib;$(ProjectDir)$(Platform)\$(Configuration)\LibWebP.lib;$(ProjectDir)$(Platform)\$(Configuration)\OpenEXR.lib;$(ProjectDir)$(Platform)\$(Configuration)\ZLib.lib;$(ProjectDir)Libs\curl\libcurl-vc-x86-release-static-ipv6-sspi-schannel\lib\libcurl_a.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalManifestDependencies>%(AdditionalManifestDependencies)</AdditionalManifestDependencies>
     </Link>
+    <Manifest>
+      <AdditionalManifestFiles>"$(ProjectDir)LongPathAware.manifest"</AdditionalManifestFiles>
+    </Manifest>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Final|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>CURL_STATICLIB;CMS_NO_REGISTER_KEYWORD;MINIZ_NO_ZLIB_COMPATIBLE_NAMES;__AVX512BF16__=1;__AVX512BW__=1;__AVX512F__=1;__AVX2__=1;__AVX__=1;__SSE4_1__=1;OPJ_STATIC;LIBRAW_NODLL;FREEIMAGE_LIB;NDEBUG;_CONSOLE;WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(ProjectDir)Libs\FreeImage\Source;$(ProjectDir)Libs\FreeImage\Source\ZLib;$(ProjectDir)Libs\LSXML\Src;$(ProjectDir)Libs\LSon\Src;$(ProjectDir)Libs\curl\libcurl-vc-x86-release-static-ipv6-sspi-schannel\include</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>Ws2_32.lib;Advapi32.lib;Crypt32.lib;Wldap32.lib;Normaliz.lib;Kernel32.lib;User32.lib;oldnames.lib;$(SolutionDir)$(Platform)\$(Configuration)\LSXML.lib;$(SolutionDir)$(Platform)\$(Configuration)\LSon.lib;$(ProjectDir)$(Platform)\$(Configuration)\FreeImage.lib;$(ProjectDir)$(Platform)\$(Configuration)\LibJPEG.lib;$(ProjectDir)$(Platform)\$(Configuration)\LibJXR.lib;$(ProjectDir)$(Platform)\$(Configuration)\LibOpenJPEG.lib;$(ProjectDir)$(Platform)\$(Configuration)\LibPNG.lib;$(ProjectDir)$(Platform)\$(Configuration)\LibRaw.lib;$(ProjectDir)$(Platform)\$(Configuration)\LibTIFF4.lib;$(ProjectDir)$(Platform)\$(Configuration)\LibWebP.lib;$(ProjectDir)$(Platform)\$(Configuration)\OpenEXR.lib;$(ProjectDir)$(Platform)\$(Configuration)\ZLib.lib;$(ProjectDir)Libs\curl\libcurl-vc-x86-release-static-ipv6-sspi-schannel\lib\libcurl_a.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalManifestDependencies>%(AdditionalManifestDependencies)</AdditionalManifestDependencies>
+    </Link>
+    <Manifest>
+      <AdditionalManifestFiles>"$(ProjectDir)LongPathAware.manifest"</AdditionalManifestFiles>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -117,14 +189,21 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>CURL_STATICLIB;CMS_NO_REGISTER_KEYWORD;MINIZ_NO_ZLIB_COMPATIBLE_NAMES;__AVX512BF16__=1;__AVX512BW__=1;__AVX512F__=1;__AVX2__=1;__AVX__=1;__SSE4_1__=1;OPJ_STATIC;LIBRAW_NODLL;FREEIMAGE_LIB;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)Libs\FreeImage\Source;$(ProjectDir)Libs\FreeImage\Source\ZLib;$(ProjectDir)Libs\LSXML\Src;$(ProjectDir)Libs\LSon\Src;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Libs\FreeImage\Source;$(ProjectDir)Libs\FreeImage\Source\ZLib;$(ProjectDir)Libs\LSXML\Src;$(ProjectDir)Libs\LSon\Src;$(ProjectDir)Libs\curl\libcurl-vc-x64-release-static-ipv6-sspi-schannel\include</AdditionalIncludeDirectories>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>Ws2_32.lib;Advapi32.lib;Crypt32.lib;Wldap32.lib;Normaliz.lib;Kernel32.lib;User32.lib;oldnames.lib;$(SolutionDir)$(Platform)\$(Configuration)\LSXML.lib;$(SolutionDir)$(Platform)\$(Configuration)\LSon.lib;$(ProjectDir)$(Platform)\$(Configuration)\FreeImage.lib;$(ProjectDir)$(Platform)\$(Configuration)\LibJPEG.lib;$(ProjectDir)$(Platform)\$(Configuration)\LibJXR.lib;$(ProjectDir)$(Platform)\$(Configuration)\LibOpenJPEG.lib;$(ProjectDir)$(Platform)\$(Configuration)\LibPNG.lib;$(ProjectDir)$(Platform)\$(Configuration)\LibRaw.lib;$(ProjectDir)$(Platform)\$(Configuration)\LibTIFF4.lib;$(ProjectDir)$(Platform)\$(Configuration)\LibWebP.lib;$(ProjectDir)$(Platform)\$(Configuration)\OpenEXR.lib;$(ProjectDir)$(Platform)\$(Configuration)\ZLib.lib;$(ProjectDir)Libs\curl\libcurl-vc-x64-release-static-ipv6-sspi-schannel\lib\libcurl_a.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalManifestDependencies>%(AdditionalManifestDependencies)</AdditionalManifestDependencies>
     </Link>
+    <Manifest>
+      <AdditionalManifestFiles>"$(ProjectDir)LongPathAware.manifest"</AdditionalManifestFiles>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -134,26 +213,102 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>CURL_STATICLIB;CMS_NO_REGISTER_KEYWORD;MINIZ_NO_ZLIB_COMPATIBLE_NAMES;__AVX512BF16__=1;__AVX512BW__=1;__AVX512F__=1;__AVX2__=1;__AVX__=1;__SSE4_1__=1;OPJ_STATIC;LIBRAW_NODLL;FREEIMAGE_LIB;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)Libs\FreeImage\Source;$(ProjectDir)Libs\FreeImage\Source\ZLib;$(ProjectDir)Libs\LSXML\Src;$(ProjectDir)Libs\LSon\Src;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Libs\FreeImage\Source;$(ProjectDir)Libs\FreeImage\Source\ZLib;$(ProjectDir)Libs\LSXML\Src;$(ProjectDir)Libs\LSon\Src;$(ProjectDir)Libs\curl\libcurl-vc-x64-release-static-ipv6-sspi-schannel\include</AdditionalIncludeDirectories>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>Ws2_32.lib;Advapi32.lib;Crypt32.lib;Wldap32.lib;Normaliz.lib;Kernel32.lib;User32.lib;oldnames.lib;$(SolutionDir)$(Platform)\$(Configuration)\LSXML.lib;$(SolutionDir)$(Platform)\$(Configuration)\LSon.lib;$(ProjectDir)$(Platform)\$(Configuration)\FreeImage.lib;$(ProjectDir)$(Platform)\$(Configuration)\LibJPEG.lib;$(ProjectDir)$(Platform)\$(Configuration)\LibJXR.lib;$(ProjectDir)$(Platform)\$(Configuration)\LibOpenJPEG.lib;$(ProjectDir)$(Platform)\$(Configuration)\LibPNG.lib;$(ProjectDir)$(Platform)\$(Configuration)\LibRaw.lib;$(ProjectDir)$(Platform)\$(Configuration)\LibTIFF4.lib;$(ProjectDir)$(Platform)\$(Configuration)\LibWebP.lib;$(ProjectDir)$(Platform)\$(Configuration)\OpenEXR.lib;$(ProjectDir)$(Platform)\$(Configuration)\ZLib.lib;$(ProjectDir)Libs\curl\libcurl-vc-x64-release-static-ipv6-sspi-schannel\lib\libcurl_a.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalManifestDependencies>%(AdditionalManifestDependencies)</AdditionalManifestDependencies>
     </Link>
+    <Manifest>
+      <AdditionalManifestFiles>"$(ProjectDir)LongPathAware.manifest"</AdditionalManifestFiles>
+    </Manifest>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Final|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>CURL_STATICLIB;CMS_NO_REGISTER_KEYWORD;MINIZ_NO_ZLIB_COMPATIBLE_NAMES;__AVX512BF16__=1;__AVX512BW__=1;__AVX512F__=1;__AVX2__=1;__AVX__=1;__SSE4_1__=1;OPJ_STATIC;LIBRAW_NODLL;FREEIMAGE_LIB;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(ProjectDir)Libs\FreeImage\Source;$(ProjectDir)Libs\FreeImage\Source\ZLib;$(ProjectDir)Libs\LSXML\Src;$(ProjectDir)Libs\LSon\Src;$(ProjectDir)Libs\curl\libcurl-vc-x64-release-static-ipv6-sspi-schannel\include</AdditionalIncludeDirectories>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>Ws2_32.lib;Advapi32.lib;Crypt32.lib;Wldap32.lib;Normaliz.lib;Kernel32.lib;User32.lib;oldnames.lib;$(SolutionDir)$(Platform)\$(Configuration)\LSXML.lib;$(SolutionDir)$(Platform)\$(Configuration)\LSon.lib;$(ProjectDir)$(Platform)\$(Configuration)\FreeImage.lib;$(ProjectDir)$(Platform)\$(Configuration)\LibJPEG.lib;$(ProjectDir)$(Platform)\$(Configuration)\LibJXR.lib;$(ProjectDir)$(Platform)\$(Configuration)\LibOpenJPEG.lib;$(ProjectDir)$(Platform)\$(Configuration)\LibPNG.lib;$(ProjectDir)$(Platform)\$(Configuration)\LibRaw.lib;$(ProjectDir)$(Platform)\$(Configuration)\LibTIFF4.lib;$(ProjectDir)$(Platform)\$(Configuration)\LibWebP.lib;$(ProjectDir)$(Platform)\$(Configuration)\OpenEXR.lib;$(ProjectDir)$(Platform)\$(Configuration)\ZLib.lib;$(ProjectDir)Libs\curl\libcurl-vc-x64-release-static-ipv6-sspi-schannel\lib\libcurl_a.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalManifestDependencies>%(AdditionalManifestDependencies)</AdditionalManifestDependencies>
+    </Link>
+    <Manifest>
+      <AdditionalManifestFiles>"$(ProjectDir)LongPathAware.manifest"</AdditionalManifestFiles>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Compression\MiniZ\miniz.c" />
+    <ClCompile Include="Src\Files\NN9FileBase.cpp" />
+    <ClCompile Include="Src\Files\NN9FileMap.cpp" />
+    <ClCompile Include="Src\Files\NN9GzFile.cpp" />
+    <ClCompile Include="Src\Files\NN9StdFile.cpp" />
+    <ClCompile Include="Src\Files\NN9ZipFile.cpp" />
+    <ClCompile Include="Src\Foundation\NN9FeatureSet.cpp" />
+    <ClCompile Include="Src\Foundation\NN9Math.cpp" />
     <ClCompile Include="Src\NeuralNet9.cpp" />
+    <ClCompile Include="Src\Utilities\NN9Crc.cpp" />
+    <ClCompile Include="Src\Utilities\NN9ThreadPool.cpp" />
+    <ClCompile Include="Src\Utilities\NN9Utilities.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Compression\gzip\include\gzip\compress.hpp" />
+    <ClInclude Include="Src\Compression\gzip\include\gzip\config.hpp" />
+    <ClInclude Include="Src\Compression\gzip\include\gzip\decompress.hpp" />
+    <ClInclude Include="Src\Compression\gzip\include\gzip\utils.hpp" />
+    <ClInclude Include="Src\Compression\gzip\include\gzip\version.hpp" />
+    <ClInclude Include="Src\Compression\MiniZ\miniz.h" />
+    <ClInclude Include="Src\Errors\NN9Errors.h" />
+    <ClInclude Include="Src\Files\NN9FileBase.h" />
+    <ClInclude Include="Src\Files\NN9FileMap.h" />
+    <ClInclude Include="Src\Files\NN9GzFile.h" />
+    <ClInclude Include="Src\Files\NN9StdFile.h" />
+    <ClInclude Include="Src\Files\NN9ZipFile.h" />
+    <ClInclude Include="Src\Foundation\NN9AlignmentAllocator.h" />
+    <ClInclude Include="Src\Foundation\NN9Bits.h" />
+    <ClInclude Include="Src\Foundation\NN9FeatureSet.h" />
+    <ClInclude Include="Src\Foundation\NN9Macros.h" />
+    <ClInclude Include="Src\Foundation\NN9Math.h" />
+    <ClInclude Include="Src\OS\NN9Apple.h" />
+    <ClInclude Include="Src\OS\NN9Os.h" />
+    <ClInclude Include="Src\OS\NN9Windows.h" />
     <ClInclude Include="Src\Types\NN9BFloat16.h" />
     <ClInclude Include="Src\Types\NN9Float16.h" />
     <ClInclude Include="Src\Types\NN9Types.h" />
+    <ClInclude Include="Src\Utilities\NN9Crc.h" />
+    <ClInclude Include="Src\Utilities\NN9Stream.h" />
+    <ClInclude Include="Src\Utilities\NN9ThreadPool.h" />
+    <ClInclude Include="Src\Utilities\NN9Timer.h" />
+    <ClInclude Include="Src\Utilities\NN9Utilities.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Src\Errors\NN9ErrorEnum.inl" />
+    <None Include="Src\Foundation\NN9SinCos.asm">
+      <FileType>Document</FileType>
+    </None>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\masm.targets" />
   </ImportGroup>
 </Project>

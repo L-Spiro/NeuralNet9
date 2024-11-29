@@ -19,10 +19,97 @@
     <Filter Include="Source Files\Types">
       <UniqueIdentifier>{c749626a-2084-4060-a468-ca9bd45d4670}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Compression">
+      <UniqueIdentifier>{acccdd9d-0628-48cb-8783-52845c424fcd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Compression">
+      <UniqueIdentifier>{df077011-8de5-4d21-af11-7d8c381b3d06}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Compression\gzip">
+      <UniqueIdentifier>{8d3ab5c7-0b1c-43a7-baa4-da37091d6f66}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Compression\gzip">
+      <UniqueIdentifier>{4522e155-e2d1-4c74-862d-0a9fa8d19f5a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Compression\MiniZ">
+      <UniqueIdentifier>{314dafd1-7c77-4be3-a26a-a32ed73ff09a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Compression\MiniZ">
+      <UniqueIdentifier>{97326323-be9a-41c9-a162-7915a57e48f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Compression\gzip\include">
+      <UniqueIdentifier>{032cae90-db63-4e3a-a3b0-a402454fa44c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Compression\gzip\include\gzip">
+      <UniqueIdentifier>{9d2f963d-c3f5-4b0f-bcea-f39b457323b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\OS">
+      <UniqueIdentifier>{69012e2f-a44f-4aaa-8a80-05a22f2eb725}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\OS">
+      <UniqueIdentifier>{03f05d84-f11d-4fae-8ce2-c3b60037f2c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Foundation">
+      <UniqueIdentifier>{ee4fcaae-2afd-4be2-8ece-4550d39db12a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Foundation">
+      <UniqueIdentifier>{faa3c18d-5e97-4522-ac59-8573ccf76167}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Files">
+      <UniqueIdentifier>{f1371743-509d-47ae-880a-c6a83aff1fa3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Files">
+      <UniqueIdentifier>{0b48285d-5dd6-4b71-9296-0fe4ec407ee4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Errors">
+      <UniqueIdentifier>{b79cbc51-f4a9-4630-9159-7b7a53e74f97}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Errors">
+      <UniqueIdentifier>{9efb83e7-b4a9-480a-9d49-33f5f832f334}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Utilities">
+      <UniqueIdentifier>{0aacb01b-dcd3-4c1e-b559-97767a11b1ae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Utilities">
+      <UniqueIdentifier>{09d51f78-e408-410c-a23f-f0edacc29cf6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\NeuralNet9.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Compression\MiniZ\miniz.c">
+      <Filter>Source Files\Compression\MiniZ</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Foundation\NN9Math.cpp">
+      <Filter>Source Files\Foundation</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Files\NN9FileBase.cpp">
+      <Filter>Source Files\Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Files\NN9FileMap.cpp">
+      <Filter>Source Files\Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Files\NN9GzFile.cpp">
+      <Filter>Source Files\Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Files\NN9StdFile.cpp">
+      <Filter>Source Files\Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Files\NN9ZipFile.cpp">
+      <Filter>Source Files\Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Utilities\NN9Utilities.cpp">
+      <Filter>Source Files\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Foundation\NN9FeatureSet.cpp">
+      <Filter>Source Files\Foundation</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Utilities\NN9ThreadPool.cpp">
+      <Filter>Source Files\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Utilities\NN9Crc.cpp">
+      <Filter>Source Files\Utilities</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -35,5 +122,88 @@
     <ClInclude Include="Src\Types\NN9Types.h">
       <Filter>Header Files\Types</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Compression\gzip\include\gzip\version.hpp">
+      <Filter>Header Files\Compression\gzip\include\gzip</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Compression\gzip\include\gzip\compress.hpp">
+      <Filter>Header Files\Compression\gzip\include\gzip</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Compression\gzip\include\gzip\config.hpp">
+      <Filter>Header Files\Compression\gzip\include\gzip</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Compression\gzip\include\gzip\decompress.hpp">
+      <Filter>Header Files\Compression\gzip\include\gzip</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Compression\gzip\include\gzip\utils.hpp">
+      <Filter>Header Files\Compression\gzip\include\gzip</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Compression\MiniZ\miniz.h">
+      <Filter>Header Files\Compression\MiniZ</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\OS\NN9Os.h">
+      <Filter>Header Files\OS</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\OS\NN9Windows.h">
+      <Filter>Header Files\OS</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Foundation\NN9Bits.h">
+      <Filter>Header Files\Foundation</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Foundation\NN9Math.h">
+      <Filter>Header Files\Foundation</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Foundation\NN9Macros.h">
+      <Filter>Header Files\Foundation</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\OS\NN9Apple.h">
+      <Filter>Header Files\OS</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Files\NN9FileBase.h">
+      <Filter>Header Files\Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Files\NN9FileMap.h">
+      <Filter>Header Files\Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Files\NN9GzFile.h">
+      <Filter>Header Files\Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Files\NN9StdFile.h">
+      <Filter>Header Files\Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Files\NN9ZipFile.h">
+      <Filter>Header Files\Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Errors\NN9Errors.h">
+      <Filter>Header Files\Errors</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Utilities\NN9Stream.h">
+      <Filter>Header Files\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Utilities\NN9Timer.h">
+      <Filter>Header Files\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Utilities\NN9Utilities.h">
+      <Filter>Header Files\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Foundation\NN9AlignmentAllocator.h">
+      <Filter>Header Files\Foundation</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Foundation\NN9FeatureSet.h">
+      <Filter>Header Files\Foundation</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Utilities\NN9ThreadPool.h">
+      <Filter>Header Files\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Utilities\NN9Crc.h">
+      <Filter>Header Files\Utilities</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Src\Foundation\NN9SinCos.asm">
+      <Filter>Header Files\Foundation</Filter>
+    </None>
+    <None Include="Src\Errors\NN9ErrorEnum.inl">
+      <Filter>Header Files\Errors</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -31,12 +31,12 @@ namespace nn9 {
 	};
 
 	/** Layer types. */
-	enum NN9_LAYER_TYPE {
+	/*enum NN9_LAYER_TYPE {
 		NN9_LT_INVALID,
 		NN9_LT_INPUT,
 		NN9_LT_HIDDEN,
 		NN9_LT_POOL,
-	};
+	};*/
 
 
 	/**

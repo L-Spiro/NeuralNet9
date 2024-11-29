@@ -102,7 +102,7 @@ namespace nn9 {
 		}
 
 		inline bool								operator != ( const float16 &_fOther ) const {
-			return !((*this) == _fOther);
+			return static_cast<float>((*this)) != static_cast<float>(_fOther);
 		}
 
 		inline bool								operator < ( const float16 &_fOther ) const {
@@ -562,47 +562,47 @@ namespace std {
 	template<>
     class numeric_limits<nn9::float16> {
     public:
-        static constexpr bool is_specialized	= true;
+		static constexpr bool is_specialized	= true;
 
-        static constexpr nn9::float16			min() noexcept { return nn9::float16::min(); }
-        static constexpr nn9::float16			max() noexcept { return nn9::float16::max(); }
-        static constexpr nn9::float16			lowest() noexcept { return nn9::float16::lowest(); }
+		static constexpr nn9::float16			min() noexcept { return nn9::float16::min(); }
+		static constexpr nn9::float16			max() noexcept { return nn9::float16::max(); }
+		static constexpr nn9::float16			lowest() noexcept { return nn9::float16::lowest(); }
 
-        static constexpr int digits				= 11;  // mantissa bits including the implicit bit
-        static constexpr int digits10			= 3;   // floor(digits * log10(2))
-        static constexpr int max_digits10		= 5;   // ceil(1 + digits * log10(2))
+		static constexpr int digits				= 11;  // mantissa bits including the implicit bit
+		static constexpr int digits10			= 3;   // floor(digits * log10(2))
+		static constexpr int max_digits10		= 5;   // ceil(1 + digits * log10(2))
 
-        static constexpr bool is_signed			= true;
-        static constexpr bool is_integer		= false;
-        static constexpr bool is_exact			= false;
-        static constexpr int radix				= 2;
+		static constexpr bool is_signed			= true;
+		static constexpr bool is_integer		= false;
+		static constexpr bool is_exact			= false;
+		static constexpr int radix				= 2;
 
-        static constexpr nn9::float16			epsilon() noexcept { return nn9::float16::epsilon(); }
-        static constexpr nn9::float16			round_error() noexcept { return nn9::float16::FromBits( 0x3800 ); }	// 0.5f.
+		static constexpr nn9::float16			epsilon() noexcept { return nn9::float16::epsilon(); }
+		static constexpr nn9::float16			round_error() noexcept { return nn9::float16::FromBits( 0x3800 ); }	// 0.5f.
 
-        static constexpr int min_exponent		= -14;
-        static constexpr int min_exponent10		= -4;
-        static constexpr int max_exponent		= 15;
-        static constexpr int max_exponent10		= 4;
+		static constexpr int min_exponent		= -14;
+		static constexpr int min_exponent10		= -4;
+		static constexpr int max_exponent		= 15;
+		static constexpr int max_exponent10		= 4;
 
-        static constexpr bool has_infinity		= true;
-        static constexpr bool has_quiet_NaN		= true;
-        static constexpr bool has_signaling_NaN	= true;
-        static constexpr std::float_denorm_style has_denorm = std::denorm_present;
-        static constexpr bool has_denorm_loss	= false;
+		static constexpr bool has_infinity		= true;
+		static constexpr bool has_quiet_NaN		= true;
+		static constexpr bool has_signaling_NaN	= true;
+		static constexpr std::float_denorm_style has_denorm = std::denorm_present;
+		static constexpr bool has_denorm_loss	= false;
 
-        static constexpr nn9::float16			infinity() noexcept { return nn9::float16::infinity(); }
-        static constexpr nn9::float16			quiet_NaN() noexcept { return nn9::float16::quiet_NaN(); }
-        static constexpr nn9::float16			signaling_NaN() noexcept { return nn9::float16::signaling_NaN(); }
-        static constexpr nn9::float16			denorm_min() noexcept { return nn9::float16::denorm_min(); }
+		static constexpr nn9::float16			infinity() noexcept { return nn9::float16::infinity(); }
+		static constexpr nn9::float16			quiet_NaN() noexcept { return nn9::float16::quiet_NaN(); }
+		static constexpr nn9::float16			signaling_NaN() noexcept { return nn9::float16::signaling_NaN(); }
+		static constexpr nn9::float16			denorm_min() noexcept { return nn9::float16::denorm_min(); }
 
-        static constexpr bool is_iec559			= true;
-        static constexpr bool is_bounded		= true;
-        static constexpr bool is_modulo			= false;
+		static constexpr bool is_iec559			= true;
+		static constexpr bool is_bounded		= true;
+		static constexpr bool is_modulo			= false;
 
-        static constexpr bool traps				= false;
-        static constexpr bool tinyness_before	= false;
-        static constexpr std::float_round_style	round_style = std::round_to_nearest;
+		static constexpr bool traps				= false;
+		static constexpr bool tinyness_before	= false;
+		static constexpr std::float_round_style	round_style = std::round_to_nearest;
     };
 
 
