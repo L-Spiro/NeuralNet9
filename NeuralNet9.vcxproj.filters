@@ -73,6 +73,12 @@
     <Filter Include="Source Files\Utilities">
       <UniqueIdentifier>{09d51f78-e408-410c-a23f-f0edacc29cf6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Buffers">
+      <UniqueIdentifier>{6b357971-2e9c-478c-98be-148a02d5662b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Buffers">
+      <UniqueIdentifier>{10e47da2-a9c4-4840-8e13-67b5a02bd705}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\NeuralNet9.cpp">
@@ -110,6 +116,9 @@
     </ClCompile>
     <ClCompile Include="Src\Utilities\NN9Crc.cpp">
       <Filter>Source Files\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Buffers\NN9Buffer.cpp">
+      <Filter>Source Files\Buffers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -196,6 +205,9 @@
     </ClInclude>
     <ClInclude Include="Src\Utilities\NN9Crc.h">
       <Filter>Header Files\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Buffers\NN9Buffer.h">
+      <Filter>Header Files\Buffers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

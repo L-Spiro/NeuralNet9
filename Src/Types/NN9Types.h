@@ -40,12 +40,12 @@ namespace nn9 {
 
 
 	/**
-	 * Class CTypes
+	 * Class Types
 	 * \brief Provides functionality related to types.
 	 *
 	 * Description: Provides functionality related to types.
 	 */
-	class CTypes {
+	class Types {
 	public :
 		// == Functions.
 		/**
@@ -68,7 +68,7 @@ namespace nn9 {
 	 * \param _tType The type whose size is to be obtained.
 	 * \return Returns the size of the given type or 0.
 	 **/
-	inline size_t CTypes::SizeOf( NN9_TYPE _tType ) {
+	inline size_t Types::SizeOf( NN9_TYPE _tType ) {
 		switch ( _tType ) {
 			case NN9_T_BFLOAT16 : { return sizeof( bfloat16_t ); }
 			case NN9_T_FLOAT16 : { return sizeof( nn9::float16 ); }
