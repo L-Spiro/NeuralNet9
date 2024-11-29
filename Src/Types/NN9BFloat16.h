@@ -1504,98 +1504,98 @@ namespace nn9 {
 }	// namespace nn9
 
 namespace std {
-    template<>
-    struct is_floating_point<nn9::bfloat16> : std::true_type {};
 	template<>
-    struct is_arithmetic<nn9::bfloat16> : std::true_type {};
+	struct is_floating_point<nn9::bfloat16> : std::true_type {};
 	template<>
-    struct is_signed<nn9::bfloat16> : std::true_type {};
+	struct is_arithmetic<nn9::bfloat16> : std::true_type {};
 	template<>
-    struct is_scalar<nn9::bfloat16> : std::true_type {};
-
+	struct is_signed<nn9::bfloat16> : std::true_type {};
 	template<>
-    struct is_standard_layout<nn9::bfloat16> : std::true_type {};
-    template<>
-    struct is_trivial<nn9::bfloat16> : std::true_type {};
-
+	struct is_scalar<nn9::bfloat16> : std::true_type {};
 
 	template<>
-    class numeric_limits<nn9::bfloat16> {
-    public:
-        static constexpr bool is_specialized	= true;
-
-        static constexpr nn9::bfloat16			min() noexcept { return nn9::bfloat16::min(); }
-        static constexpr nn9::bfloat16			max() noexcept { return nn9::bfloat16::max(); }
-        static constexpr nn9::bfloat16			lowest() noexcept { return nn9::bfloat16::lowest(); }
-
-        static constexpr int digits				= 8;	// Mantissa bits including the implicit bit.
-        static constexpr int digits10			= 2;	// floor(digits * log10(2)).
-        static constexpr int max_digits10		= 4;	// ceil(1 + digits * log10(2)).
-
-        static constexpr bool is_signed			= true;
-        static constexpr bool is_integer		= false;
-        static constexpr bool is_exact			= false;
-        static constexpr int radix				= 2;
-
-        static constexpr nn9::bfloat16			epsilon() noexcept { return nn9::bfloat16::epsilon(); }
-        static constexpr nn9::bfloat16			round_error() noexcept { return nn9::bfloat16::FromBits( 0x3F00 ); }	// 0.5f.
-
-        static constexpr int min_exponent		= std::numeric_limits<float>::min_exponent;
-        static constexpr int min_exponent10		= std::numeric_limits<float>::min_exponent10;
-        static constexpr int max_exponent		= std::numeric_limits<float>::max_exponent;
-        static constexpr int max_exponent10		= std::numeric_limits<float>::max_exponent10;
-
-        static constexpr bool has_infinity		= true;
-        static constexpr bool has_quiet_NaN		= true;
-        static constexpr bool has_signaling_NaN	= true;
-        static constexpr std::float_denorm_style has_denorm = std::denorm_present;
-        static constexpr bool has_denorm_loss	= false;
-
-        static constexpr nn9::bfloat16			infinity() noexcept { return nn9::bfloat16::infinity(); }
-        static constexpr nn9::bfloat16			quiet_NaN() noexcept { return nn9::bfloat16::quiet_NaN(); }
-        static constexpr nn9::bfloat16			signaling_NaN() noexcept { return nn9::bfloat16::signaling_NaN(); }
-        static constexpr nn9::bfloat16			denorm_min() noexcept { return nn9::bfloat16::denorm_min(); }
-
-        static constexpr bool is_iec559			= true;
-        static constexpr bool is_bounded		= true;
-        static constexpr bool is_modulo			= false;
-
-        static constexpr bool traps				= false;
-        static constexpr bool tinyness_before	= false;
-        static constexpr std::float_round_style	round_style = std::round_toward_zero;
-    };
+	struct is_standard_layout<nn9::bfloat16> : std::true_type {};
+	template<>
+	struct is_trivial<nn9::bfloat16> : std::true_type {};
 
 
 	template<>
-    struct is_pod<nn9::bfloat16> : std::true_type {};
+	class numeric_limits<nn9::bfloat16> {
+	public:
+		static constexpr bool is_specialized	= true;
+
+		static constexpr nn9::bfloat16			min() noexcept { return nn9::bfloat16::min(); }
+		static constexpr nn9::bfloat16			max() noexcept { return nn9::bfloat16::max(); }
+		static constexpr nn9::bfloat16			lowest() noexcept { return nn9::bfloat16::lowest(); }
+
+		static constexpr int digits				= 8;	// Mantissa bits including the implicit bit.
+		static constexpr int digits10			= 2;	// floor(digits * log10(2)).
+		static constexpr int max_digits10		= 4;	// ceil(1 + digits * log10(2)).
+
+		static constexpr bool is_signed			= true;
+		static constexpr bool is_integer		= false;
+		static constexpr bool is_exact			= false;
+		static constexpr int radix				= 2;
+
+		static constexpr nn9::bfloat16			epsilon() noexcept { return nn9::bfloat16::epsilon(); }
+		static constexpr nn9::bfloat16			round_error() noexcept { return nn9::bfloat16::FromBits( 0x3F00 ); }	// 0.5f.
+
+		static constexpr int min_exponent		= std::numeric_limits<float>::min_exponent;
+		static constexpr int min_exponent10		= std::numeric_limits<float>::min_exponent10;
+		static constexpr int max_exponent		= std::numeric_limits<float>::max_exponent;
+		static constexpr int max_exponent10		= std::numeric_limits<float>::max_exponent10;
+
+		static constexpr bool has_infinity		= true;
+		static constexpr bool has_quiet_NaN		= true;
+		static constexpr bool has_signaling_NaN	= true;
+		static constexpr std::float_denorm_style has_denorm = std::denorm_present;
+		static constexpr bool has_denorm_loss	= false;
+
+		static constexpr nn9::bfloat16			infinity() noexcept { return nn9::bfloat16::infinity(); }
+		static constexpr nn9::bfloat16			quiet_NaN() noexcept { return nn9::bfloat16::quiet_NaN(); }
+		static constexpr nn9::bfloat16			signaling_NaN() noexcept { return nn9::bfloat16::signaling_NaN(); }
+		static constexpr nn9::bfloat16			denorm_min() noexcept { return nn9::bfloat16::denorm_min(); }
+
+		static constexpr bool is_iec559			= true;
+		static constexpr bool is_bounded		= true;
+		static constexpr bool is_modulo			= false;
+
+		static constexpr bool traps				= false;
+		static constexpr bool tinyness_before	= false;
+		static constexpr std::float_round_style	round_style = std::round_toward_zero;
+	};
 
 
 	template<>
-    struct common_type<nn9::bfloat16, float> {
-        using type = float;
-    };
-
-    template<>
-    struct common_type<float, nn9::bfloat16> {
-        using type = float;
-    };
-
-    template<>
-    struct common_type<nn9::bfloat16, double> {
-        using type = double;
-    };
-
-    template<>
-    struct common_type<double, nn9::bfloat16> {
-        using type = double;
-    };
+	struct is_pod<nn9::bfloat16> : std::true_type {};
 
 
 	template<>
-    struct hash<nn9::bfloat16> {
-        std::size_t								operator()( const nn9::bfloat16 &_bf16Val ) const noexcept {
-            return std::hash<uint16_t>()( _bf16Val.ToBits() );
-        }
-    };
+	struct common_type<nn9::bfloat16, float> {
+		using type = float;
+	};
+
+	template<>
+	struct common_type<float, nn9::bfloat16> {
+		using type = float;
+	};
+
+	template<>
+	struct common_type<nn9::bfloat16, double> {
+		using type = double;
+	};
+
+	template<>
+	struct common_type<double, nn9::bfloat16> {
+		using type = double;
+	};
+
+
+	template<>
+	struct hash<nn9::bfloat16> {
+		std::size_t								operator()( const nn9::bfloat16 &_bf16Val ) const noexcept {
+			return std::hash<uint16_t>()( _bf16Val.ToBits() );
+		}
+	};
 
 }
