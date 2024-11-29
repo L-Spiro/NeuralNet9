@@ -52,6 +52,7 @@ namespace nn9 {
 			return Uint16ToFloat( m_u16Value );
 		}
 
+
 		// ===============================
 		// Arithmetic Operators
 		// ===============================
@@ -70,6 +71,7 @@ namespace nn9 {
 		inline float16							operator / ( const float16 &_fOther ) const {
 			return float16( static_cast<float>((*this)) / static_cast<float>(_fOther) );
 		}
+
 
 		// ===============================
 		// Compound Assignment Operators
@@ -93,6 +95,7 @@ namespace nn9 {
 			(*this) = (*this) / _fOther;
 			return (*this);
 		}
+
 
 		// ===============================
 		// Comparison Operators
@@ -560,8 +563,8 @@ namespace std {
 
 
 	template<>
-    class numeric_limits<nn9::float16> {
-    public:
+	class numeric_limits<nn9::float16> {
+	public:
 		static constexpr bool is_specialized	= true;
 
 		static constexpr nn9::float16			min() noexcept { return nn9::float16::min(); }
@@ -603,7 +606,7 @@ namespace std {
 		static constexpr bool traps				= false;
 		static constexpr bool tinyness_before	= false;
 		static constexpr std::float_round_style	round_style = std::round_to_nearest;
-    };
+	};
 
 
 	template<>
@@ -612,30 +615,30 @@ namespace std {
 
 	template<>
 	struct common_type<nn9::float16, float> {
-        using type = float;
-    };
+		using type = float;
+	};
 
 	template<>
 	struct common_type<float, nn9::float16> {
-        using type = float;
-    };
+		using type = float;
+	};
 
 	template<>
 	struct common_type<nn9::float16, double> {
-        using type = double;
-    };
+		using type = double;
+	};
 
 	template<>
 	struct common_type<double, nn9::float16> {
-        using type = double;
-    };
+		using type = double;
+	};
 
 
 	template<>
 	struct hash<nn9::float16> {
-        std::size_t								operator()( const nn9::float16 &_f16Val ) const noexcept {
-            return std::hash<uint16_t>()( _f16Val.ToBits() );
-        }
-    };
+		std::size_t								operator()( const nn9::float16 &_f16Val ) const noexcept {
+			return std::hash<uint16_t>()( _f16Val.ToBits() );
+		}
+	};
 
 }

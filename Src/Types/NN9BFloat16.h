@@ -114,6 +114,7 @@ namespace nn9 {
 			return (*reinterpret_cast<float *>(&ui32Val));
 		}
 
+
 		// ===============================
 		// Arithmetic Operators
 		// ===============================
@@ -132,6 +133,7 @@ namespace nn9 {
 		inline bfloat16							operator / ( const bfloat16 &_fOther ) const {
 			return bfloat16( static_cast<float>((*this)) / static_cast<float>(_fOther) );
 		}
+
 
 		// ===============================
 		// Compound Assignment Operators
@@ -155,6 +157,7 @@ namespace nn9 {
 			(*this) = (*this) / _fOther;
 			return (*this);
 		}
+
 
 		// ===============================
 		// Comparison Operators
@@ -350,6 +353,7 @@ namespace nn9 {
 		 **/
 		static inline void						store_m512bh_to_bf16( uint16_t * _pDst, __m512bh _mSrc );
 
+
 		// ===============================
 		// VCVTNE2PS2BF16
 		// ===============================
@@ -443,6 +447,7 @@ namespace nn9 {
 		 **/
 		static inline __m512bh					_mm512_maskz_cvtne2ps_pbh_emu( __mmask32 _kMask, __m512 _mA, __m512 _mB );
 
+
 		// ===============================
 		// VCVTNEPS2BF16
 		// ===============================
@@ -526,6 +531,7 @@ namespace nn9 {
 		 * \return A bfloat16 vector containing converted values where the mask is set, zero elsewhere.
 		 **/
 		static inline __m256bh					_mm512_maskz_cvtneps_pbh_emu( __mmask16 _kMask, __m512 _mA );
+
 
 		// ===============================
 		// VDPBF16PS
