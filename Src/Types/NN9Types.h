@@ -26,6 +26,12 @@ namespace nn9 {
 		NN9_T_UINT32,
 		NN9_T_UINT64,
 
+		NN9_T_INT8,
+		NN9_T_INT16,
+		NN9_T_INT32,
+		NN9_T_INT64,
+
+		NN9_T_BOOL,
 
 		NN9_T_OTHER,
 	};
@@ -79,6 +85,13 @@ namespace nn9 {
 			case NN9_T_UINT16 : { return sizeof( uint16_t ); }
 			case NN9_T_UINT32 : { return sizeof( uint32_t ); }
 			case NN9_T_UINT64 : { return sizeof( uint64_t ); }
+
+			case NN9_T_INT8 : { return sizeof( uint8_t ); }
+			case NN9_T_INT16 : { return sizeof( int16_t ); }
+			case NN9_T_INT32 : { return sizeof( int32_t ); }
+			case NN9_T_INT64 : { return sizeof( int64_t ); }
+
+			case NN9_T_BOOL : { return sizeof( bool ); }
 		}
 		return 0;
 	}
