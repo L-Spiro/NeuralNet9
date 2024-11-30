@@ -4814,7 +4814,7 @@ static yyconst yy_state_type yy_NUL_trans[139] =
  * Author: Bert Bos <bert@w3.org>
  * Created: 9 July 1997
  *
- * Copyright © 1997-2000 World Wide Web Consortium
+ * Copyright C 1997-2000 World Wide Web Consortium
  * See http://www.w3.org/Consortium/Legal/copyright-software-19980720.html
  */
 
