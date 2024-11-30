@@ -1,4 +1,4 @@
-// ==========================================================
+﻿// ==========================================================
 // Tag manipulation functions
 //
 // Design and implementation by
@@ -312,7 +312,7 @@ typedef struct tagTagInfo {
 
 
 /**
-Class to hold tag information (based on Meyers� Singleton).<br>
+Class to hold tag information (based on Meyers’ Singleton).<br>
 
 Sample usage :<br>
 <code>
