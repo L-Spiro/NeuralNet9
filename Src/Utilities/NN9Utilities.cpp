@@ -414,60 +414,68 @@ namespace nn9 {
 	 * \return Returns an error code indicating the result of the operation.
 	 **/
 	NN9_ERRORS Utilities::DownloadFile( const std::u16string &_pcUrl, const std::u16string &_pcPath ) {
-		// Must verify that the download folder exists.
-		/*try {
-			std::filesystem::path pPath = _pcPath;
-			if ( !pPath.has_filename() ) { return NN9_E_INVALID_NAME; }
-			if ( !std::filesystem::exists( std::filesystem::absolute( pPath.make_preferred().remove_filename() ) ) ) { return NN9_E_FOLDER_NOT_FOUND; }
-		}
-		catch ( ... ) { return NN9_E_FOLDER_NOT_FOUND; }*/
+		NN9_ERRORS eCode;
+		{
+			// Must verify that the download folder exists.
+			/*try {
+				std::filesystem::path pPath = _pcPath;
+				if ( !pPath.has_filename() ) { return NN9_E_INVALID_NAME; }
+				if ( !std::filesystem::exists( std::filesystem::absolute( pPath.make_preferred().remove_filename() ) ) ) { return NN9_E_FOLDER_NOT_FOUND; }
+			}
+			catch ( ... ) { return NN9_E_FOLDER_NOT_FOUND; }*/
 
 
-		NN9_CURL cCurl( ::curl_easy_init() );
+			NN9_CURL cCurl( ::curl_easy_init() );
 
-		if ( !cCurl.Valid() ) { return NN9_E_CURL_INIT_FAILED; }
+			if ( !cCurl.Valid() ) { return NN9_E_CURL_INIT_FAILED; }
 #define NN9_CHECK							if ( aCurlCode != CURLE_OK ) { return Errors::LibCurl_To_Native( aCurlCode ); }
-		StdFile sfFile;
-		auto aCurlCode = ::curl_easy_setopt( cCurl.pcCurl, CURLOPT_URL, Utf16ToUtf8( _pcUrl ).c_str() );
-		NN9_CHECK;
-		 // Set the User-Agent to mimic a web browser.
-		aCurlCode = ::curl_easy_setopt( cCurl.pcCurl, CURLOPT_USERAGENT, "Mozilla/5.0" );
-		NN9_CHECK;
-        // Follow redirects if necessary.
-        aCurlCode = ::curl_easy_setopt( cCurl.pcCurl, CURLOPT_FOLLOWLOCATION, 1L );
-		// Enable verbose output for debugging.
-		/*aCurlCode = ::curl_easy_setopt( cCurl.pcCurl, CURLOPT_VERBOSE, 1L );
-		NN9_CHECK;*/
-
-
-		NN9_CHECK;
-        // Write data to our file.
-        aCurlCode = ::curl_easy_setopt( cCurl.pcCurl, CURLOPT_WRITEFUNCTION, WriteCurlData );
-		NN9_CHECK;
-        aCurlCode = ::curl_easy_setopt( cCurl.pcCurl, CURLOPT_WRITEDATA, &sfFile );
-		NN9_CHECK;
-        // Set SSL options.
-        aCurlCode = ::curl_easy_setopt( cCurl.pcCurl, CURLOPT_SSL_VERIFYPEER, 1L ); // Enable certificate validation.
-		NN9_CHECK;
-        aCurlCode = ::curl_easy_setopt( cCurl.pcCurl, CURLOPT_SSL_VERIFYHOST, 2L ); // Verify that the host name matches the certificate.
-		NN9_CHECK;
-
-		std::filesystem::create_directories( std::filesystem::absolute( std::filesystem::path( _pcPath ) ).remove_filename() );
-		auto eCode = sfFile.Create( _pcPath.c_str() );
-		if ( eCode == NN9_E_SUCCESS ) {
-			aCurlCode = ::curl_easy_perform( cCurl.pcCurl );
-
-			// Check HTTP response code.
-			//long lRespCode = 0;
-			//aCurlCode = ::curl_easy_getinfo( cCurl.pcCurl, CURLINFO_RESPONSE_CODE, &lRespCode );
-			//if ( lRespCode != 200 ) {
-			//	std::cerr << "Failed to download file. HTTP Response Code: " << lRespCode << std::endl;
-			//	//return Errors::LibCurl_To_Native( aCurlCode );
-			//}
+			StdFile sfFile;
+			auto aCurlCode = ::curl_easy_setopt( cCurl.pcCurl, CURLOPT_URL, Utf16ToUtf8( _pcUrl ).c_str() );
 			NN9_CHECK;
-		}
+			 // Set the User-Agent to mimic a web browser.
+			aCurlCode = ::curl_easy_setopt( cCurl.pcCurl, CURLOPT_USERAGENT, "Mozilla/5.0" );
+			NN9_CHECK;
+			// Follow redirects if necessary.
+			aCurlCode = ::curl_easy_setopt( cCurl.pcCurl, CURLOPT_FOLLOWLOCATION, 1L );
+			// Enable verbose output for debugging.
+			/*aCurlCode = ::curl_easy_setopt( cCurl.pcCurl, CURLOPT_VERBOSE, 1L );
+			NN9_CHECK;*/
+
+
+			NN9_CHECK;
+			// Write data to our file.
+			aCurlCode = ::curl_easy_setopt( cCurl.pcCurl, CURLOPT_WRITEFUNCTION, WriteCurlData );
+			NN9_CHECK;
+			aCurlCode = ::curl_easy_setopt( cCurl.pcCurl, CURLOPT_WRITEDATA, &sfFile );
+			NN9_CHECK;
+			// Set SSL options.
+			aCurlCode = ::curl_easy_setopt( cCurl.pcCurl, CURLOPT_SSL_VERIFYPEER, 1L ); // Enable certificate validation.
+			NN9_CHECK;
+			aCurlCode = ::curl_easy_setopt( cCurl.pcCurl, CURLOPT_SSL_VERIFYHOST, 2L ); // Verify that the host name matches the certificate.
+			NN9_CHECK;
+
+			std::filesystem::create_directories( std::filesystem::absolute( std::filesystem::path( _pcPath ) ).remove_filename() );
+			eCode = sfFile.Create( _pcPath.c_str() );
+			if ( eCode == NN9_E_SUCCESS ) {
+				aCurlCode = ::curl_easy_perform( cCurl.pcCurl );
+
+				// Check HTTP response code.
+				//long lRespCode = 0;
+				//aCurlCode = ::curl_easy_getinfo( cCurl.pcCurl, CURLINFO_RESPONSE_CODE, &lRespCode );
+				//if ( lRespCode != 200 ) {
+				//	std::cerr << "Failed to download file. HTTP Response Code: " << lRespCode << std::endl;
+				//	//return Errors::LibCurl_To_Native( aCurlCode );
+				//}
+				NN9_CHECK;
+			}
+
         
-		::curl_easy_cleanup( cCurl.pcCurl );
+			::curl_easy_cleanup( cCurl.pcCurl );
+		}
+
+
+		auto aCrc = StdFile::Crc( _pcPath.c_str() );
+		std::wcout << "Downloaded file \"" << reinterpret_cast<const wchar_t *>(_pcPath.c_str()) << "\": " << std::uppercase << std::hex << std::setfill( L'0' ) << std::setw( 8 ) << aCrc << std::endl;
 
 		return eCode;
 	}
@@ -510,6 +518,12 @@ namespace nn9 {
 			u"t10k-images-idx3-ubyte.gz",
 			u"t10k-labels-idx1-ubyte.gz"
 		};
+		static uint32_t ui32Crc[] = {
+			0xEB392171,
+			0x28EE680A,
+			0xDF9322EE,
+			0x5C1CF43B,
+		};
 
 		try {
 			std::filesystem::path pPath = _pcFolder;
@@ -520,8 +534,12 @@ namespace nn9 {
 			for ( size_t I = 0; I < NN9_ELEMENTS( sUrls ); ++I ) {
 				std::filesystem::path pThisPath = pPath;
 				pThisPath /= sFileNames[I];
-				auto aCode = DownloadFile( sUrls[I], pThisPath.u16string() );
-				if ( aCode != NN9_E_SUCCESS ) { return aCode; }
+
+				auto aCrc = StdFile::Crc( pThisPath.u16string().c_str() );
+				if ( aCrc != ui32Crc[I] ) {
+					auto aCode = DownloadFile( sUrls[I], pThisPath.u16string() );
+					if ( aCode != NN9_E_SUCCESS ) { return aCode; }
+				}
 			}
 		}
 		catch ( ... ) { return NN9_E_OUT_OF_MEMORY; }

@@ -10,6 +10,7 @@
 #pragma once
 
 #include "../OS/NN9Os.h"
+#include "../Utilities/NN9Crc.h"
 #include "NN9FileBase.h"
 
 namespace nn9 {
@@ -246,12 +247,22 @@ namespace nn9 {
 		/**
 		 * Appends the given data to a given file.
 		 *
+		 * \tparam _tStrType The string type (typically char8_t or char16_t).
 		 * \param _pcFile The file to which to append the given data.
 		 * \param _vData The data to write to the file.
 		 * \return Returns true if the data was successfully written to the file.
 		 */
 		template <typename _tStrType>
 		static inline NN9_ERRORS							AppendToFile( const _tStrType * _pcFile, const std::vector<uint8_t> &_vData );
+
+		/**
+		 * Gets the CRC of a given file.
+		 * 
+		 * \param _pcFile The file whose CRC is to be obtained.
+		 * \return Returns true if the data was successfully written to the file.
+		 **/
+		template <typename _tStrType>
+		static inline uint32_t								Crc( const _tStrType * _pcFile );
 
 
 	protected :
@@ -369,6 +380,20 @@ namespace nn9 {
 	template <typename _tStrType>
 	inline NN9_ERRORS StdFile::AppendToFile( const _tStrType * _pcFile, const std::vector<uint8_t> &_vData ) {
 		return AppendToFile( _pcFile, _vData.data(), _vData.size() );
+	}
+
+	/**
+	 * Gets the CRC of a given file.
+	 * 
+	 * \param _pcFile The file whose CRC is to be obtained.
+	 * \return Returns true if the data was successfully written to the file.
+	 **/
+	template <typename _tStrType>
+	inline uint32_t StdFile::Crc( const _tStrType * _pcFile ) {
+		std::vector<uint8_t> vData;
+		auto eErr = LoadToMemory( _pcFile, vData );
+		if ( eErr != NN9_E_SUCCESS ) { return 0; }
+		return Crc::GetCrc( vData.data(), vData.size() );
 	}
 
 }	// namespace nn9
