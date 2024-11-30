@@ -117,6 +117,8 @@ namespace nn9 {
 
         static bool                     AVX512BF16() { return m_iiCpuRep.m_bEax7_1[5]; }
 
+		static bool						AVX_VNNI() { return m_iiCpuRep.m_iNumIds >= 7 && m_iiCpuRep.m_bEbx7_1[11];  }
+
         static bool                     PREFETCHWT1() { return m_iiCpuRep.m_bEcx7[0]; }
 
         static bool                     LAHF() { return m_iiCpuRep.m_bEcx81[0]; }
