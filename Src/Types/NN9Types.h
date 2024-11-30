@@ -60,7 +60,7 @@ namespace nn9 {
 		 * \param _tType The type whose size is to be obtained.
 		 * \return Returns the size of the given type or 0.
 		 **/
-		static inline size_t									SizeOf( NN9_TYPE _tType );
+		static inline constexpr size_t									SizeOf( NN9_TYPE _tType );
 	};
 
 
@@ -74,7 +74,7 @@ namespace nn9 {
 	 * \param _tType The type whose size is to be obtained.
 	 * \return Returns the size of the given type or 0.
 	 **/
-	inline size_t Types::SizeOf( NN9_TYPE _tType ) {
+	inline constexpr size_t Types::SizeOf( NN9_TYPE _tType ) {
 		switch ( _tType ) {
 			case NN9_T_BFLOAT16 : { return sizeof( bfloat16_t ); }
 			case NN9_T_FLOAT16 : { return sizeof( nn9::float16 ); }
