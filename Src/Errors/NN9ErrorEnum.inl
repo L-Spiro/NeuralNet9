@@ -235,7 +235,7 @@ NN9_E_ENUM( NN9_E_INVALID_HANDLE, "The handle is invalid." )
 // Neural network errros.
 NN9_E_ENUM( NN9_E_TOO_FEW_INPUTS, "Too little input data for the number of neurons in the input layer." )
 NN9_E_ENUM( NN9_E_UNATTACHED_LAYERS, "A set of weights is missing either an input or an output." )
-NN9_E_ENUM( NN9_E_SPAN_TOO_LARGE, "The difference between a sparse neuron’s lowest connection index and its highest connection index is greater than 0xFFFFFFFF." )
+NN9_E_ENUM( NN9_E_SPAN_TOO_LARGE, "The difference between a sparse neuron's lowest connection index and its highest connection index is greater than 0xFFFFFFFF." )
 NN9_E_ENUM( NN9_E_OFFSET_PLUS_STARTING_INDEX_TOO_LARGE, "The sum of the given offset and the first index caused integer overflow." )
 NN9_E_ENUM( NN9_E_LAYER_TOO_LARGE_FOR_MAX_SPARSE, "The layer is too large for the given sparse configuration." )
 

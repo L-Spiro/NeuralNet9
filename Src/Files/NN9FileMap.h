@@ -69,7 +69,7 @@ namespace nn9 {
 		/**
 		 * Opens a file.  The path is given in UTF-8.
 		 *
-		 * \param _pcPath Path to the file to open.
+		 * \param _pcFile Path to the file to open.
 		 * \return Returns an error code indicating the result of the operation.
 		 */
 		virtual NN9_ERRORS									Open( const char8_t * _pcFile );
@@ -77,7 +77,7 @@ namespace nn9 {
 		/**
 		 * Opens a file.  The path is given in UTF-16.
 		 *
-		 * \param _pcPath Path to the file to open.
+		 * \param _pcFile Path to the file to open.
 		 * \return Returns an error code indicating the result of the operation.
 		 */
 		virtual NN9_ERRORS									Open( const char16_t * _pcFile ) { return FileBase::Open( _pcFile ); }

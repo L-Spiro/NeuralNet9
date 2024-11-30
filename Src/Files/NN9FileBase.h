@@ -32,7 +32,7 @@ namespace nn9 {
 		/**
 		 * Opens a file.  The path is given in UTF-8.
 		 *
-		 * \param _pcPath Path to the file to open.
+		 * \param _pcFile Path to the file to open.
 		 * \return Returns an error code indicating the result of the operation.
 		 */
 		virtual NN9_ERRORS									Open( const char8_t * _pcFile );
@@ -40,7 +40,7 @@ namespace nn9 {
 		/**
 		 * Opens a file.  The path is given in UTF-16.
 		 *
-		 * \param _pcPath Path to the file to open.
+		 * \param _pcFile Path to the file to open.
 		 * \return Returns an error code indicating the result of the operation.
 		 */
 		virtual NN9_ERRORS									Open( const char16_t * _pcFile );
@@ -48,7 +48,7 @@ namespace nn9 {
 		/**
 		 * Creates a file.  The path is given in UTF-8.
 		 *
-		 * \param _pcPath Path to the file to create.
+		 * \param _pcFile Path to the file to create.
 		 * \return Returns an error code indicating the result of the operation.
 		 */
 		virtual NN9_ERRORS									Create( const char8_t * _pcFile );
@@ -56,7 +56,7 @@ namespace nn9 {
 		/**
 		 * Creates a file.  The path is given in UTF-16.
 		 *
-		 * \param _pcPath Path to the file to create.
+		 * \param _pcFile Path to the file to create.
 		 * \return Returns an error code indicating the result of the operation.
 		 */
 		virtual NN9_ERRORS									Create( const char16_t * _pcFile );
@@ -64,7 +64,7 @@ namespace nn9 {
 		/**
 		 * Opens a file for appending.  If it does not exist it is created.  The path is given in UTF-8.
 		 *
-		 * \param _pcPath Path to the file to open for appending.
+		 * \param _pcFile Path to the file to open for appending.
 		 * \return Returns an error code indicating the result of the operation.
 		 */
 		virtual NN9_ERRORS									Append( const char8_t * _pcFile );
@@ -72,7 +72,7 @@ namespace nn9 {
 		/**
 		 * Opens a file for appending.  If it does not exist it is created.  The path is given in UTF-16.
 		 *
-		 * \param _pcPath Path to the file to open for appending.
+		 * \param _pcFile Path to the file to open for appending.
 		 * \return Returns an error code indicating the result of the operation.
 		 */
 		virtual NN9_ERRORS									Append( const char16_t * _pcFile );
