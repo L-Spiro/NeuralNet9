@@ -486,7 +486,6 @@ namespace nn9 {
 	 * \return Returns the text description for the given error.
 	 **/
 	inline const char8_t * Errors::ToStrPU8( NN9_ERRORS _eCode ) {
-		(void)u8"’";
 		switch ( _eCode ) {
 #define NN9_E_ENUM( ENUM, TXT )			case ENUM : { return u8##TXT; }
 #include "NN9ErrorEnum.inl"
