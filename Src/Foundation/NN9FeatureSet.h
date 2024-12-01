@@ -22,9 +22,9 @@
 #endif  // #if defined( __i386__ ) || defined( __x86_64__ )
 
 
-#if defined( __i386__ ) || defined( __x86_64__ ) || defined( _MSC_VER )
+#if (defined( __APPLE__ ) && defined( __i386__ ) || defined( __x86_64__ )) || defined( _MSC_VER )
 #ifdef __GNUC__
-
+#define NN9_CPUID
 void __cpuid( int * _piCpuInfo, int _iInfo ) {
 	__asm__ __volatile__(
 		"xchg %%ebx, %%edi;"
@@ -49,13 +49,16 @@ void __cpuidex( int * _piCpuInfo, int _iInfo, int _iSubFunc ) {
     // _iInfo is the leaf, and _iSubFunc is the sub-leaf.
     __cpuid_count( _iInfo, _iSubFunc, _piCpuInfo[0], _piCpuInfo[1], _piCpuInfo[2], _piCpuInfo[3] );
 }
-
 #endif	// #ifdef __GNUC__
-#endif	// #if defined( __i386__ ) || defined( __x86_64__ )
+#endif	// #if (defined( __APPLE__ ) && defined( __i386__ ) || defined( __x86_64__ )) || defined( _MSC_VER )
+
+#ifndef NN9_COUID
+#include <sys/sysctl.h>
+#endif	// #ifndef NN9_COUID
 
 
 namespace nn9 {
-
+#ifdef NN9_CPUID
 	/**
 	 * Class FeatureSet
 	 * \brief Detects the processor feature set.
@@ -256,5 +259,86 @@ namespace nn9 {
             std::vector<std::array<int, 4>> m_vExtData;
         };
     };
+#else
+	/**
+	 * Class FeatureSet
+	 * \brief Detects the processor feature set.
+	 *
+	 * Description: Detects the processor feature set.
+	 */
+	class FeatureSet {
+	public:
+		// General
+		static std::string Vendor() {
+			static std::string vendor = GetSysctlString("machdep.cpu.vendor");
+			return vendor;
+		}
+
+		static std::string Brand() {
+			static std::string brand = GetSysctlString("machdep.cpu.brand_string");
+			return brand;
+		}
+
+		// x86 Features
+		static bool SSE3() { return HasFeature("machdep.cpu.features", "SSE3"); }
+		static bool PCLMULQDQ() { return HasFeature("machdep.cpu.features", "PCLMULQDQ"); }
+		static bool MONITOR() { return HasFeature("machdep.cpu.features", "MONITOR"); }
+		static bool SSSE3() { return HasFeature("machdep.cpu.features", "SSSE3"); }
+		static bool FMA() { return HasFeature("machdep.cpu.features", "FMA"); }
+		static bool CMPXCHG16B() { return HasFeature("machdep.cpu.features", "CMPXCHG16B"); }
+		static bool SSE41() { return HasFeature("machdep.cpu.features", "SSE4.1"); }
+		static bool SSE42() { return HasFeature("machdep.cpu.features", "SSE4.2"); }
+		static bool AVX() { return HasFeature("machdep.cpu.features", "AVX"); }
+		static bool AVX2() { return HasFeature("machdep.cpu.extfeatures", "AVX2"); }
+		static bool AES() { return HasFeature("machdep.cpu.features", "AES"); }
+
+		// ARM/Apple Silicon Features
+		static bool NEON() { return IsARM() && HasFeature("hw.optional.neon"); }
+		static bool SVE() { return IsARM() && HasFeature("hw.optional.sve"); }
+		static bool CRC32() { return IsARM() && HasFeature("hw.optional.armv8_crc32"); }
+		static bool ASIMD() { return IsARM() && HasFeature("hw.optional.asimd"); }
+		static bool FP16() { return IsARM() && HasFeature("hw.optional.armv8_2_fhm"); }
+		static bool ATOMIC() { return IsARM() && HasFeature("hw.optional.armv8_1_atomics"); }
+		static bool BF16() { return IsARM() && HasFeature("hw.optional.armv8_6_bf16"); }
+		static bool RDMA() { return IsARM() && HasFeature("hw.optional.armv8_rdma"); }
+
+		// Additional ARM-specific capabilities
+		static bool DotProd() { return IsARM() && HasFeature("hw.optional.armv8_2_dotprod"); }
+		static bool FP() { return IsARM() && HasFeature("hw.optional.floatingpoint"); }
+		static bool SHA1() { return IsARM() && HasFeature("hw.optional.armv8_sha1"); }
+		static bool SHA256() { return IsARM() && HasFeature("hw.optional.armv8_sha256"); }
+		static bool SHA512() { return IsARM() && HasFeature("hw.optional.armv8_sha512"); }
+
+	private:
+		static std::string GetSysctlString(const char* name) {
+			size_t size = 0;
+			sysctlbyname(name, nullptr, &size, nullptr, 0);
+			if (size == 0) return "";
+			std::vector<char> buffer(size);
+			sysctlbyname(name, buffer.data(), &size, nullptr, 0);
+			return std::string(buffer.data());
+		}
+
+		static bool HasFeature(const char* sysctlName, const char* feature) {
+			std::string features = GetSysctlString(sysctlName);
+			return features.find(feature) != std::string::npos;
+		}
+
+		static bool HasFeature(const char* feature) {
+			int value = 0;
+			size_t size = sizeof(value);
+			if (sysctlbyname(feature, &value, &size, nullptr, 0) == 0) {
+				return value != 0;
+			}
+			return false;
+		}
+
+		static bool IsARM() {
+			static bool isARM = GetSysctlString("hw.machine").find("arm") != std::string::npos ||
+								GetSysctlString("hw.machine").find("aarch64") != std::string::npos;
+			return isARM;
+		}
+	};
+#endif	// #ifdef NN9_CPUID
 
 }   // namespace nn9

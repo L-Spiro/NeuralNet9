@@ -14,7 +14,7 @@
 #include "../OS/NN9Os.h"
 
 #include <cmath>
-#include <curl\curl.h>
+#include <curl/curl.h>
 #include <filesystem>
 #include <numbers>
 #include <set>
@@ -1229,6 +1229,7 @@ namespace nn9 {
 		inline ::CURL *										Create() {
 			Reset();
 			pcCurl = ::curl_easy_init();
+			return pcCurl;
 		}
 
 		inline bool											Valid() const { return pcCurl != nullptr; }

@@ -7,15 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		CE23CEF81AF1193E0086370C /* libLibJPEG.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CE23CEEF1AF1193E0086370C /* libLibJPEG.a */; };
-		CE23CEF91AF1193E0086370C /* libLibJXR.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CE23CEF01AF1193E0086370C /* libLibJXR.a */; };
-		CE23CEFA1AF1193E0086370C /* libLibOpenJPEG.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CE23CEF11AF1193E0086370C /* libLibOpenJPEG.a */; };
-		CE23CEFB1AF1193E0086370C /* libLibPNG.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CE23CEF21AF1193E0086370C /* libLibPNG.a */; };
-		CE23CEFC1AF1193E0086370C /* libLibRawLite.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CE23CEF31AF1193E0086370C /* libLibRawLite.a */; };
-		CE23CEFD1AF1193E0086370C /* libLibTIFF4.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CE23CEF41AF1193E0086370C /* libLibTIFF4.a */; };
-		CE23CEFE1AF1193E0086370C /* libLibWebP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CE23CEF51AF1193E0086370C /* libLibWebP.a */; };
-		CE23CEFF1AF1193E0086370C /* libOpenEXR.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CE23CEF61AF1193E0086370C /* libOpenEXR.a */; };
-		CE23CF001AF1193E0086370C /* libZLib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CE23CEF71AF1193E0086370C /* libZLib.a */; };
 		CE41277E194726D500D1D40E /* libFreeImageLib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CE412766194726D500D1D40E /* libFreeImageLib.a */; };
 		CE4127B81947284500D1D40E /* Conversion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE4127A61947284500D1D40E /* Conversion.cpp */; };
 		CE4127B91947284500D1D40E /* Conversion4.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE4127A71947284500D1D40E /* Conversion4.cpp */; };
@@ -257,15 +248,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CE23CEF81AF1193E0086370C /* libLibJPEG.a in Frameworks */,
-				CE23CEF91AF1193E0086370C /* libLibJXR.a in Frameworks */,
-				CE23CEFA1AF1193E0086370C /* libLibOpenJPEG.a in Frameworks */,
-				CE23CEFB1AF1193E0086370C /* libLibPNG.a in Frameworks */,
-				CE23CEFC1AF1193E0086370C /* libLibRawLite.a in Frameworks */,
-				CE23CEFD1AF1193E0086370C /* libLibTIFF4.a in Frameworks */,
-				CE23CEFE1AF1193E0086370C /* libLibWebP.a in Frameworks */,
-				CE23CEFF1AF1193E0086370C /* libOpenEXR.a in Frameworks */,
-				CE23CF001AF1193E0086370C /* libZLib.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -546,6 +528,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 			);
 			mainGroup = CE41275D194726D500D1D40E;
@@ -716,7 +699,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = iphoneos;
+				SDKROOT = macosx;
 			};
 			name = "Debug Metal";
 		};
@@ -801,7 +784,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
-				SDKROOT = iphoneos;
+				SDKROOT = macosx;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = "Release Metal";
@@ -889,7 +872,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = iphoneos;
+				SDKROOT = macosx;
 			};
 			name = Debug;
 		};
@@ -919,7 +902,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
-				SDKROOT = iphoneos;
+				SDKROOT = macosx;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;

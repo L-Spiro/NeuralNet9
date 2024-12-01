@@ -50,7 +50,7 @@ namespace nn9 {
 		 * Decompresses a file to memory.
 		 * 
 		 * \param _pcFile The path to the file to open and decompress.
-		 * \param PARM The Holds the resulting decompressed file data.
+		 * \param _vResult The Holds the resulting decompressed file data.
 		 * \return Returns an error code indicating the result of the operation.
 		 **/
 		template <typename _tStrType = char8_t>
@@ -73,11 +73,11 @@ namespace nn9 {
 	 * Decompresses a file to memory.
 	 * 
 	 * \param _pcFile The path to the file to open and decompress.
-	 * \param PARM The Holds the resulting decompressed file data.
+	 * \param _vResult The Holds the resulting decompressed file data.
 	 * \return Returns an error code indicating the result of the operation.
 	 **/
 	template <typename _tStrType>
-	static NN9_ERRORS GzFile::ExtractToMemory( const _tStrType * _pcFile, std::vector<uint8_t> &_vResult ) {
+	NN9_ERRORS GzFile::ExtractToMemory( const _tStrType * _pcFile, std::vector<uint8_t> &_vResult ) {
 		GzFile gfFile;
 		auto eCode = gfFile.Open( _pcFile );
 		if ( eCode != NN9_E_SUCCESS ) { return eCode; }

@@ -81,7 +81,9 @@ inline std::filesystem::path					GetThisPath() {
 #elif defined( __APPLE__ )
 #include <mach-o/dyld.h>
 #include <limits.h>
+#include <sched.h>
 #include <stdlib.h>
+#include <vector>
 
 inline std::filesystem::path					GetThisPath() {
 	uint32_t ui32BufferSize = 0;
@@ -120,7 +122,7 @@ inline void                                     SetThreadHighPriority() {
     spSchParms.sched_priority = ::sched_get_priority_max( SCHED_FIFO );
     ::pthread_setschedparam( ::pthread_self(), SCHED_FIFO, &spSchParms );
 }
-void                                            SetThreadNormalPriority() {
+inline void                                     SetThreadNormalPriority() {
     sched_param spSchParms;
     spSchParms.sched_priority = 0;  // Normal priority
     ::pthread_setschedparam( ::pthread_self(), SCHED_OTHER, &spSchParms );
@@ -135,13 +137,24 @@ inline void                                     SetThreadAffinity( HANDLE _hHand
 	DWORD_PTR dwptrMask = DWORD_PTR( 1 ) << sCoreId;
 	::SetThreadAffinityMask( _hHandle, dwptrMask );
 }
-#elif defined( __APPLE__ ) || defined( __linux__ )
+#elif defined( __linux__ )
 inline void                                     SetThreadAffinity( pthread_t _tHandle, size_t sCoreId ) {
 	// Set thread affinity on Linux
 	cpu_set_t csCpuSet;
 	CPU_ZERO( &csCpuSet );
 	CPU_SET( sCoreId, &csCpuSet );
 	::pthread_setaffinity_np( _tHandle, sizeof( cpu_set_t ), &csCpuSet );
+}
+#elif defined( __APPLE__ )
+#include <pthread.h>
+#include <mach/thread_policy.h>
+#include <mach/mach.h>
+
+inline void 									SetThreadAffinity( pthread_t _tHandle, size_t sCoreId ) {
+	// Set thread affinity on macOS
+	::thread_affinity_policy_data_t tapdPolicy = { static_cast<integer_t>(sCoreId) };
+	::thread_port_t mach_thread = ::pthread_mach_thread_np( _tHandle );
+	::thread_policy_set( mach_thread, THREAD_AFFINITY_POLICY, reinterpret_cast<::thread_policy_t>(&tapdPolicy), 1 );
 }
 #endif	// #ifdef _WIN32
 

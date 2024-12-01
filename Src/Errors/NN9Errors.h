@@ -211,6 +211,7 @@ namespace nn9 {
 	 * \return Returns the converted error code.
 	 **/
 	inline NN9_ERRORS Errors::LibCurl_To_Native( CURLcode _cCode ) {
+		int ghjg = CURLE_OK;
 #define NN9_CHECK( ERROR )				case ERROR : { return NN9_E_ ## ERROR; }
 		switch ( _cCode ) {
 			case CURLE_OK : { return NN9_E_SUCCESS; }
@@ -313,8 +314,10 @@ namespace nn9 {
 			NN9_CHECK( CURLE_PROXY )
 			NN9_CHECK( CURLE_SSL_CLIENTCERT )
 			NN9_CHECK( CURLE_UNRECOVERABLE_POLL )
+#if !defined( __APPLE__ )
 			NN9_CHECK( CURLE_TOO_LARGE )
 			NN9_CHECK( CURLE_ECH_REQUIRED )
+#endif	// #if !defined( __APPLE__ )
 			//NN9_CHECK( CURL_LAST )
 
 			default : { return NN9_E_OTHER; }
