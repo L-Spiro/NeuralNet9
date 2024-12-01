@@ -1420,7 +1420,7 @@ int LibRaw::raw2image(void)
           unsigned r,c;
           int row,col;
           for (row=0; row < S.raw_height-S.top_margin*2; row++) {
-            for (col=0; col < IO.fuji_width << !libraw_internal_data.unpacker_data.fuji_layout; col++) {
+            for (col=0; col < IO.fuji_width << static_cast<int>(!libraw_internal_data.unpacker_data.fuji_layout); col++) {
               if (libraw_internal_data.unpacker_data.fuji_layout) {
                 r = IO.fuji_width - 1 - col + (row >> 1);
                 c = col + ((row+1) >> 1);

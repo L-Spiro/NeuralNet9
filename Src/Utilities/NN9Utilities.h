@@ -891,11 +891,7 @@ namespace nn9 {
 		 * \return Returns true if AVX is supported.
 		 **/
 		static inline bool									IsAvxSupported() {
-#if defined( __i386__ ) || defined( __x86_64__ ) || defined( _MSC_VER )
 			return FeatureSet::AVX();
-#else
-			return false;
-#endif	// #if defined( __i386__ ) || defined( __x86_64__ )
 		}
 
 		/**
@@ -904,11 +900,7 @@ namespace nn9 {
 		 * \return Returns true if AVX is supported.
 		 **/
 		static inline bool									IsAvx2Supported() {
-#if defined( __i386__ ) || defined( __x86_64__ ) || defined( _MSC_VER )
 			return FeatureSet::AVX2();
-#else
-			return false;
-#endif	// #if defined( __i386__ ) || defined( __x86_64__ )
 		}
 
 		/**
@@ -917,11 +909,7 @@ namespace nn9 {
 		 * \return Returns true if AVX-512F is supported.
 		 **/
 		static inline bool									IsAvx512FSupported() {
-#if defined( __i386__ ) || defined( __x86_64__ ) || defined( _MSC_VER )
 			return FeatureSet::AVX512F();
-#else
-			return false;
-#endif	// #if defined( __i386__ ) || defined( __x86_64__ )
 		}
 
 		/**
@@ -930,11 +918,7 @@ namespace nn9 {
 		 * \return Returns true if AVX-512BW is supported.
 		 **/
 		static inline bool									IsAvx512BWSupported() {
-#if defined( __i386__ ) || defined( __x86_64__ ) || defined( _MSC_VER )
 			return FeatureSet::AVX512BW();
-#else
-			return false;
-#endif	// #if defined( __i386__ ) || defined( __x86_64__ )
 		}
 
 		/**
@@ -943,24 +927,72 @@ namespace nn9 {
 		 * \return Returns true if AVX-512BF16 is supported.
 		 **/
 		static inline bool									IsAvx512BF16Supported() {
-#if defined( __i386__ ) || defined( __x86_64__ ) || defined( _MSC_VER )
 			return FeatureSet::AVX512BF16();
-#else
-			return false;
-#endif	// #if defined( __i386__ ) || defined( __x86_64__ )
 		}
 
 		/**
-		 * Is SSE 4 supported?
+		 * Is AVX-VNNI supported?
 		 *
-		 * \return Returns true if SSE 4 is supported.
+		 * \return Returns true if AVX-VNNI is supported.
 		 **/
-		static inline bool									IsSse4Supported() {
-#if defined( __i386__ ) || defined( __x86_64__ ) || defined( _MSC_VER )
-			return FeatureSet::SSE41();
+		static inline bool									IsAvxVNNISupported() {
+			return FeatureSet::AVX_VNNI();
+		}
+
+		/**
+		 * Is NEON supported?
+		 *
+		 * \return Returns true if NEON is supported.
+		 **/
+		static inline bool									IsNeonSupported() {
+#ifndef NN9_CPUID
+			if ( m_iNeon == 3 ) { m_iNeon = FeatureSet::NEON(); }
+			return m_iNeon != 0;
 #else
 			return false;
-#endif	// #if defined( __i386__ ) || defined( __x86_64__ )
+#endif	// #ifndef NN9_CPUID
+		}
+
+		/**
+		 * Is non-AVX BF16 supported?
+		 *
+		 * \return Returns true if non-AVX BF16 is supported.
+		 **/
+		static inline bool									IsBf16Supported() {
+#ifndef NN9_CPUID
+			if ( m_iBf16 == 3 ) { m_iBf16 = FeatureSet::BF16(); }
+			return m_iBf16 != 0;
+#else
+			return false;
+#endif	// #ifndef NN9_CPUID
+		}
+
+		/**
+		 * Is non-AVX FP16 supported?
+		 *
+		 * \return Returns true if non-AVX FP16 is supported.
+		 **/
+		static inline bool									IsFp16Supported() {
+#ifndef NN9_CPUID
+			if ( m_iFp16 == 3 ) { m_iFp16 = FeatureSet::FP16(); }
+			return m_iFp16 != 0;
+#else
+			return false;
+#endif	// #ifndef NN9_CPUID
+		}
+
+		/**
+		 * Is SVE supported?
+		 *
+		 * \return Returns true if SVE is supported.
+		 **/
+		static inline bool									IsSveSupported() {
+#ifndef NN9_CPUID
+			if ( m_iSve == 3 ) { m_iSve = FeatureSet::SVE(); }
+			return m_iSve != 0;
+#else
+			return false;
+#endif	// #ifndef NN9_CPUID
 		}
 
 #ifdef __AVX512F__
@@ -1089,6 +1121,15 @@ namespace nn9 {
 		}
 #endif	// #ifdef __SSE4_1__
 
+
+	protected :
+		// == Members.
+#ifdef NN9_CPUID
+		static int											m_iNeon;					/**< Tracks support for NEON. */
+		static int											m_iBf16;					/**< Tracks support for BF16. */
+		static int											m_iFp16;					/**< Tracks support for FP16. */
+		static int											m_iSve;						/**< Tracks support for SVE. */
+#endif	// #ifdef NN9_CPUID
 	};
 
 

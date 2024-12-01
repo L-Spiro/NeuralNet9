@@ -14,6 +14,14 @@
 
 namespace nn9 {
 
+	// == Members.
+#ifdef NN9_CPUID
+	int Utilities::m_iNeon = 3;						/**< Tracks support for NEON. */
+	int Utilities::m_iBf16 = 3;						/**< Tracks support for BF16. */
+	int Utilities::m_iFp16 = 3;						/**< Tracks support for FP16. */
+	int Utilities::m_iSve = 3;						/**< Tracks support for SVE. */
+#endif	// #ifdef NN9_CPUID
+
 	// == Functions.
 	/**
 	 * Gets the next UTF-16 character from a stream or error (NN9_UTF_INVALID).

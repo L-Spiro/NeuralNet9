@@ -11,6 +11,8 @@
 #include "NN9BFloat16.h"
 #include "NN9Float16.h"
 
+#include <complex>
+
 
 namespace nn9 {
 
@@ -32,6 +34,15 @@ namespace nn9 {
 		NN9_T_INT64,
 
 		NN9_T_BOOL,
+
+		NN9_T_COMPLEX64,
+		NN9_T_COMPLEX128,
+
+		NN9_T_QINT8,
+		NN9_T_QINT16,
+		NN9_T_QINT32,
+
+		NN9_T_QUINT8,
 
 		NN9_T_OTHER,
 	};
@@ -92,6 +103,15 @@ namespace nn9 {
 			case NN9_T_INT64 : { return sizeof( int64_t ); }
 
 			case NN9_T_BOOL : { return sizeof( bool ); }
+
+			case NN9_T_COMPLEX64 : { return sizeof( std::complex<float> ); }
+			case NN9_T_COMPLEX128 : { return sizeof( std::complex<double> ); }
+
+			case NN9_T_QINT8 : { return sizeof( uint8_t ); }
+			case NN9_T_QINT16 : { return sizeof( int16_t ); }
+			case NN9_T_QINT32 : { return sizeof( int32_t ); }
+
+			case NN9_T_QUINT8 : { return sizeof( uint8_t ); }
 		}
 		return 0;
 	}

@@ -554,6 +554,7 @@ static void cleanup_true(x3f_true_t **TRUP)
 static x3f_true_t *new_true(x3f_true_t **TRUP)
 {
   x3f_true_t *TRU = (x3f_true_t *)calloc(1, sizeof(x3f_true_t));
+  if ( !TRU ) { return nullptr; }
 
   cleanup_true(TRUP);
 
