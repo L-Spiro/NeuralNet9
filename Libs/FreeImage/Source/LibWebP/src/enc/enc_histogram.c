@@ -736,7 +736,7 @@ int VP8LGetHistoImageSymbols(int xsize, int ysize,
   // Higher qualities (> 90), to preserve the compression gains at those
   // quality settings.
   if (init_histo->size > 2 * BIN_SIZE && quality < 90) {
-    const int bin_map_size = (uint64_t)bin_depth * BIN_SIZE;
+    const int bin_map_size = (int)((uint64_t)bin_depth * BIN_SIZE);
     bin_map = (int16_t*)WebPSafeCalloc(bin_map_size, sizeof(*bin_map));
     if (bin_map == NULL) goto Error;
   }
