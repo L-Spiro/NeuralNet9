@@ -211,7 +211,6 @@ namespace nn9 {
 	 * \return Returns the converted error code.
 	 **/
 	inline NN9_ERRORS Errors::LibCurl_To_Native( CURLcode _cCode ) {
-		int ghjg = CURLE_OK;
 #define NN9_CHECK( ERROR )				case ERROR : { return NN9_E_ ## ERROR; }
 		switch ( _cCode ) {
 			case CURLE_OK : { return NN9_E_SUCCESS; }

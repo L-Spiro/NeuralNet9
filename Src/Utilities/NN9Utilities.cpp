@@ -15,12 +15,12 @@
 namespace nn9 {
 
 	// == Members.
-#ifdef NN9_CPUID
+#ifndef NN9_CPUID
 	int Utilities::m_iNeon = 3;						/**< Tracks support for NEON. */
 	int Utilities::m_iBf16 = 3;						/**< Tracks support for BF16. */
 	int Utilities::m_iFp16 = 3;						/**< Tracks support for FP16. */
 	int Utilities::m_iSve = 3;						/**< Tracks support for SVE. */
-#endif	// #ifdef NN9_CPUID
+#endif	// #ifndef NN9_CPUID
 
 	// == Functions.
 	/**
@@ -308,7 +308,7 @@ namespace nn9 {
 	/**
 	 * Converts a UTF-16 string to a UTF-8 string.  The resulting string may have allocated more characters than necessary but will be terminated with a NULL.
 	 *
-	 * \param _pcPath String to convert.
+	 * \param _pcString String to convert.
 	 * \param _sLen The number of char16_t's to which _pcString points.
 	 * \param _pbErrored If not nullptr, holds a returned boolean indicating success or failure of the conversion.
 	 * \return Returns the converted UTF-8 string.

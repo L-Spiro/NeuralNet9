@@ -526,7 +526,7 @@ Rotate8Bit(FIBITMAP *dib, double angle, double x_shift, double y_shift, double x
 	double	p;
 	double	a11, a12, a21, a22;
 	double	x0, y0, x1, y1;
-	long	x, y;
+	int	x, y;
 	long	spline;
 	bool	bResult;
 

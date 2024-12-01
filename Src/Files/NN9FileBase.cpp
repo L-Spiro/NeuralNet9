@@ -75,7 +75,7 @@ namespace nn9 {
 	/**
 	 * Opens a file for appending.  If it does not exist it is created.  The path is given in UTF-8.
 	 *
-	 * \param _pcPath Path to the file to open for appending.
+	 * \param _pcFile Path to the file to open for appending.
 	 * \return Returns an error code indicating the result of the operation.
 	 */
 	NN9_ERRORS FileBase::Append( const char8_t * _pcFile ) {
@@ -88,7 +88,7 @@ namespace nn9 {
 	/**
 	 * Opens a file for appending.  If it does not exist it is created.  The path is given in UTF-16.
 	 *
-	 * \param _pcPath Path to the file to open for appending.
+	 * \param _pcFile Path to the file to open for appending.
 	 * \return Returns an error code indicating the result of the operation.
 	 */
 	NN9_ERRORS FileBase::Append( const char16_t * _pcFile ) {

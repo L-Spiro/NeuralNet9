@@ -239,8 +239,7 @@ namespace nn9 {
 		/**
 		 * Converts any string to an std::u16string.  Call inside try{}catch(...){}.
 		 * 
-		 * \param _pctStr The string to convert.
-		 * \param _sLen The length of the string or 0.
+		 * \param _sStr The string to convert.
 		 * \return Returns the converted string.
 		 **/
 		template <typename _tCharType>
@@ -277,8 +276,7 @@ namespace nn9 {
 		/**
 		 * Converts any string to an std::wstring.  Call inside try{}catch(...){}.
 		 * 
-		 * \param _pwcStr The string to convert.
-		 * \param _sLen The length of the string or 0.
+		 * \param _sStr The string to convert.
 		 * \return Returns the converted string.
 		 **/
 		template <typename _tCharType>
@@ -408,26 +406,26 @@ namespace nn9 {
 		/**
 		 * Performs ::towlower() on the given input.
 		 * 
-		 * \param _pcStr The string to convert to lower-case.
+		 * \param _sStr The string to convert to lower-case.
 		 * \return Returns the lower-cased input.
 		 **/
 		template <typename _tType = std::u8string>
-		static inline _tType								ToLower( const _tType &_Str ) {
-			_tType sRet = _Str;
-			std::transform( sRet.begin(), sRet.end(), sRet.begin(), []( _tType::value_type _iC ) { return ::towlower( static_cast<wint_t>(_iC) ); } );	
+		static inline _tType								ToLower( const _tType &_sStr ) {
+			_tType sRet = _sStr;
+			std::transform( sRet.begin(), sRet.end(), sRet.begin(), []( _tType::value_type _iC ) { return ::towlower( static_cast<wint_t>(_iC) ); } );
 			return sRet;
 		}
 
 		/**
 		 * Performs ::towupper() on the given input.
 		 * 
-		 * \param _pcStr The string to convert to upper-case.
+		 * \param _sStr The string to convert to upper-case.
 		 * \return Returns the upper-cased input.
 		 **/
 		template <typename _tType = std::u8string>
-		static inline _tType								ToUpper( const _tType &_Str ) {
-			_tType sRet = _Str;
-			std::transform( sRet.begin(), sRet.end(), sRet.begin(), []( _tType::value_type _iC ) { return ::towupper( static_cast<wint_t>(_iC) ); } );	
+		static inline _tType								ToUpper( const _tType &_sStr ) {
+			_tType sRet = _sStr;
+			std::transform( sRet.begin(), sRet.end(), sRet.begin(), []( _tType::value_type _iC ) { return ::towupper( static_cast<wint_t>(_iC) ); } );
 			return sRet;
 		}
 
@@ -1124,12 +1122,12 @@ namespace nn9 {
 
 	protected :
 		// == Members.
-#ifdef NN9_CPUID
+#ifndef NN9_CPUID
 		static int											m_iNeon;					/**< Tracks support for NEON. */
 		static int											m_iBf16;					/**< Tracks support for BF16. */
 		static int											m_iFp16;					/**< Tracks support for FP16. */
 		static int											m_iSve;						/**< Tracks support for SVE. */
-#endif	// #ifdef NN9_CPUID
+#endif	// #ifndef NN9_CPUID
 	};
 
 
