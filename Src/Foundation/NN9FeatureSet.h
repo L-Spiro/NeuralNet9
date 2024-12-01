@@ -270,17 +270,17 @@ namespace nn9 {
 	public:
 		// General
 		static std::string Vendor() {
-			static std::string vendor = GetSysctlString("machdep.cpu.vendor");
+			static std::string vendor = 	GetSysctlString("machdep.cpu.vendor");
 			return vendor;
 		}
 
 		static std::string Brand() {
-			static std::string brand = GetSysctlString("machdep.cpu.brand_string");
+			static std::string brand = 		GetSysctlString("machdep.cpu.brand_string");
 			return brand;
 		}
 
 		// x86 Features
-		static bool SSE3() { return HasFeature("machdep.cpu.features", "SSE3"); }
+		static bool 						SSE3() { return HasFeature("machdep.cpu.features", "SSE3"); }
 		static bool PCLMULQDQ() { return HasFeature("machdep.cpu.features", "PCLMULQDQ"); }
 		static bool MONITOR() { return HasFeature("machdep.cpu.features", "MONITOR"); }
 		static bool SSSE3() { return HasFeature("machdep.cpu.features", "SSSE3"); }
