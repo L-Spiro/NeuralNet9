@@ -9,6 +9,8 @@
 
 #pragma once
 
+#include "../Foundation/NN9AlignmentAllocator.h"
+
 #include <vector>
 
 
@@ -29,7 +31,7 @@ namespace nn9 {
 
 	protected :
 		// == Members.
-		std::vector<uint8_t>									m_vBuffer;					/**< The actual data buffer. */
+		std::vector<uint8_t, AlignmentAllocator<uint8_t, 64>>						m_vBuffer;					/**< The actual data buffer. */
 	};
 
 }	// namespace nn9
