@@ -274,6 +274,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Buffers\NN9Buffer.h" />
+    <ClInclude Include="Src\Buffers\NN9BufferManager.h" />
     <ClInclude Include="Src\Compression\gzip\include\gzip\compress.hpp" />
     <ClInclude Include="Src\Compression\gzip\include\gzip\config.hpp" />
     <ClInclude Include="Src\Compression\gzip\include\gzip\decompress.hpp" />
@@ -291,9 +292,11 @@
     <ClInclude Include="Src\Foundation\NN9FeatureSet.h" />
     <ClInclude Include="Src\Foundation\NN9Macros.h" />
     <ClInclude Include="Src\Foundation\NN9Math.h" />
+    <ClInclude Include="Src\Foundation\NN9RefCnt.h" />
     <ClInclude Include="Src\OS\NN9Apple.h" />
     <ClInclude Include="Src\OS\NN9Os.h" />
     <ClInclude Include="Src\OS\NN9Windows.h" />
+    <ClInclude Include="Src\Tensor\NN9Tensor.h" />
     <ClInclude Include="Src\Types\NN9BFloat16.h" />
     <ClInclude Include="Src\Types\NN9Float16.h" />
     <ClInclude Include="Src\Types\NN9Types.h" />

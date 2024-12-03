@@ -79,6 +79,12 @@
     <Filter Include="Source Files\Buffers">
       <UniqueIdentifier>{10e47da2-a9c4-4840-8e13-67b5a02bd705}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Tensor">
+      <UniqueIdentifier>{5edb5c18-809f-4d69-b7e0-618f1f16fc9d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Tensor">
+      <UniqueIdentifier>{2b293b5f-bb99-419f-91dc-05a34dd08575}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\NeuralNet9.cpp">
@@ -208,6 +214,15 @@
     </ClInclude>
     <ClInclude Include="Src\Buffers\NN9Buffer.h">
       <Filter>Header Files\Buffers</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Foundation\NN9RefCnt.h">
+      <Filter>Header Files\Foundation</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Buffers\NN9BufferManager.h">
+      <Filter>Header Files\Buffers</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Tensor\NN9Tensor.h">
+      <Filter>Header Files\Tensor</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

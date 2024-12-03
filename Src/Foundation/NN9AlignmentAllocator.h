@@ -23,7 +23,7 @@ namespace nn9 {
 	 */
 	template <typename T, size_t N = 64>
 	class AlignmentAllocator {
-	public:
+	public :
 		typedef T                                                   value_type;
 		typedef size_t                                              size_type;
 		typedef ptrdiff_t                                           difference_type;
