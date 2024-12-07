@@ -1183,19 +1183,19 @@ namespace nn9 {
 
 
 		// == Functions.
-		BOOL												LoadLibrary( LPCSTR _sPath ) {
+		BOOL												LoadLib( LPCSTR _sPath ) {
 			Reset();
 			hHandle = ::LoadLibraryW( nn9::Utilities::XStringToWString( _sPath ).c_str() );
 			return hHandle != NULL;
 		}
 
-		BOOL												LoadLibrary( LPCWSTR _wsPath ) {
+		BOOL												LoadLib( LPCWSTR _wsPath ) {
 			Reset();
 			hHandle = ::LoadLibraryW( _wsPath );
 			return hHandle != NULL;
 		}
 
-		BOOL												LoadLibrary( const char16_t * _pu16Path ) {
+		BOOL												LoadLib( const char16_t * _pu16Path ) {
 			Reset();
 			hHandle = ::LoadLibraryW( reinterpret_cast<LPCWSTR>(_pu16Path) );
 			return hHandle != NULL;
@@ -1214,39 +1214,6 @@ namespace nn9 {
 		// == Members.
 		HMODULE												hHandle;					/**< The wrapped object. */
 	};
-
-	/** A wrapper for Windows HINTERNET. **/
-	//struct NN9_HINTERNET {
-	//	NN9_HINTERNET() : hHandle( NULL ) {}
-	//	NN9_HINTERNET( HINTERNET _hHandle ) : hHandle( _hHandle ) {}
-	//	~NN9_HINTERNET() {
-	//		Reset();
-	//	}
-
-	//	NN9_HINTERNET &										operator = ( HINTERNET &_hHandle ) {
-	//		Reset();
-	//		hHandle = _hHandle;
-	//		_hHandle = NULL;
-	//		return (*this);
-	//	}
-
-
-	//	// == Functions.
-	//	VOID												Reset() {
-	//		if ( Valid() ) {
-	//			::WinHttpCloseHandle( hHandle );
-	//			hHandle = NULL;
-	//		}
-	//	}
-
-	//	inline BOOL											Valid() const { return hHandle && hHandle != INVALID_HANDLE_VALUE; }
-
-	//	static inline  BOOL									Valid( HINTERNET _hHandle ) { return _hHandle && _hHandle != INVALID_HANDLE_VALUE; }
-
-
-	//	// == Members.
-	//	HINTERNET											hHandle;					/**< The wrapped object. */
-	//};
 #endif	// #if defined( _WIN32 )
 
 	/** A curl object. */

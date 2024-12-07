@@ -259,6 +259,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Src\Buffers\NN9Buffer.cpp" />
+    <ClCompile Include="Src\Buffers\NN9BufferManager.cpp" />
     <ClCompile Include="Src\Compression\MiniZ\miniz.c" />
     <ClCompile Include="Src\Files\NN9FileBase.cpp" />
     <ClCompile Include="Src\Files\NN9FileMap.cpp" />
@@ -267,7 +268,34 @@
     <ClCompile Include="Src\Files\NN9ZipFile.cpp" />
     <ClCompile Include="Src\Foundation\NN9FeatureSet.cpp" />
     <ClCompile Include="Src\Foundation\NN9Math.cpp" />
+    <ClCompile Include="Src\Image\Little-CMS\src\cmsalpha.c" />
+    <ClCompile Include="Src\Image\Little-CMS\src\cmscam02.c" />
+    <ClCompile Include="Src\Image\Little-CMS\src\cmscgats.c" />
+    <ClCompile Include="Src\Image\Little-CMS\src\cmscnvrt.c" />
+    <ClCompile Include="Src\Image\Little-CMS\src\cmserr.c" />
+    <ClCompile Include="Src\Image\Little-CMS\src\cmsgamma.c" />
+    <ClCompile Include="Src\Image\Little-CMS\src\cmsgmt.c" />
+    <ClCompile Include="Src\Image\Little-CMS\src\cmshalf.c" />
+    <ClCompile Include="Src\Image\Little-CMS\src\cmsintrp.c" />
+    <ClCompile Include="Src\Image\Little-CMS\src\cmsio0.c" />
+    <ClCompile Include="Src\Image\Little-CMS\src\cmsio1.c" />
+    <ClCompile Include="Src\Image\Little-CMS\src\cmslut.c" />
+    <ClCompile Include="Src\Image\Little-CMS\src\cmsmd5.c" />
+    <ClCompile Include="Src\Image\Little-CMS\src\cmsmtrx.c" />
+    <ClCompile Include="Src\Image\Little-CMS\src\cmsnamed.c" />
+    <ClCompile Include="Src\Image\Little-CMS\src\cmsopt.c" />
+    <ClCompile Include="Src\Image\Little-CMS\src\cmspack.c" />
+    <ClCompile Include="Src\Image\Little-CMS\src\cmspcs.c" />
+    <ClCompile Include="Src\Image\Little-CMS\src\cmsplugin.c" />
+    <ClCompile Include="Src\Image\Little-CMS\src\cmsps2.c" />
+    <ClCompile Include="Src\Image\Little-CMS\src\cmssamp.c" />
+    <ClCompile Include="Src\Image\Little-CMS\src\cmssm.c" />
+    <ClCompile Include="Src\Image\Little-CMS\src\cmstypes.c" />
+    <ClCompile Include="Src\Image\Little-CMS\src\cmsvirt.c" />
+    <ClCompile Include="Src\Image\Little-CMS\src\cmswtpnt.c" />
+    <ClCompile Include="Src\Image\Little-CMS\src\cmsxform.c" />
     <ClCompile Include="Src\NeuralNet9.cpp" />
+    <ClCompile Include="Src\Tensor\NN9Tensor.cpp" />
     <ClCompile Include="Src\Utilities\NN9Crc.cpp" />
     <ClCompile Include="Src\Utilities\NN9ThreadPool.cpp" />
     <ClCompile Include="Src\Utilities\NN9Utilities.cpp" />
@@ -293,6 +321,9 @@
     <ClInclude Include="Src\Foundation\NN9Macros.h" />
     <ClInclude Include="Src\Foundation\NN9Math.h" />
     <ClInclude Include="Src\Foundation\NN9RefCnt.h" />
+    <ClInclude Include="Src\Image\Little-CMS\include\lcms2.h" />
+    <ClInclude Include="Src\Image\Little-CMS\include\lcms2_plugin.h" />
+    <ClInclude Include="Src\Image\Little-CMS\src\lcms2_internal.h" />
     <ClInclude Include="Src\OS\NN9Apple.h" />
     <ClInclude Include="Src\OS\NN9Os.h" />
     <ClInclude Include="Src\OS\NN9Windows.h" />

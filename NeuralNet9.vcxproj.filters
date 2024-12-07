@@ -85,6 +85,30 @@
     <Filter Include="Source Files\Tensor">
       <UniqueIdentifier>{2b293b5f-bb99-419f-91dc-05a34dd08575}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Image">
+      <UniqueIdentifier>{da44a901-bf1c-4d48-aa53-c1939211f046}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Image">
+      <UniqueIdentifier>{6a1afde4-eaf3-4ad7-bc30-a5824a568805}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Image\Little-CMS">
+      <UniqueIdentifier>{111e1350-82b3-4ec7-851b-84d5a3f6c1ea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Image\Little-CMS">
+      <UniqueIdentifier>{9f92eb9a-c704-47a6-abc6-17e1ed80f38d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Image\Little-CMS\include">
+      <UniqueIdentifier>{d47537c5-be12-4ad7-8dd5-160db28f7a9b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Image\Little-CMS\include">
+      <UniqueIdentifier>{6c0fc2ff-573d-44a3-9d03-21aa638230f4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Image\Little-CMS\src">
+      <UniqueIdentifier>{c6a0b4b9-4d96-4679-ab39-36838ad2a80f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Image\Little-CMS\src">
+      <UniqueIdentifier>{3bf7696b-3804-4981-ad5f-8420cf2f4134}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\NeuralNet9.cpp">
@@ -124,6 +148,90 @@
       <Filter>Source Files\Utilities</Filter>
     </ClCompile>
     <ClCompile Include="Src\Buffers\NN9Buffer.cpp">
+      <Filter>Source Files\Buffers</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Image\Little-CMS\src\cmsgamma.c">
+      <Filter>Source Files\Image\Little-CMS\src</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Image\Little-CMS\src\cmsgmt.c">
+      <Filter>Source Files\Image\Little-CMS\src</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Image\Little-CMS\src\cmshalf.c">
+      <Filter>Source Files\Image\Little-CMS\src</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Image\Little-CMS\src\cmsintrp.c">
+      <Filter>Source Files\Image\Little-CMS\src</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Image\Little-CMS\src\cmsio0.c">
+      <Filter>Source Files\Image\Little-CMS\src</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Image\Little-CMS\src\cmsio1.c">
+      <Filter>Source Files\Image\Little-CMS\src</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Image\Little-CMS\src\cmslut.c">
+      <Filter>Source Files\Image\Little-CMS\src</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Image\Little-CMS\src\cmsmd5.c">
+      <Filter>Source Files\Image\Little-CMS\src</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Image\Little-CMS\src\cmsmtrx.c">
+      <Filter>Source Files\Image\Little-CMS\src</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Image\Little-CMS\src\cmsnamed.c">
+      <Filter>Source Files\Image\Little-CMS\src</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Image\Little-CMS\src\cmsopt.c">
+      <Filter>Source Files\Image\Little-CMS\src</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Image\Little-CMS\src\cmspack.c">
+      <Filter>Source Files\Image\Little-CMS\src</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Image\Little-CMS\src\cmspcs.c">
+      <Filter>Source Files\Image\Little-CMS\src</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Image\Little-CMS\src\cmsplugin.c">
+      <Filter>Source Files\Image\Little-CMS\src</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Image\Little-CMS\src\cmsps2.c">
+      <Filter>Source Files\Image\Little-CMS\src</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Image\Little-CMS\src\cmssamp.c">
+      <Filter>Source Files\Image\Little-CMS\src</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Image\Little-CMS\src\cmssm.c">
+      <Filter>Source Files\Image\Little-CMS\src</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Image\Little-CMS\src\cmstypes.c">
+      <Filter>Source Files\Image\Little-CMS\src</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Image\Little-CMS\src\cmsvirt.c">
+      <Filter>Source Files\Image\Little-CMS\src</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Image\Little-CMS\src\cmswtpnt.c">
+      <Filter>Source Files\Image\Little-CMS\src</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Image\Little-CMS\src\cmsxform.c">
+      <Filter>Source Files\Image\Little-CMS\src</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Image\Little-CMS\src\cmsalpha.c">
+      <Filter>Source Files\Image\Little-CMS\src</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Image\Little-CMS\src\cmscam02.c">
+      <Filter>Source Files\Image\Little-CMS\src</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Image\Little-CMS\src\cmscgats.c">
+      <Filter>Source Files\Image\Little-CMS\src</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Image\Little-CMS\src\cmscnvrt.c">
+      <Filter>Source Files\Image\Little-CMS\src</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Image\Little-CMS\src\cmserr.c">
+      <Filter>Source Files\Image\Little-CMS\src</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Tensor\NN9Tensor.cpp">
+      <Filter>Source Files\Tensor</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Buffers\NN9BufferManager.cpp">
       <Filter>Source Files\Buffers</Filter>
     </ClCompile>
   </ItemGroup>
@@ -223,6 +331,15 @@
     </ClInclude>
     <ClInclude Include="Src\Tensor\NN9Tensor.h">
       <Filter>Header Files\Tensor</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Image\Little-CMS\include\lcms2.h">
+      <Filter>Header Files\Image\Little-CMS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Image\Little-CMS\include\lcms2_plugin.h">
+      <Filter>Header Files\Image\Little-CMS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Image\Little-CMS\src\lcms2_internal.h">
+      <Filter>Header Files\Image\Little-CMS\include</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

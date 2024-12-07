@@ -18,6 +18,8 @@
 
 namespace nn9 {
 
+	class BufferManager;
+
 	/**
 	 * Class Buffer
 	 * \brief A buffer can be interpreted as any kind of data and be flushed to disk.
@@ -27,7 +29,13 @@ namespace nn9 {
 	 */
 	class Buffer : public RefCnt {
 	public :
-		Buffer() {}
+		Buffer( size_t _sSize ) :
+			m_vBuffer( _sSize ) {
+		}
+		Buffer( size_t _sSize, RefCnt * _rcOwner ) :
+			m_vBuffer( _sSize ),
+			m_prcOwner( _rcOwner ) {
+		}
 
 
 		// == Functions.
@@ -50,6 +58,14 @@ namespace nn9 {
 			
 			return aRet;
 		}
+
+		/**
+		 * S
+		 * 
+		 * \param PARM DESC
+		 * \param PARM DESC
+		 * \return DESC
+		 **/
 
 
 	protected :
