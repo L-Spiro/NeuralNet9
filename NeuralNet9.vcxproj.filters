@@ -341,6 +341,9 @@
     <ClInclude Include="Src\Image\Little-CMS\src\lcms2_internal.h">
       <Filter>Header Files\Image\Little-CMS\include</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Tensor\NN9View.h">
+      <Filter>Header Files\Tensor</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Src\Foundation\NN9SinCos.asm">

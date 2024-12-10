@@ -80,11 +80,11 @@ inline void										sincosf( float _fAngle, float * _pfSin, float * _pfCos ) {
     #else
         inline uint64_t                         _udiv128( uint64_t _ui64High, uint64_t _ui64Low, uint64_t _ui64Divisor, uint64_t * _pui64Remainder ) {
             if ( _ui64Divisor == 0 ) {
-		        throw std::overflow_error( "Division by zero is not allowed." );
+		        throw std::overflow_error( "_udiv128: Division by zero is not allowed." );
 	        }
 
 	        if ( _ui64High >= _ui64Divisor ) {
-		        throw std::overflow_error( "The division would overflow the 64-bit quotient." );
+		        throw std::overflow_error( "_udiv128: The division would overflow the 64-bit quotient." );
 	        }
 
 	        if ( _ui64High == 0 ) {
@@ -130,11 +130,11 @@ inline void										sincosf( float _fAngle, float * _pfSin, float * _pfCos ) {
 	// Implementation for compilers that support __uint128_t (e.g., GCC, Clang)
 	inline uint64_t                             _udiv128( uint64_t _ui64High, uint64_t _ui64Low, uint64_t _ui64Divisor, uint64_t * _pui64Remainder ) {
 		if ( _ui64Divisor == 0 ) {
-			throw std::overflow_error( "Division by zero is not allowed." );
+			throw std::overflow_error( "_udiv128: Division by zero is not allowed." );
 		}
 
 		if ( _ui64High >= _ui64Divisor ) {
-			throw std::overflow_error( "The division would overflow the 64-bit quotient." );
+			throw std::overflow_error( "_udiv128: The division would overflow the 64-bit quotient." );
 		}
 
 		if ( _ui64High == 0 ) {

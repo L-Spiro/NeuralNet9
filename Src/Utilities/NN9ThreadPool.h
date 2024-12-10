@@ -100,7 +100,7 @@ namespace nn9 {
 
 			// Don't allow adding tasks after stopping the pool.
 			if ( m_bStop ) {
-				throw std::runtime_error( "Cannot submit to a stopped ThreadPool." );
+				throw std::runtime_error( "ThreadPool::Submit: Cannot submit to a stopped ThreadPool." );
 			}
 
 			m_qTasks.emplace( [aTask]() { (*aTask)(); } );

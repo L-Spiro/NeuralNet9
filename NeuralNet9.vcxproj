@@ -176,7 +176,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>Ws2_32.lib;Advapi32.lib;Crypt32.lib;Wldap32.lib;Normaliz.lib;Kernel32.lib;User32.lib;oldnames.lib;$(SolutionDir)$(Platform)\$(Configuration)\LSXML.lib;$(SolutionDir)$(Platform)\$(Configuration)\LSon.lib;$(ProjectDir)$(Platform)\$(Configuration)\FreeImage.lib;$(ProjectDir)$(Platform)\$(Configuration)\LibJPEG.lib;$(ProjectDir)$(Platform)\$(Configuration)\LibJXR.lib;$(ProjectDir)$(Platform)\$(Configuration)\LibOpenJPEG.lib;$(ProjectDir)$(Platform)\$(Configuration)\LibPNG.lib;$(ProjectDir)$(Platform)\$(Configuration)\LibRaw.lib;$(ProjectDir)$(Platform)\$(Configuration)\LibTIFF4.lib;$(ProjectDir)$(Platform)\$(Configuration)\LibWebP.lib;$(ProjectDir)$(Platform)\$(Configuration)\OpenEXR.lib;$(ProjectDir)$(Platform)\$(Configuration)\ZLib.lib;$(ProjectDir)Libs\curl\libcurl-vc-x86-release-static-ipv6-sspi-schannel\lib\libcurl_a.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Ws2_32.lib;Advapi32.lib;Crypt32.lib;Wldap32.lib;Normaliz.lib;Kernel32.lib;User32.lib;oldnames.lib;$(SolutionDir)$(Platform)\$(Configuration)\LSXML.lib;$(SolutionDir)$(Platform)\$(Configuration)\LSon.lib;$(ProjectDir)$(Platform)\Release\FreeImage.lib;$(ProjectDir)$(Platform)\Release\LibJPEG.lib;$(ProjectDir)$(Platform)\Release\LibJXR.lib;$(ProjectDir)$(Platform)\Release\LibOpenJPEG.lib;$(ProjectDir)$(Platform)\Release\LibPNG.lib;$(ProjectDir)$(Platform)\Release\LibRaw.lib;$(ProjectDir)$(Platform)\Release\LibTIFF4.lib;$(ProjectDir)$(Platform)\Release\LibWebP.lib;$(ProjectDir)$(Platform)\Release\OpenEXR.lib;$(ProjectDir)$(Platform)\Release\ZLib.lib;$(ProjectDir)Libs\curl\libcurl-vc-x86-release-static-ipv6-sspi-schannel\lib\libcurl_a.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalManifestDependencies>%(AdditionalManifestDependencies)</AdditionalManifestDependencies>
     </Link>
     <Manifest>
@@ -250,7 +250,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>Ws2_32.lib;Advapi32.lib;Crypt32.lib;Wldap32.lib;Normaliz.lib;Kernel32.lib;User32.lib;oldnames.lib;$(SolutionDir)$(Platform)\$(Configuration)\LSXML.lib;$(SolutionDir)$(Platform)\$(Configuration)\LSon.lib;$(ProjectDir)$(Platform)\$(Configuration)\FreeImage.lib;$(ProjectDir)$(Platform)\$(Configuration)\LibJPEG.lib;$(ProjectDir)$(Platform)\$(Configuration)\LibJXR.lib;$(ProjectDir)$(Platform)\$(Configuration)\LibOpenJPEG.lib;$(ProjectDir)$(Platform)\$(Configuration)\LibPNG.lib;$(ProjectDir)$(Platform)\$(Configuration)\LibRaw.lib;$(ProjectDir)$(Platform)\$(Configuration)\LibTIFF4.lib;$(ProjectDir)$(Platform)\$(Configuration)\LibWebP.lib;$(ProjectDir)$(Platform)\$(Configuration)\OpenEXR.lib;$(ProjectDir)$(Platform)\$(Configuration)\ZLib.lib;$(ProjectDir)Libs\curl\libcurl-vc-x64-release-static-ipv6-sspi-schannel\lib\libcurl_a.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Ws2_32.lib;Advapi32.lib;Crypt32.lib;Wldap32.lib;Normaliz.lib;Kernel32.lib;User32.lib;oldnames.lib;$(SolutionDir)$(Platform)\$(Configuration)\LSXML.lib;$(SolutionDir)$(Platform)\$(Configuration)\LSon.lib;$(ProjectDir)$(Platform)\Release\FreeImage.lib;$(ProjectDir)$(Platform)\Release\LibJPEG.lib;$(ProjectDir)$(Platform)\Release\LibJXR.lib;$(ProjectDir)$(Platform)\Release\LibOpenJPEG.lib;$(ProjectDir)$(Platform)\Release\LibPNG.lib;$(ProjectDir)$(Platform)\Release\LibRaw.lib;$(ProjectDir)$(Platform)\Release\LibTIFF4.lib;$(ProjectDir)$(Platform)\Release\LibWebP.lib;$(ProjectDir)$(Platform)\Release\OpenEXR.lib;$(ProjectDir)$(Platform)\Release\ZLib.lib;$(ProjectDir)Libs\curl\libcurl-vc-x64-release-static-ipv6-sspi-schannel\lib\libcurl_a.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalManifestDependencies>%(AdditionalManifestDependencies)</AdditionalManifestDependencies>
     </Link>
     <Manifest>
@@ -328,6 +328,7 @@
     <ClInclude Include="Src\OS\NN9Os.h" />
     <ClInclude Include="Src\OS\NN9Windows.h" />
     <ClInclude Include="Src\Tensor\NN9Tensor.h" />
+    <ClInclude Include="Src\Tensor\NN9View.h" />
     <ClInclude Include="Src\Types\NN9BFloat16.h" />
     <ClInclude Include="Src\Types\NN9Float16.h" />
     <ClInclude Include="Src\Types\NN9Types.h" />

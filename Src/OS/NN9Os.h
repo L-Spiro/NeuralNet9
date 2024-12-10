@@ -33,7 +33,7 @@ inline std::filesystem::path					GetThisPath() {
 
 		if ( dwLen == 0 ) {
 			// Handle error.
-			throw std::runtime_error( "Error getting executable path." );
+			throw std::runtime_error( "GetThisPath: Error getting executable path." );
 		}
 		else if ( dwLen < dwBufSize ) {
 			// Successfully retrieved the path.
@@ -43,7 +43,7 @@ inline std::filesystem::path					GetThisPath() {
 			// Buffer was too small, increase size and retry.
 			dwBufSize *= 2;
 			if ( dwBufSize > 1 << 20 ) { // Limit to 1 MB.
-				throw std::runtime_error( "Executable path is too long." );
+				throw std::runtime_error( "GetThisPath: Executable path is too long." );
 			}
 		}
 	}
@@ -64,7 +64,7 @@ inline std::filesystem::path					GetThisPath() {
 		ssize_t sLength = readlink( "/proc/self/exe", vBuffer.data(), sBufferSize );
 
 		if ( sLength == -1 ) {
-			throw std::runtime_error( "Error getting executable path: " + std::string( strerror( errno ) ) );
+			throw std::runtime_error( "GetThisPath: Error getting executable path: " + std::string( strerror( errno ) ) );
 		}
 		else if ( static_cast<size_t>(sLength) < sBufferSize ) {
 			return std::string( vBuffer.data(), sLength );
@@ -72,7 +72,7 @@ inline std::filesystem::path					GetThisPath() {
 		else {
 			sBufferSize *= 2;
 			if ( sBufferSize > 1 << 20 ) { // Limit to 1 MB.
-				throw std::runtime_error( "Executable path is too long." );
+				throw std::runtime_error( "GetThisPath: Executable path is too long." );
 			}
 		}
 	}
@@ -89,18 +89,18 @@ inline std::filesystem::path					GetThisPath() {
 	uint32_t ui32BufferSize = 0;
 	// Get the required buffer size.
 	if ( _NSGetExecutablePath( NULL, &ui32BufferSize ) != -1 ) {
-		throw std::runtime_error( "Unexpected error getting executable path size." );
+		throw std::runtime_error( "GetThisPath: Unexpected error getting executable path size." );
 	}
 
 	std::vector<char> vBuffer( ui32BufferSize );
 	if ( _NSGetExecutablePath( vBuffer.data(), &ui32BufferSize ) != 0 ) {
-		throw std::runtime_error( "Error getting executable path." );
+		throw std::runtime_error( "GetThisPath: Error getting executable path." );
 	}
 
 	// Resolve any symbolic links to get the absolute path.
 	char szRealPath[PATH_MAX];
 	if ( ::realpath( vBuffer.data(), szRealPath ) == NULL ) {
-		throw std::runtime_error( "Error resolving real path." );
+		throw std::runtime_error( "GetThisPath: Error resolving real path." );
 	}
 
 	return std::string( szRealPath );

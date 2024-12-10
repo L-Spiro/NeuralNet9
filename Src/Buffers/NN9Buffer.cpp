@@ -12,6 +12,16 @@
 
  namespace nn9 {
 
-
+	Buffer::Buffer( NN9_TYPE _tType, size_t _sSize, RefCnt * _rcOwner ) :
+		m_tType( _tType ),
+		m_vBuffer( Types::SizeOf( _tType ) * _sSize ),
+		m_prcOwner( _rcOwner ) {
+		BufferManager::GblBufferManager.AddMem( MemUsed() );
+		//if ( m_prcOwner ) { m_prcOwner->IncRef(); }
+	}
+	Buffer::~Buffer() {
+		BufferManager::GblBufferManager.DelMem( MemUsed() );
+		//if ( m_prcOwner ) { m_prcOwner->DecRef(); }
+	}
 
  }	// namespace nn9
