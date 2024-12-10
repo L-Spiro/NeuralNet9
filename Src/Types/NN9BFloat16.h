@@ -8,6 +8,8 @@
 
 #pragma once
 
+#include "../Foundation/NN9Macros.h"
+
 #include <cstdint>
 #include <functional>
 #include <immintrin.h>
@@ -105,13 +107,22 @@ namespace nn9 {
 
 		// == Operators.
 		/**
-		 * Cast to float.
+		 * Casts to float.
 		 * 
 		 * \return Returns the float value of the bfloat16.
 		 **/
 		inline operator							float() const {
 			uint32_t ui32Val = static_cast<uint32_t>(m_u16Value) << 16;
 			return (*reinterpret_cast<float *>(&ui32Val));
+		}
+
+		/**
+		 * Casts to double.
+		 * 
+		 * \return Returns the double value of the bfloat16.
+		 **/
+		inline operator							double() const {
+			return static_cast<float>(*this);
 		}
 
 
@@ -295,7 +306,7 @@ namespace nn9 {
 		 * \param _pBF16 Pointer to the memory containing 16 bfloat16 values.
 		 * \return A __m512 vector containing the converted single-precision floating-point values.
 		 **/
-		static inline __m512					loadu_bf16_to_fp32( const uint16_t * _pBF16 );
+		static inline __m512					loadu_bf16_to_fp32_16( const uint16_t * _pBF16 );
 
 		/**
 		 * Load 16 bfloat16 values from memory and convert them into a __m512 (16 floats).
@@ -303,7 +314,7 @@ namespace nn9 {
 		 * \param _pBF16 Pointer to the memory containing 16 bfloat16 values.
 		 * \return A __m512 vector containing the converted single-precision floating-point values.
 		 **/
-		static inline __m512					load_bf16_to_fp32( const uint16_t * _pBF16 );
+		static inline __m512					load_bf16_to_fp32_16( const uint16_t * _pBF16 );
 
 		/**
 		 * Load 32 bfloat16 values from memory into a __m512bh vector.
@@ -633,6 +644,104 @@ namespace nn9 {
 		static inline __m512					_mm512_maskz_dpbf16_ps_emu( __mmask16 _kMask, __m512 _mAcc, __m512bh _mA, __m512bh _mB );
 #endif	// #ifdef __AVX512F__
 
+#ifdef __AVX2__
+		/**
+		 * \brief Load 8 bfloat16 values from memory and convert them into a __m256 (8 floats) using AVX2.
+		 *
+		 * Each bfloat16 occupies 16 bits. 8 bfloat16 values = 8 * 2 bytes = 16 bytes total.
+		 * We'll:
+		 * - Load into a __m128i.
+		 * - Unpack and zero-extend to 32 bits per element.
+		 * - Shift left to position the bfloat16 bits correctly.
+		 * - Reinterpret as floats.
+		 *
+		 * \param _pBF16 Pointer to memory containing 8 bfloat16 values.
+		 * \return A __m256 vector containing 8 floats converted from bfloat16.
+		 **/
+		static inline __m256					loadu_bf16_to_fp32_8( const uint16_t * _pBF16 );
+
+		/**
+		 * \brief Load 8 bfloat16 values from memory and convert them into a __m256 (8 floats) using AVX2.
+		 *
+		 * Each bfloat16 occupies 16 bits. 8 bfloat16 values = 8 * 2 bytes = 16 bytes total.
+		 * We'll:
+		 * - Load into a __m128i.
+		 * - Unpack and zero-extend to 32 bits per element.
+		 * - Shift left to position the bfloat16 bits correctly.
+		 * - Reinterpret as floats.
+		 *
+		 * \param _pBF16 Pointer to memory containing 8 bfloat16 values.
+		 * \return A __m256 vector containing 8 floats converted from bfloat16.
+		 **/
+		static inline __m256					load_bf16_to_fp32_8( const uint16_t * _pBF16 );
+
+		/**
+	     * \brief Load 8 bfloat16 values from memory into a __m128i vector using AVX2.
+	     *
+	     * Since AVX2 does not support BF16 directly, we just treat them as 16-byte raw data.
+	     * You can then process them as needed. This is not a perfect parallel to __m512bh,
+	     * but it gives you a vector holding 8 bfloat16 values.
+	     * 
+	     * \param _pBF16 Pointer to the memory containing 8 bfloat16 values.
+	     * \return A __m128i vector containing the loaded bfloat16 values.
+	     */
+		static inline __m128i					loadu_bf16_to_m128i( const uint16_t * _pBF16 );
+
+		/**
+	     * \brief Load 8 bfloat16 values from memory into a __m128i vector using AVX2.
+	     *
+	     * Since AVX2 does not support BF16 directly, we just treat them as 16-byte raw data.
+	     * You can then process them as needed. This is not a perfect parallel to __m512bh,
+	     * but it gives you a vector holding 8 bfloat16 values.
+	     * 
+	     * \param _pBF16 Pointer to the memory containing 8 bfloat16 values.
+	     * \return A __m128i vector containing the loaded bfloat16 values.
+	     */
+		static inline __m128i					load_bf16_to_m128i( const uint16_t * _pBF16 );
+
+		/**
+		 * \brief Store 8 floats from a __m256 vector to memory as 8 bfloat16 values using AVX2.
+		 *
+		 * This method:
+		 * - Reinterprets floats as 32-bit ints.
+		 * - Shifts right by 16 to get the top 16 bits of each float.
+		 * - Safely converts these to uint16_t by storing intermediate results to a temporary array.
+		 *
+		 * \param _pDst Pointer to the memory location where the bfloat16 values will be stored.
+		 * \param _mSrc The __m256 vector containing 8 single-precision floats.
+		 */
+		static inline void						storeu_fp32_to_bf16( uint16_t * _pDst, __m256 _mSrc );
+
+		/**
+		 * \brief Store 8 floats from a __m256 vector to memory as 8 bfloat16 values using AVX2.
+		 *
+		 * This method:
+		 * - Reinterprets floats as 32-bit ints.
+		 * - Shifts right by 16 to get the top 16 bits of each float.
+		 * - Safely converts these to uint16_t by storing intermediate results to a temporary array.
+		 *
+		 * \param _pDst Pointer to the memory location where the bfloat16 values will be stored.
+		 * \param _mSrc The __m256 vector containing 8 single-precision floats.
+		 */
+		static inline void						store_fp32_to_bf16( uint16_t * _pDst, __m256 _mSrc );
+
+		/**
+	     * \brief Store 8 bfloat16 values from a __m128i vector to memory using AVX2.
+	     *
+	     * \param _pDst Pointer to the memory location where the 8 bfloat16 values will be stored.
+	     * \param _mSrc The __m128i vector containing 8 bfloat16 values.
+	     */
+		static inline void						storeu_m128i_to_bf16( uint16_t * _pDst, __m128i _mSrc );
+
+		/**
+	     * \brief Store 8 bfloat16 values from a __m128i vector to memory using AVX2.
+	     *
+	     * \param _pDst Pointer to the memory location where the 8 bfloat16 values will be stored.
+	     * \param _mSrc The __m128i vector containing 8 bfloat16 values.
+	     */
+		static inline void						store_m128i_to_bf16( uint16_t * _pDst, __m128i _mSrc );
+#endif	// #ifdef __AVX2__
+
 		// == Members.
 		/** The backing value. */
 		uint16_t								m_u16Value;
@@ -653,7 +762,7 @@ namespace nn9 {
 	 * \param _pBF16 Pointer to the memory containing 16 bfloat16 values.
 	 * \return A __m512 vector containing the converted single-precision floating-point values.
 	 **/
-	inline __m512 bfloat16::loadu_bf16_to_fp32( const uint16_t * _pBF16 ) {
+	inline __m512 bfloat16::loadu_bf16_to_fp32_16( const uint16_t * _pBF16 ) {
 		// Step 1: Load 16 bfloat16 values (16 * 16 bits = 256 bits) into a __m256i vector.
 		__m256i mBF16 = _mm256_loadu_si256( reinterpret_cast<const __m256i *>(_pBF16) );
 
@@ -673,7 +782,7 @@ namespace nn9 {
 	 * \param _pBF16 Pointer to the memory containing 16 bfloat16 values.
 	 * \return A __m512 vector containing the converted single-precision floating-point values.
 	 **/
-	inline __m512 bfloat16::load_bf16_to_fp32( const uint16_t * _pBF16 ) {
+	inline __m512 bfloat16::load_bf16_to_fp32_16( const uint16_t * _pBF16 ) {
 		// Step 1: Load 16 bfloat16 values (16 * 16 bits = 256 bits) into a __m256i vector.
 		__m256i mBF16 = _mm256_load_si256( reinterpret_cast<const __m256i *>(_pBF16) );
 
@@ -1504,6 +1613,219 @@ namespace nn9 {
 #define _mm512_maskz_dpbf16_ps					nn9::bfloat16::_mm512_maskz_dpbf16_ps_emu
 #endif	// #ifdef __AVX512F__
 
+#ifdef __AVX2__
+	/**
+	 * \brief Load 8 bfloat16 values from memory and convert them into a __m256 (8 floats) using AVX2.
+	 *
+	 * Each bfloat16 occupies 16 bits. 8 bfloat16 values = 8 * 2 bytes = 16 bytes total.
+	 * We'll:
+	 * - Load into a __m128i.
+	 * - Unpack and zero-extend to 32 bits per element.
+	 * - Shift left to position the bfloat16 bits correctly.
+	 * - Reinterpret as floats.
+	 *
+	 * \param _pBF16 Pointer to memory containing 8 bfloat16 values.
+	 * \return A __m256 vector containing 8 floats converted from bfloat16.
+	 **/
+	inline __m256 bfloat16::loadu_bf16_to_fp32_8( const uint16_t * _pBF16 ) {
+		// Step 1: Load 8 bfloat16 values (16 bytes) into a __m128i.
+		__m128i mBF16 = _mm_loadu_si128( reinterpret_cast<const __m128i *>(_pBF16) );
+
+		// We'll need a mZero vector for unpacking.
+		__m128i mZero = _mm_setzero_si128();
+
+		// Step 2: Unpack lower and upper 4 16-bit values into 32-bit values.
+		// Unpack lower half (4 elements).
+		__m128i mLow32  = _mm_unpacklo_epi16( mBF16, mZero ); // 4x32-bit in low half.
+		// Unpack upper half (4 elements).
+		__m128i mHigh32 = _mm_unpackhi_epi16( mBF16, mZero ); // 4x32-bit in high half.
+
+		// Combine the two __m128i vectors into a single __m256i.
+		// mLow32 -> lower 128 bits, mHigh32 -> upper 128 bits.
+		__m256i mInt32 = _mm256_castsi128_si256( mLow32 );
+		mInt32 = _mm256_inserti128_si256( mInt32, mHigh32, 1 );
+
+		// Step 3: Shift left by 16 bits to position bfloat16 bits in the high half of the 32-bit float.
+		mInt32 = _mm256_slli_epi32( mInt32, 16 );
+
+		// Step 4: Reinterpret these bits as single-precision floats.
+		__m256 mFloats = _mm256_castsi256_ps( mInt32 );
+
+		return mFloats;
+	}
+
+	/**
+	 * \brief Load 8 bfloat16 values from memory and convert them into a __m256 (8 floats) using AVX2.
+	 *
+	 * Each bfloat16 occupies 16 bits. 8 bfloat16 values = 8 * 2 bytes = 16 bytes total.
+	 * We'll:
+	 * - Load into a __m128i.
+	 * - Unpack and zero-extend to 32 bits per element.
+	 * - Shift left to position the bfloat16 bits correctly.
+	 * - Reinterpret as floats.
+	 *
+	 * \param _pBF16 Pointer to memory containing 8 bfloat16 values.
+	 * \return A __m256 vector containing 8 floats converted from bfloat16.
+	 **/
+	inline __m256 bfloat16::load_bf16_to_fp32_8( const uint16_t * _pBF16 ) {
+		// Step 1: Load 8 bfloat16 values (16 bytes) into a __m128i.
+		__m128i mBF16 = _mm_load_si128( reinterpret_cast<const __m128i *>(_pBF16) );
+
+		// We'll need a mZero vector for unpacking.
+		__m128i mZero = _mm_setzero_si128();
+
+		// Step 2: Unpack lower and upper 4 16-bit values into 32-bit values.
+		// Unpack lower half (4 elements).
+		__m128i mLow32  = _mm_unpacklo_epi16( mBF16, mZero ); // 4x32-bit in low half.
+		// Unpack upper half (4 elements).
+		__m128i mHigh32 = _mm_unpackhi_epi16( mBF16, mZero ); // 4x32-bit in high half.
+
+		// Combine the two __m128i vectors into a single __m256i.
+		// mLow32 -> lower 128 bits, mHigh32 -> upper 128 bits.
+		__m256i mInt32 = _mm256_castsi128_si256( mLow32 );
+		mInt32 = _mm256_inserti128_si256( mInt32, mHigh32, 1 );
+
+		// Step 3: Shift left by 16 bits to position bfloat16 bits in the high half of the 32-bit float.
+		mInt32 = _mm256_slli_epi32( mInt32, 16 );
+
+		// Step 4: Reinterpret these bits as single-precision floats.
+		__m256 mFloats = _mm256_castsi256_ps( mInt32 );
+
+		return mFloats;
+	}
+
+	/**
+     * \brief Load 8 bfloat16 values from memory into a __m128i vector using AVX2.
+     *
+     * Since AVX2 does not support BF16 directly, we just treat them as 16-byte raw data.
+     * You can then process them as needed. This is not a perfect parallel to __m512bh,
+     * but it gives you a vector holding 8 bfloat16 values.
+     * 
+     * \param _pBF16 Pointer to the memory containing 8 bfloat16 values.
+     * \return A __m128i vector containing the loaded bfloat16 values.
+     */
+    inline __m128i bfloat16::loadu_bf16_to_m128i( const uint16_t * _pBF16 ) {
+        // Load 16 bytes (8 bfloat16 values) into a __m128i.
+        return _mm_loadu_si128( reinterpret_cast<const __m128i *>(_pBF16) );
+    }
+
+	/**
+     * \brief Load 8 bfloat16 values from memory into a __m128i vector using AVX2.
+     *
+     * Since AVX2 does not support BF16 directly, we just treat them as 16-byte raw data.
+     * You can then process them as needed. This is not a perfect parallel to __m512bh,
+     * but it gives you a vector holding 8 bfloat16 values.
+     * 
+     * \param _pBF16 Pointer to the memory containing 8 bfloat16 values.
+     * \return A __m128i vector containing the loaded bfloat16 values.
+     */
+    inline __m128i bfloat16::load_bf16_to_m128i( const uint16_t * _pBF16 ) {
+        // Load 16 bytes (8 bfloat16 values) into a __m128i.
+        return _mm_load_si128( reinterpret_cast<const __m128i *>(_pBF16) );
+    }
+
+	/**
+	 * \brief Store 8 floats from a __m256 vector to memory as 8 bfloat16 values using AVX2.
+	 *
+	 * This method:
+	 * - Reinterprets floats as 32-bit ints.
+	 * - Shifts right by 16 to get the top 16 bits of each float.
+	 * - Safely converts these to uint16_t by storing intermediate results to a temporary array.
+	 *
+	 * \param _pDst Pointer to the memory location where the bfloat16 values will be stored.
+	 * \param _mSrc The __m256 vector containing 8 single-precision floats.
+	 */
+	inline void bfloat16::storeu_fp32_to_bf16( uint16_t * _pDst, __m256 _mSrc ) {
+		__m256i mIntRepr = _mm256_castps_si256( _mSrc );
+
+		__m256i mask = _mm256_setr_epi8(
+			// For 8 elements (each 4 bytes), picking bytes 2 and 3 of each element:
+			// Element 0: bytes (2,3)
+			// Element 1: bytes (6,7)
+			// Element 2: bytes (10,11)
+			// Element 3: bytes (14,15)
+			// Element 4: bytes (18,19)
+			// Element 5: bytes (22,23)
+			// Element 6: bytes (26,27)
+			// Element 7: bytes (30,31)
+			 2,  3,  6,  7,  10, 11, 14, 15,
+			18, 19, 22, 23,  26, 27, 30, 31,
+			// The remaining 16 bytes we don't need; set them to 0x80 to zero them out.
+			static_cast<char>(0x80), static_cast<char>(0x80), static_cast<char>(0x80), static_cast<char>(0x80),
+			static_cast<char>(0x80), static_cast<char>(0x80), static_cast<char>(0x80), static_cast<char>(0x80),
+			static_cast<char>(0x80), static_cast<char>(0x80), static_cast<char>(0x80), static_cast<char>(0x80),
+			static_cast<char>(0x80), static_cast<char>(0x80), static_cast<char>(0x80), static_cast<char>(0x80)
+		);
+
+		// Shuffle the bytes so that only the top 2 bytes of each element remain in order.
+		__m256i mBF16 = _mm256_shuffle_epi8( mIntRepr, mask );
+
+		// Now mBF16 contains 8 consecutive 16-bit values that can be directly stored.
+		_mm256_storeu_si256( reinterpret_cast<__m256i *>(_pDst), mBF16 );
+	}
+
+	/**
+	 * \brief Store 8 floats from a __m256 vector to memory as 8 bfloat16 values using AVX2.
+	 *
+	 * This method:
+	 * - Reinterprets floats as 32-bit ints.
+	 * - Shifts right by 16 to get the top 16 bits of each float.
+	 * - Safely converts these to uint16_t by storing intermediate results to a temporary array.
+	 *
+	 * \param _pDst Pointer to the memory location where the bfloat16 values will be stored.
+	 * \param _mSrc The __m256 vector containing 8 single-precision floats.
+	 */
+	inline void bfloat16::store_fp32_to_bf16( uint16_t * _pDst, __m256 _mSrc ) {
+		__m256i mIntRepr = _mm256_castps_si256( _mSrc );
+
+		__m256i mask = _mm256_setr_epi8(
+			// For 8 elements (each 4 bytes), picking bytes 2 and 3 of each element:
+			// Element 0: bytes (2,3)
+			// Element 1: bytes (6,7)
+			// Element 2: bytes (10,11)
+			// Element 3: bytes (14,15)
+			// Element 4: bytes (18,19)
+			// Element 5: bytes (22,23)
+			// Element 6: bytes (26,27)
+			// Element 7: bytes (30,31)
+			 2,  3,  6,  7,  10, 11, 14, 15,
+			18, 19, 22, 23,  26, 27, 30, 31,
+			// The remaining 16 bytes we don't need; set them to 0x80 to zero them out.
+			static_cast<char>(0x80), static_cast<char>(0x80), static_cast<char>(0x80), static_cast<char>(0x80),
+			static_cast<char>(0x80), static_cast<char>(0x80), static_cast<char>(0x80), static_cast<char>(0x80),
+			static_cast<char>(0x80), static_cast<char>(0x80), static_cast<char>(0x80), static_cast<char>(0x80),
+			static_cast<char>(0x80), static_cast<char>(0x80), static_cast<char>(0x80), static_cast<char>(0x80)
+		);
+
+		// Shuffle the bytes so that only the top 2 bytes of each element remain in order.
+		__m256i mBF16 = _mm256_shuffle_epi8( mIntRepr, mask );
+
+		// Now mBF16 contains 8 consecutive 16-bit values that can be directly stored.
+		_mm256_store_si256( reinterpret_cast<__m256i *>(_pDst), mBF16 );
+	}
+
+	/**
+     * \brief Store 8 bfloat16 values from a __m128i vector to memory using AVX2.
+     *
+     * \param _pDst Pointer to the memory location where the 8 bfloat16 values will be stored.
+     * \param _mSrc The __m128i vector containing 8 bfloat16 values.
+     */
+    inline void bfloat16::storeu_m128i_to_bf16( uint16_t * _pDst, __m128i _mSrc ) {
+        // Store the 8 bfloat16 values (16 bytes) to memory.
+        _mm_storeu_si128( reinterpret_cast<__m128i *>(_pDst), _mSrc );
+    }
+
+	/**
+     * \brief Store 8 bfloat16 values from a __m128i vector to memory using AVX2.
+     *
+     * \param _pDst Pointer to the memory location where the 8 bfloat16 values will be stored.
+     * \param _mSrc The __m128i vector containing 8 bfloat16 values.
+     */
+    inline void bfloat16::store_m128i_to_bf16( uint16_t * _pDst, __m128i _mSrc ) {
+        // Store the 8 bfloat16 values (16 bytes) to memory.
+        _mm_store_si128( reinterpret_cast<__m128i *>(_pDst), _mSrc );
+    }
+#endif	// #ifdef __AVX2__
 #define bfloat16_t								nn9::bfloat16
 
 

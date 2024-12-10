@@ -71,8 +71,8 @@ namespace nn9 {
 		 **/
 		template <typename _tType, typename _tFunc>
 		static _tType &												Func( _tType &_vValues, _tFunc _fFunc ) {
-#ifdef __AVX512F__
 			using ValueType = typename _tType::value_type;
+#ifdef __AVX512F__
 			if constexpr ( IsBFloat16<ValueType>() ) {
 				if ( Utilities::IsAvx512FSupported() ) {
 					// Decode 16 bfloat16_t's at once for super-fast processing.
@@ -81,7 +81,7 @@ namespace nn9 {
 					NN9_ALIGN( 64 )
 					float fTmp[16];
 					while ( sSize >= 16 ) {
-						__m512 mFloats = bfloat16::loadu_bf16_to_fp32( _pBF16 );
+						__m512 mFloats = bfloat16::loadu_bf16_to_fp32_16( _pBF16 );
 						_mm512_store_ps( fTmp, mFloats );
 
 						(*reinterpret_cast<bfloat16_t *>(_pBF16++)) = _tType::value_type( _fFunc( fTmp[0] ) );
@@ -109,9 +109,44 @@ namespace nn9 {
 						++_pBF16;
 						--sSize;
 					}
+					return _vValues;
 				}
 			}
 #endif	// #ifdef __AVX512F__
+
+#ifdef __AVX2__
+			if constexpr ( IsBFloat16<ValueType>() ) {
+				if ( Utilities::IsAvx2FSupported() ) {
+					// Decode 16 bfloat16_t's at once for super-fast processing.
+					uint16_t * _pBF16 = reinterpret_cast<uint16_t *>(&_vValues[0]);
+					size_t sSize = _vValues.size();
+					NN9_ALIGN( 32 )
+					float fTmp[8];
+					while ( sSize >= 8 ) {
+						__m512 mFloats = bfloat16::loadu_bf16_to_fp32_8( _pBF16 );
+						_mm512_store_ps( fTmp, mFloats );
+
+						(*reinterpret_cast<bfloat16_t *>(_pBF16++)) = _tType::value_type( _fFunc( fTmp[0] ) );
+						(*reinterpret_cast<bfloat16_t *>(_pBF16++)) = _tType::value_type( _fFunc( fTmp[1] ) );
+						(*reinterpret_cast<bfloat16_t *>(_pBF16++)) = _tType::value_type( _fFunc( fTmp[2] ) );
+						(*reinterpret_cast<bfloat16_t *>(_pBF16++)) = _tType::value_type( _fFunc( fTmp[3] ) );
+						(*reinterpret_cast<bfloat16_t *>(_pBF16++)) = _tType::value_type( _fFunc( fTmp[4] ) );
+						(*reinterpret_cast<bfloat16_t *>(_pBF16++)) = _tType::value_type( _fFunc( fTmp[5] ) );
+						(*reinterpret_cast<bfloat16_t *>(_pBF16++)) = _tType::value_type( _fFunc( fTmp[6] ) );
+						(*reinterpret_cast<bfloat16_t *>(_pBF16++)) = _tType::value_type( _fFunc( fTmp[7] ) );
+
+						sSize -= 8;
+					}
+
+					while ( sSize ) {
+						(*reinterpret_cast<bfloat16_t *>(_pBF16)) = _tType::value_type( _fFunc( (*reinterpret_cast<bfloat16_t *>(_pBF16)) ) );
+						++_pBF16;
+						--sSize;
+					}
+					return _vValues;
+				}
+			}
+#endif	// #ifdef __AVX2__
 			for ( auto & aThis : _vValues ) {
 				aThis = _tType::value_type( _fFunc( aThis ) );
 			}

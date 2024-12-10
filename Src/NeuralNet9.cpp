@@ -25,14 +25,17 @@ int wmain( int _iArgC, wchar_t const * _wcpArgV[] ) {
 		NN9_ALIGN( 64 )
 		bfloat16_t bfBfloat[16];
 		NN9_ALIGN( 64 )
+		bfloat16_t bfTmp[16];
+		NN9_ALIGN( 64 )
 		float fTmp[16], fTmp2[16], fTmp3[16];
 		for ( size_t I = 0; I < 16; ++I ) {
 			bfBfloat[I] = vView[I];
 			fTmp2[I] = bfBfloat[I];
 			fTmp3[I] = vView[I];
 		}
-		__m512 mFloats = nn9::bfloat16::load_bf16_to_fp32( reinterpret_cast<uint16_t *>(bfBfloat) );
-		_mm512_store_ps( fTmp, mFloats );
+		auto mFloats = nn9::bfloat16::loadu_bf16_to_fp32_8( reinterpret_cast<uint16_t *>(bfBfloat) );
+		_mm256_store_ps( fTmp, mFloats );
+		nn9::bfloat16::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(bfTmp), (__m256)mFloats );
 		
 		{
 			auto v3d = tTensorTest.Full3dView<float>();
