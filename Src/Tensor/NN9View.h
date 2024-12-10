@@ -55,6 +55,8 @@ namespace nn9 {
 
 
 		// == Types.
+		typedef _tDataType										value_type;							/**< std::vector<>-compatible value_type definition. */
+
 		/**
 		 * Class Iterator
 		 * \brief Allows for ( : ) iteration over the values.

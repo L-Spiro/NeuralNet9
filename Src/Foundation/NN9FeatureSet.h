@@ -66,7 +66,7 @@ namespace nn9 {
 	class FeatureSet {
 		class									InstructionSet_Internal;
 
-	public:
+	public :
 		// == Functions.
 		static std::string						Vendor() { return m_iiCpuRep.m_sVendor; }
 		static std::string						Brand() { return m_iiCpuRep.m_sBrand; }
@@ -113,12 +113,11 @@ namespace nn9 {
 		static bool								AVX512ER() { return m_iiCpuRep.m_bEbx7[27]; }
 		static bool								AVX512CD() { return m_iiCpuRep.m_bEbx7[28]; }
 		static bool								SHA() { return m_iiCpuRep.m_bEbx7[29]; }
+
 		static bool								AVX512BW() { return m_iiCpuRep.m_bEbx7[30]; }
 		static bool								AVX512VL() { return m_iiCpuRep.m_bEbx7[31]; }
-
 		static bool								AVX512BF16() { return m_iiCpuRep.m_bEax7_1[5]; }
-
-		static bool								AVX_VNNI() { return m_iiCpuRep.m_iNumIds >= 7 && m_iiCpuRep.m_bEbx7_1[11];  }
+		static bool								AVX_VNNI() { return m_iiCpuRep.m_bEbx7_1[11];  }
 
 		static bool								PREFETCHWT1() { return m_iiCpuRep.m_bEcx7[0]; }
 
@@ -288,7 +287,7 @@ namespace nn9 {
 	 * Description: Detects the processor feature set.
 	 */
 	class FeatureSet {
-	public:
+	public :
 		// General
 		static std::string						Vendor() {
 			static std::string sVendor = GetSysctlString( "machdep.cpu.vendor" );
@@ -363,11 +362,10 @@ namespace nn9 {
         static constexpr  bool					AVX512ER() { return false; }
         static constexpr  bool					AVX512CD() { return false; }
         static constexpr  bool					SHA() { return false; }
+
         static constexpr  bool					AVX512BW() { return false; }
         static constexpr  bool					AVX512VL() { return false; }
-
         static constexpr  bool					AVX512BF16() { return false; }
-
 		static constexpr  bool					AVX_VNNI() { return false; }
 
         static constexpr  bool					PREFETCHWT1() { return false; }
@@ -385,7 +383,7 @@ namespace nn9 {
         static constexpr  bool					_3DNOWEXT() { return false; }
         static constexpr  bool					_3DNOW() { return false; }
 
-	private:
+	private :
 		static std::string						GetSysctlString( const char * _pcName ) {
 			size_t sSize = 0;
 			::sysctlbyname( _pcName, nullptr, &sSize, nullptr, 0 );

@@ -23,6 +23,9 @@ namespace nn9 {
 	BufferManager::~BufferManager() {
 		{
 			std::unique_lock<std::mutex> ulLock( m_mMutex );
+			if ( m_ui64TotalMemory != 0 ) {
+				std::wcout << L"BufferManager Warning: " << m_ui64TotalMemory << L" still-allocated bytes." << std::endl;
+			}
 			if ( m_vBuffers.size() ) {
 				std::wcout << L"BufferManager Warning: " << m_vBuffers.size() << L" unreleased buffers." << std::endl;
 			}

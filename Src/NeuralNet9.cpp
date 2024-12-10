@@ -1,6 +1,8 @@
 // NeuralNet9.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
 
+#include "Ops/NN9Init.h"
+#include "Ops/NNMath.h"
 #include "Utilities/NN9Utilities.h"
 #include <iostream>
 
@@ -16,7 +18,22 @@ int wmain( int _iArgC, wchar_t const * _wcpArgV[] ) {
 		nn9::Tensor tTensorTest( { 60, 28, 28 }, nn9::NN9_T_FLOAT, 33.2f );
 
 		auto vView = tTensorTest.FullView<float>();
-		auto vRange = tTensorTest.RangeView<float>( 28, 2 );
+		nn9::Init::OrthogonalInitialization( 60, 28 * 28, vView );
+		nn9::Math::Asinh( vView );
+		auto vRange = tTensorTest.RangeView<float>( 28, 200 );
+
+		NN9_ALIGN( 64 )
+		bfloat16_t bfBfloat[16];
+		NN9_ALIGN( 64 )
+		float fTmp[16], fTmp2[16], fTmp3[16];
+		for ( size_t I = 0; I < 16; ++I ) {
+			bfBfloat[I] = vView[I];
+			fTmp2[I] = bfBfloat[I];
+			fTmp3[I] = vView[I];
+		}
+		__m512 mFloats = nn9::bfloat16::load_bf16_to_fp32( reinterpret_cast<uint16_t *>(bfBfloat) );
+		_mm512_store_ps( fTmp, mFloats );
+		
 		{
 			auto v3d = tTensorTest.Full3dView<float>();
 			for ( size_t I = 0; I < vRange.size(); ++I ) {

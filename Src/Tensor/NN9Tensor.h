@@ -172,6 +172,16 @@ namespace nn9 {
 		size_t											Size( NN9_TYPE _tType ) const { return m_pbBuffer->Size( _tType ); }
 
 		/**
+		 * Gets the size of a dimension by index.  For a 1-D buffer, index must be 0 and the return will be the total number of elements in the
+		 *	buffer as interpreted as the original buffer type.  Example using a 3-D buffer with shape { 60000, 28, 1 }: DimSize(0)=1,
+		 *	DimSize(1)=28, and DimSize(2)=60000.
+		 * 
+		 * \param _sIdx The index of the dimension whose size is to be gotten.
+		 * \return Returns the size of the dimension (shape) by index.
+		 **/
+		size_t											DimSize( size_t _sIdx ) const { return m_vShape[_sIdx]; }
+
+		/**
 		 * Gets a view to the whole buffer.
 		 * 
 		 * \tparam _tType The type to which to interpret the buffer.
@@ -230,13 +240,13 @@ namespace nn9 {
 		}
 
 		/**
-		 * For a 1-D tensor, puts the full buffer view into a single vector entry.  For 3-D tensors, such that X is the flat first dimension
+		 * For a 1-D tensor, puts the full buffer view into nested vector entries.  For 3-D tensors, such that X is the flat first dimension
 		 *	and Y is the 2nd dimension, and Z is the 3rd dimension, puts the full buffer into views spread across vector entries.  The number
 		 *	of views will be the Z dimension with each of the Y dimensions and each view will have X items.
 		 * 
 		 * \throw If _DEBUG it will throw if the tensor shape is not 1-D or 3-D.  Also throws if _tType is a larger type than the tensor holds,
 		 *	as this will always cause a buffer overrun.
-		 * \return Returns an array of views, one view per 2nd dimension, each view with as many items as the 1st dimension.
+		 * \return Returns an array of arrays of views, each final vector containing views with as many items as the 1st dimension.
 		 **/
 		template <typename _tType>
 		std::vector<std::vector<View<_tType>>>			Full3dView() {
@@ -273,6 +283,62 @@ namespace nn9 {
 			return vRet;
 		}
 
+		/**
+		 * For a 1-D tensor, puts the full buffer view into nested vector entries.  For 4-D tensors, such that X is the flat first dimension
+		 *	and Y is the 2nd dimension, Z is the 3rd dimension, and W is the 4th dimension, puts the full buffer into views spread across vector
+		 *	entries.  The number of views will be the W dimension each with Z dimension with each of the Y dimensions and each view will have X items.
+		 * 
+		 * \throw If _DEBUG it will throw if the tensor shape is not 1-D or 4-D.  Also throws if _tType is a larger type than the tensor holds,
+		 *	as this will always cause a buffer overrun.
+		 * \return Returns an array of arrays of arrays of views, each final vector containing views with as many items as the 1st dimension.
+		 **/
+		template <typename _tType>
+		std::vector<std::vector<std::vector<View<_tType>>>>
+														Full4dView() {
+#ifdef _DEBUG
+			if ( m_vShape.size() != 4 && m_vShape.size() != 1 ) {
+				throw std::invalid_argument( "Tensor::Full2dView: Tensor must be either 1-D or 4-D." );
+			}
+#endif	// #ifdef _DEBUG
+			std::vector<std::vector<std::vector<View<_tType>>>> vRet;
+			if ( m_vShape.size() == 1 ) {
+				std::vector<View<_tType>> v2d;
+				v2d.reserve( 1 );
+				v2d.emplace_back( FullView<_tType>() );
+
+				std::vector<std::vector<View<_tType>>> v3d;
+				v3d.reserve( 1 );
+				v3d.emplace_back( std::move( v2d ) );
+
+				vRet.reserve( 1 );
+				// A 1-D buffer can be treated as a 4-D buffer with a single outer dimension.
+				vRet.emplace_back( std::move( v3d ) );
+				return vRet;
+			}
+			size_t s4dSize = m_vShape[m_vShape.size()-4];
+			size_t s3dSize = m_vShape[m_vShape.size()-3];
+			size_t s2dSize = m_vShape[m_vShape.size()-2];
+			size_t s1dSize = m_vShape[m_vShape.size()-1];
+
+			vRet.reserve( s4dSize );
+			
+			for ( size_t K = 0; K < s4dSize; ++K ) {
+				std::vector<std::vector<View<_tType>>> v3d;
+				v3d.reserve( s3dSize );
+				for ( size_t I = 0; I < s3dSize; ++I ) {
+					std::vector<View<_tType>> v2d;
+					v2d.reserve( s2dSize );
+					for ( size_t J = 0; J < s2dSize; ++J ) {
+						v2d.emplace_back( RangeView<_tType>( Flat( K, I, J, 0 ), s1dSize ) );
+					}
+					v3d.emplace_back( std::move( v2d ) );
+				}
+				vRet.emplace_back( std::move( v3d ) );
+			}
+
+			return vRet;
+		}
+
 
 
 	protected :
@@ -281,6 +347,8 @@ namespace nn9 {
 		std::vector<size_t>								m_vStride;						/**< Strides for each dimension. */
 		Buffer *										m_pbBuffer = nullptr;			/**< Pointer to the reference-counted buffer. */
 		size_t											m_sSize = 0;					/**< The total size of the buffer, in elements. */
+		float											m_fQuantizeScale = 1.0f;		/**< Quantize scale. */
+		float											m_fQuantizeZero = 0.0f;			/**< Quantize 0 point. */
 
 
 		// == Functions.

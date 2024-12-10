@@ -109,6 +109,12 @@
     <Filter Include="Header Files\Image\Little-CMS\src">
       <UniqueIdentifier>{3bf7696b-3804-4981-ad5f-8420cf2f4134}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Ops">
+      <UniqueIdentifier>{ad25d153-3492-4ea2-93a9-42bb0ed88d91}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Ops">
+      <UniqueIdentifier>{c14c5c63-217c-4cd7-a6ad-f7c6dfa108b9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\NeuralNet9.cpp">
@@ -343,6 +349,12 @@
     </ClInclude>
     <ClInclude Include="Src\Tensor\NN9View.h">
       <Filter>Header Files\Tensor</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Ops\NN9Init.h">
+      <Filter>Header Files\Ops</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Ops\NNMath.h">
+      <Filter>Header Files\Ops</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
