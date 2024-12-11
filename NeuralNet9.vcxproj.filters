@@ -240,6 +240,12 @@
     <ClCompile Include="Src\Buffers\NN9BufferManager.cpp">
       <Filter>Source Files\Buffers</Filter>
     </ClCompile>
+    <ClCompile Include="Src\Types\NN9BFloat16.cpp">
+      <Filter>Source Files\Types</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Types\NN9Float16.cpp">
+      <Filter>Source Files\Types</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Types\NN9BFloat16.h">
@@ -353,7 +359,7 @@
     <ClInclude Include="Src\Ops\NN9Init.h">
       <Filter>Header Files\Ops</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Ops\NNMath.h">
+    <ClInclude Include="Src\Ops\NN9Math.h">
       <Filter>Header Files\Ops</Filter>
     </ClInclude>
   </ItemGroup>

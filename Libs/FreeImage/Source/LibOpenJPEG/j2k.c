@@ -5423,7 +5423,7 @@ OPJ_BOOL opj_j2k_read_mcc (     opj_j2k_t *p_j2k,
                         p_header_data+=l_nb_bytes_by_comp;
 
                         if (l_tmp != j) {
-                                opj_event_msg(p_manager, EVT_WARNING, "Cannot take in charge collections with indix shuffle\n");
+                                opj_event_msg(p_manager, EVT_WARNING, "Cannot take in charge collections with index shuffle\n");
                                 return OPJ_TRUE;
                         }
                 }
@@ -5451,7 +5451,7 @@ OPJ_BOOL opj_j2k_read_mcc (     opj_j2k_t *p_j2k,
                         p_header_data+=l_nb_bytes_by_comp;
 
                         if (l_tmp != j) {
-                                opj_event_msg(p_manager, EVT_WARNING, "Cannot take in charge collections with indix shuffle\n");
+                                opj_event_msg(p_manager, EVT_WARNING, "Cannot take in charge collections with index shuffle\n");
                                 return OPJ_TRUE;
                         }
                 }

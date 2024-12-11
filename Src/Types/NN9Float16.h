@@ -16,6 +16,8 @@
 
 namespace nn9 {
 
+	class bfloat16;
+	
 	/**
 	 * Class float16
 	 * \brief A software implementation of float16.
@@ -27,6 +29,7 @@ namespace nn9 {
 		constexpr float16() {}
 		//constexpr explicit float16( uint16_t _ui16Bits ) : m_u16Value( _ui16Bits ) {}
 
+		float16( bfloat16 _bfval );
 		float16( float _fVal ) :
 			m_u16Value( FloatToUint16( _fVal ) ) {
 		}
@@ -50,6 +53,17 @@ namespace nn9 {
 		 **/
 		inline operator							float() const {
 			return Uint16ToFloat( m_u16Value );
+		}
+
+		/**
+		 * Casts to an integer type.
+		 * 
+		 * \tparam T The integer type to which to cast this object.
+		 * \return Returns an integer value of the float16.
+		 **/
+		template <typename T, typename = std::enable_if_t<std::is_integral<T>::value>>
+		inline operator							T() const {
+			return T( static_cast<float>(*this) );
 		}
 
 

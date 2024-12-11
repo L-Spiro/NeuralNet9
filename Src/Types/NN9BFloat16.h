@@ -15,7 +15,10 @@
 #include <immintrin.h>
 #include <type_traits>
 
+
 namespace nn9 {
+
+	class float16;
 
 	/**
 	 * Class bfloat16
@@ -26,11 +29,23 @@ namespace nn9 {
 	class bfloat16 {
 	public :
 		constexpr bfloat16() {}
-		//constexpr explicit bfloat16( uint16_t _ui16Bits ) : m_u16Value( _ui16Bits ) {}
+		
+		bfloat16( double _dValue ) {
+			// Truncate the float to 16-bit by discarding the lower 16 bits.
+			float fValue = float( _dValue );
+			// Benchmark against (1000000*5000) values.
+			// Hi:	7.06102
+			// Lo:	6.86468
+			// Av:	6.885046666666666
+			struct s {
+				uint16_t						ui16Low;
+				uint16_t						ui16High;
+			};
+			m_u16Value = (*reinterpret_cast<s *>(&fValue)).ui16High;
+		}
 
 		bfloat16( float _fValue ) {
 			// Truncate the float to 16-bit by discarding the lower 16 bits.
-#if 1
 			// Benchmark against (1000000*5000) values.
 			// Hi:	7.06102
 			// Lo:	6.86468
@@ -40,42 +55,8 @@ namespace nn9 {
 				uint16_t						ui16High;
 			};
 			m_u16Value = (*reinterpret_cast<s *>(&_fValue)).ui16High;
-			/*
-			 *	00007FF62AB83E6E  movd        ebx,xmm0  
-			 *	00007FF62AB83E72  shr         ebx,10h 
-			 */
-#elif 0
-			// Benchmark against (1000000*5000) values.
-			// Hi:	6.99877
-			// Lo:	6.88991
-			// Av:	6.955083333333333
-			union {
-				struct {
-					uint16_t					ui16Low;
-					uint16_t					ui16High;
-				};
-				float							fVal;
-			} uTmp;
-			uTmp.fVal = _fValue;
-			m_u16Value = uTmp.ui16High;
-
-			/*
-			 *	00007FF6609F3E6E  movd        ebx,xmm0  
-			 *	00007FF6609F3E72  shr         ebx,10h  
-			 */
-#else
-			// Benchmark against (1000000*5000) values.
-			// Hi:	6.92265
-			// Lo:	6.81515
-			// Av:	6.89350333333333
-			m_u16Value = static_cast<uint16_t>((*reinterpret_cast<uint32_t *>(&_fValue)) >> 16);
-
-			/*
-			 *	00007FF6609F3E6E  movd        ebx,xmm0  
-			 *	00007FF6609F3E72  shr         ebx,10h  
-			 */
-#endif
 		}
+		bfloat16( float16 );
 
 		template <typename T, typename = std::enable_if_t<std::is_integral<T>::value>>
 		bfloat16( T tVal ) {
@@ -123,6 +104,17 @@ namespace nn9 {
 		 **/
 		inline operator							double() const {
 			return static_cast<float>(*this);
+		}
+
+		/**
+		 * Casts to an integer type.
+		 * 
+		 * \tparam T The integer type to which to cast this object.
+		 * \return Returns an integer value of the bfloat16.
+		 **/
+		template <typename T, typename = std::enable_if_t<std::is_integral<T>::value>>
+		inline operator							T() const {
+			return T( static_cast<float>(*this) );
 		}
 
 
@@ -1761,7 +1753,10 @@ namespace nn9 {
 		__m256i mBF16 = _mm256_shuffle_epi8( mIntRepr, mask );
 
 		// Now mBF16 contains 8 consecutive 16-bit values that can be directly stored.
-		_mm256_storeu_si256( reinterpret_cast<__m256i *>(_pDst), mBF16 );
+		//_mm256_storeu_si256( reinterpret_cast<__m256i *>(_pDst), mBF16 );
+
+		__m128i mBF16_low = _mm256_extractf128_si256( mBF16, 0 );
+		_mm_storeu_si128( reinterpret_cast<__m128i *>(_pDst), mBF16_low );
 	}
 
 	/**
@@ -1801,7 +1796,10 @@ namespace nn9 {
 		__m256i mBF16 = _mm256_shuffle_epi8( mIntRepr, mask );
 
 		// Now mBF16 contains 8 consecutive 16-bit values that can be directly stored.
-		_mm256_store_si256( reinterpret_cast<__m256i *>(_pDst), mBF16 );
+		//_mm256_store_si256( reinterpret_cast<__m256i *>(_pDst), mBF16 );
+
+		__m128i mBF16_low = _mm256_extractf128_si256( mBF16, 0 );
+		_mm_store_si128( reinterpret_cast<__m128i *>(_pDst), mBF16_low );
 	}
 
 	/**

@@ -39,6 +39,13 @@ namespace nn9 {
 
 		// == Functions.
 		/**
+		 * Gets the original type assigned to the buffer.
+		 * 
+		 * \return Returns the original type assigned to the buffer.
+		 **/
+		NN9_TYPE																	Type() const { return m_tType; }
+
+		/**
 		 * Increases the reference count.
 		 **/
 		virtual void																IncRef() {
@@ -100,20 +107,20 @@ namespace nn9 {
 		}
 
 		/**
-		 * Gets a view of a part of the buffer.  If _DEBUG, throws if any part of the requested range is out of range of the buffer.
+		 * Gets a view of a part of the buffer.  If NN9_SAFETY_CHECK, throws if any part of the requested range is out of range of the buffer.
 		 * 
 		 * \param _sStart the starting index for the view.
 		 * \param _sTotal The total number of elements to map into the view.
-		 * \throw If _DEBUG, it will throw if the requested range extends beyond the valid buffer range.
+		 * \throw If NN9_SAFETY_CHECK, it will throw if the requested range extends beyond the valid buffer range.
 		 * \return Returns a view of the given range within the buffer.
 		 **/
 		template <typename _tType>
 		View<_tType>																RangeView( size_t _sStart, size_t _sTotal ) {
-#ifdef _DEBUG
+#ifdef NN9_SAFETY_CHECK
 			if ( _sStart + _sTotal > Size<_tType>() ) {
 				throw std::out_of_range( "Buffer::RangeView: Range is out of bounds." );
 			}
-#endif	// #ifdef _DEBUG
+#endif	// #ifdef NN9_SAFETY_CHECK
 			return View<_tType>( reinterpret_cast<_tType *>(m_vBuffer.data()) + _sStart, _sTotal, this );
 		}
 

@@ -47,14 +47,6 @@ namespace nn9 {
 		NN9_T_OTHER,
 	};
 
-	/** Layer types. */
-	/*enum NN9_LAYER_TYPE {
-		NN9_LT_INVALID,
-		NN9_LT_INPUT,
-		NN9_LT_HIDDEN,
-		NN9_LT_POOL,
-	};*/
-
 
 	/**
 	 * Class Types
@@ -72,6 +64,16 @@ namespace nn9 {
 		 * \return Returns the size of the given type or 0.
 		 **/
 		static inline constexpr size_t									SizeOf( NN9_TYPE _tType );
+
+		/**
+		 * Gets the NN9_TYPE based off the actual C++ type.
+		 * 
+		 * \tparam _tType The type to convert into an NN9_TYPE value.
+		 * \throw Throws if the given type is not recognized.
+		 * \return Returns the NN9_TYPE value corresponding to the given native C++ type.
+		 **/
+		template <typename _tType>
+		static inline constexpr NN9_TYPE								ToType();
 	};
 
 
@@ -114,6 +116,38 @@ namespace nn9 {
 			case NN9_T_QUINT8 : { return sizeof( uint8_t ); }
 		}
 		return 0;
+	}
+
+	/**
+	 * Gets the NN9_TYPE based off the actual C++ type.
+	 * 
+	 * \tparam _tType The type to convert into an NN9_TYPE value.
+	 * \throw Throws if the given type is not recognized.
+	 * \return Returns the NN9_TYPE value corresponding to the given native C++ type.
+	 **/
+	template <typename _tType>
+	inline constexpr NN9_TYPE Types::ToType() {
+		if constexpr ( std::is_same<_tType, bfloat16_t>::value ) { return NN9_T_BFLOAT16; }
+		if constexpr ( std::is_same<_tType, nn9::float16>::value ) { return NN9_T_FLOAT16; }
+		if constexpr ( std::is_same<_tType, float>::value ) { return NN9_T_FLOAT; }
+		if constexpr ( std::is_same<_tType, double>::value ) { return NN9_T_DOUBLE; }
+
+		if constexpr ( std::is_same<_tType, uint8_t>::value ) { return NN9_T_UINT8; }
+		if constexpr ( std::is_same<_tType, uint16_t>::value ) { return NN9_T_UINT16; }
+		if constexpr ( std::is_same<_tType, uint32_t>::value ) { return NN9_T_UINT32; }
+		if constexpr ( std::is_same<_tType, uint64_t>::value ) { return NN9_T_UINT64; }
+
+		if constexpr ( std::is_same<_tType, int8_t>::value ) { return NN9_T_INT8; }
+		if constexpr ( std::is_same<_tType, int16_t>::value ) { return NN9_T_INT16; }
+		if constexpr ( std::is_same<_tType, int32_t>::value ) { return NN9_T_INT32; }
+		if constexpr ( std::is_same<_tType, int64_t>::value ) { return NN9_T_INT64; }
+
+		if constexpr ( std::is_same<_tType, bool>::value ) { return NN9_T_BOOL; }
+
+		if constexpr ( std::is_same<_tType, std::complex<float>>::value ) { return NN9_T_COMPLEX64; }
+		if constexpr ( std::is_same<_tType, std::complex<double>>::value ) { return NN9_T_COMPLEX128; }
+
+		throw std::runtime_error( "Types::ToType: Unrecognized type." );
 	}
 
 }	// namespace nn9

@@ -41,7 +41,7 @@ namespace nn9 {
 			m_prcRef( _vOther.m_prcRef ) {
 			if ( m_prcRef ) { m_prcRef->IncRef(); }
 		}
-		View( View<_tDataType> && _vOther ) :
+		View( View<_tDataType> && _vOther ) noexcept :
 			m_pData( _vOther.m_pData ), 
 			m_sTotal( _vOther.m_sTotal ),
 			m_prcRef( _vOther.m_prcRef ) {
@@ -55,7 +55,7 @@ namespace nn9 {
 
 
 		// == Types.
-		typedef _tDataType										value_type;							/**< std::vector<>-compatible value_type definition. */
+		typedef _tDataType										value_type;										/**< std::vector<>-compatible value_type definition. */
 
 		/**
 		 * Class Iterator
@@ -273,14 +273,14 @@ namespace nn9 {
 		 * 
 		 * \param _sIdx The position of the element.
 		 * \return A reference to the element at _sIdx.
-		 * \throws std::out_of_range if _sIdx is outside the valid range (_DEBUG only).
+		 * \throws If NN9_SAFETY_CHECK, std::out_of_range is thrown if _sIdx is outside the valid range.
 		 */
 		_tDataType &											operator [] ( std::size_t _sIdx ) {
-#ifdef _DEBUG
+#ifdef NN9_SAFETY_CHECK
 			if ( _sIdx >= m_sTotal ) {
 				throw std::out_of_range( "View::[]: Index out of range." );
 			}
-#endif	// #ifdef _DEBUG
+#endif	// #ifdef NN9_SAFETY_CHECK
 			return m_pData[_sIdx];
 		}
 
@@ -289,14 +289,14 @@ namespace nn9 {
 		 * 
 		 * \param _sIdx The position of the element.
 		 * \return A const reference to the element at _sIdx.
-		 * \throws std::out_of_range if _sIdx is outside the valid range (_DEBUG only).
+		 * \throws If NN9_SAFETY_CHECK, std::out_of_range is thrown if _sIdx is outside the valid range.
 		 */
 		const _tDataType &										operator [] ( std::size_t _sIdx ) const {
-#ifdef _DEBUG
+#ifdef NN9_SAFETY_CHECK
 			if ( _sIdx >= m_sTotal ) {
 				throw std::out_of_range( "View::[]: Index out of range." );
 			}
-#endif	// #ifdef _DEBUG
+#endif	// #ifdef NN9_SAFETY_CHECK
 			return m_pData[_sIdx];
 		}
 
