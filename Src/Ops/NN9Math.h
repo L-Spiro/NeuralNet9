@@ -9,6 +9,7 @@
 #pragma once
 
 #include "../Types/NN9BFloat16.h"
+#include "../Types/NN9Float16.h"
 #include "../Utilities/NN9Utilities.h"
 
 #include <cmath>
@@ -60,6 +61,15 @@ namespace nn9 {
 		static constexpr bool										IsBFloat16() { return std::is_same<T, bfloat16_t>::value; }
 
 		/**
+		 * A constexpr function that checks if T is a nn9::float16 type.
+		 *
+		 * \tparam T The type to check.
+		 * \return true if T is nn9::float16, false otherwise.
+		 */
+		template <typename T>
+		static constexpr bool										IsFloat16() { return std::is_same<T, nn9::float16>::value; }
+
+		/**
 		 * \brief A constexpr function that checks if T is an unsigned type.
 		 *
 		 * This relies on std::is_unsigned, which checks if T is an unsigned integral type.
@@ -88,13 +98,13 @@ namespace nn9 {
 			if constexpr ( IsBFloat16<ValueType>() ) {
 				if ( Utilities::IsAvx512FSupported() ) {
 					// Decode 16 bfloat16_t's at once for super-fast processing.
-					bfloat16_t * _pSrc = reinterpret_cast<bfloat16_t *>(&_vValues[0]);
+					bfloat16_t * pSrc = reinterpret_cast<bfloat16_t *>(&_vValues[0]);
 					size_t sSize = _vValues.size();
 					NN9_ALIGN( 64 )
 					float fTmp[16];
-					// Alignment.
+
 					while ( sSize >= 16 ) {
-						__m512 mSrc = bfloat16::loadu_bf16_to_fp32_16( reinterpret_cast<uint16_t *>(_pSrc) );
+						__m512 mSrc = bfloat16::loadu_bf16_to_fp32_16( reinterpret_cast<uint16_t *>(pSrc) );
 						_mm512_store_ps( fTmp, mSrc );
 
 						fTmp[0] = float( _fFunc( fTmp[0] ) );
@@ -116,13 +126,54 @@ namespace nn9 {
 
 						sSize -= 16;
 						__m512 mDst = _mm512_load_ps( fTmp );
-						bfloat16::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pSrc), mDst );
-						_pSrc += 16;
+						bfloat16::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(pSrc), mDst );
+						pSrc += 16;
 					}
-
 					while ( sSize ) {
-						(*reinterpret_cast<bfloat16_t *>(_pSrc)) = _tType::value_type( _fFunc( (*reinterpret_cast<bfloat16_t *>(_pSrc)) ) );
-						++_pSrc;
+						(*reinterpret_cast<bfloat16_t *>(pSrc)) = _tType::value_type( _fFunc( (*reinterpret_cast<bfloat16_t *>(pSrc)) ) );
+						++pSrc;
+						--sSize;
+					}
+					return _vValues;
+				}
+			}
+			if constexpr ( IsFloat16<ValueType>() ) {
+				if ( Utilities::IsAvx512FSupported() ) {
+					nn9::float16 * pSrc = reinterpret_cast<nn9::float16 *>(&_vValues[0]);
+					size_t sSize = _vValues.size();
+					NN9_ALIGN( 64 )
+					float fTmp[16];
+
+					while ( sSize >= 16 ) {
+						__m512 mVal = nn9::float16::Convert16Float16ToFloat32( pSrc );
+						_mm512_store_ps( fTmp, mVal );
+
+						fTmp[0] = float( _fFunc( fTmp[0] ) );
+						fTmp[1] = float( _fFunc( fTmp[1] ) );
+						fTmp[2] = float( _fFunc( fTmp[2] ) );
+						fTmp[3] = float( _fFunc( fTmp[3] ) );
+						fTmp[4] = float( _fFunc( fTmp[4] ) );
+						fTmp[5] = float( _fFunc( fTmp[5] ) );
+						fTmp[6] = float( _fFunc( fTmp[6] ) );
+						fTmp[7] = float( _fFunc( fTmp[7] ) );
+						fTmp[8] = float( _fFunc( fTmp[8] ) );
+						fTmp[9] = float( _fFunc( fTmp[9] ) );
+						fTmp[10] = float( _fFunc( fTmp[10] ) );
+						fTmp[11] = float( _fFunc( fTmp[11] ) );
+						fTmp[12] = float( _fFunc( fTmp[12] ) );
+						fTmp[13] = float( _fFunc( fTmp[13] ) );
+						fTmp[14] = float( _fFunc( fTmp[14] ) );
+						fTmp[15] = float( _fFunc( fTmp[15] ) );
+
+						__m512 mDst = _mm512_load_ps( fTmp );
+						nn9::float16::Convert16Float32ToFloat16( pSrc, mDst );
+
+						pSrc += 16;
+						sSize -= 16;
+					}
+					while ( sSize ) {
+						(*pSrc) = _tType::value_type( _fFunc( (*pSrc) ) );
+						++pSrc;
 						--sSize;
 					}
 					return _vValues;
@@ -134,13 +185,13 @@ namespace nn9 {
 			if constexpr ( IsBFloat16<ValueType>() ) {
 				if ( Utilities::IsAvx2Supported() ) {
 					// Decode 8 bfloat16_t's at once for super-fast processing.
-					bfloat16_t * _pSrc = reinterpret_cast<bfloat16_t *>(&_vValues[0]);
+					bfloat16_t * pSrc = reinterpret_cast<bfloat16_t *>(&_vValues[0]);
 					size_t sSize = _vValues.size();
 					NN9_ALIGN( 32 )
 					float fTmp[8];
 
 					while ( sSize >= 8 ) {
-						__m256 mSrc = bfloat16::loadu_bf16_to_fp32_8( reinterpret_cast<uint16_t *>(_pSrc) );
+						__m256 mSrc = bfloat16::loadu_bf16_to_fp32_8( reinterpret_cast<uint16_t *>(pSrc) );
 						_mm256_store_ps( fTmp, mSrc );
 
 						fTmp[0] = float( _fFunc( fTmp[0] ) );
@@ -154,12 +205,46 @@ namespace nn9 {
 
 						sSize -= 8;
 						__m256 mDst = _mm256_load_ps( fTmp );
-						bfloat16::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pSrc), mDst );
-						_pSrc += 8;
+						bfloat16::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(pSrc), mDst );
+						pSrc += 8;
 					}
 					while ( sSize ) {
-						(*reinterpret_cast<bfloat16_t *>(_pSrc)) = _tType::value_type( _fFunc( (*reinterpret_cast<bfloat16_t *>(_pSrc)) ) );
-						++_pSrc;
+						(*reinterpret_cast<bfloat16_t *>(pSrc)) = _tType::value_type( _fFunc( (*reinterpret_cast<bfloat16_t *>(pSrc)) ) );
+						++pSrc;
+						--sSize;
+					}
+					return _vValues;
+				}
+			}
+			if constexpr ( IsFloat16<ValueType>() ) {
+				if ( Utilities::IsAvx2Supported() ) {
+					nn9::float16 * pSrc = reinterpret_cast<nn9::float16 *>(&_vValues[0]);
+					size_t sSize = _vValues.size();
+					NN9_ALIGN( 32 )
+					float fTmp[8];
+
+					while ( sSize >= 8 ) {
+						__m256 mVal = nn9::float16::Convert8Float16ToFloat32( pSrc );
+						_mm256_store_ps( fTmp, mVal );
+
+						fTmp[0] = float( _fFunc( fTmp[0] ) );
+						fTmp[1] = float( _fFunc( fTmp[1] ) );
+						fTmp[2] = float( _fFunc( fTmp[2] ) );
+						fTmp[3] = float( _fFunc( fTmp[3] ) );
+						fTmp[4] = float( _fFunc( fTmp[4] ) );
+						fTmp[5] = float( _fFunc( fTmp[5] ) );
+						fTmp[6] = float( _fFunc( fTmp[6] ) );
+						fTmp[7] = float( _fFunc( fTmp[7] ) );
+
+						__m256 mDst = _mm256_load_ps( fTmp );
+						nn9::float16::Convert8Float32ToFloat16( pSrc, mDst );
+
+						pSrc += 8;
+						sSize -= 8;
+					}
+					while ( sSize ) {
+						(*pSrc) = _tType::value_type( _fFunc( (*pSrc) ) );
+						++pSrc;
 						--sSize;
 					}
 					return _vValues;
@@ -195,15 +280,14 @@ namespace nn9 {
 			if constexpr ( IsBFloat16<ValueTypeIn>() ) {
 				if ( Utilities::IsAvx512FSupported() ) {
 					// Decode 16 bfloat16_t's at once for super-fast processing.
-					const uint16_t * _pSrc = reinterpret_cast<const uint16_t *>(&_vIn[0]);
-					ValueTypeOut * _pDst = reinterpret_cast<ValueTypeOut *>(&_vOut[0]);
+					const uint16_t * pSrc = reinterpret_cast<const uint16_t *>(&_vIn[0]);
+					ValueTypeOut * pDst = reinterpret_cast<ValueTypeOut *>(&_vOut[0]);
 					size_t sSize = _vIn.size();
 					NN9_ALIGN( 64 )
 					float fTmp[16];
 
-					// Alignment.
 					while ( sSize >= 16 ) {
-						__m512 mSrc = bfloat16::loadu_bf16_to_fp32_16( _pSrc );
+						__m512 mSrc = bfloat16::loadu_bf16_to_fp32_16( pSrc );
 						_mm512_store_ps( fTmp, mSrc );
 
 						if constexpr ( IsBFloat16<ValueTypeOut>() ) {
@@ -225,36 +309,137 @@ namespace nn9 {
 							fTmp[15] = _fFunc( fTmp[15] );
 
 							__m512 mDst = _mm512_load_ps( fTmp );
-							bfloat16::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pDst), mDst );
+							bfloat16::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(pDst), mDst );
+						}
+						else if constexpr ( IsFloat16<ValueTypeOut>() ) {
+							fTmp[0] = _fFunc( fTmp[0] );
+							fTmp[1] = _fFunc( fTmp[1] );
+							fTmp[2] = _fFunc( fTmp[2] );
+							fTmp[3] = _fFunc( fTmp[3] );
+							fTmp[4] = _fFunc( fTmp[4] );
+							fTmp[5] = _fFunc( fTmp[5] );
+							fTmp[6] = _fFunc( fTmp[6] );
+							fTmp[7] = _fFunc( fTmp[7] );
+							fTmp[8] = _fFunc( fTmp[8] );
+							fTmp[9] = _fFunc( fTmp[9] );
+							fTmp[10] = _fFunc( fTmp[10] );
+							fTmp[11] = _fFunc( fTmp[11] );
+							fTmp[12] = _fFunc( fTmp[12] );
+							fTmp[13] = _fFunc( fTmp[13] );
+							fTmp[14] = _fFunc( fTmp[14] );
+							fTmp[15] = _fFunc( fTmp[15] );
+
+							__m512 mDst = _mm512_load_ps( fTmp );
+							nn9::float16::Convert16Float32ToFloat16( reinterpret_cast<nn9::float16 *>(pDst), mDst );
 						}
 						else {
-							_pDst[0] = ValueTypeOut( _fFunc( fTmp[0] ) );
-							_pDst[1] = ValueTypeOut( _fFunc( fTmp[1] ) );
-							_pDst[2] = ValueTypeOut( _fFunc( fTmp[2] ) );
-							_pDst[3] = ValueTypeOut( _fFunc( fTmp[3] ) );
-							_pDst[4] = ValueTypeOut( _fFunc( fTmp[4] ) );
-							_pDst[5] = ValueTypeOut( _fFunc( fTmp[5] ) );
-							_pDst[6] = ValueTypeOut( _fFunc( fTmp[6] ) );
-							_pDst[7] = ValueTypeOut( _fFunc( fTmp[7] ) );
-							_pDst[8] = ValueTypeOut( _fFunc( fTmp[8] ) );
-							_pDst[9] = ValueTypeOut( _fFunc( fTmp[9] ) );
-							_pDst[10] = ValueTypeOut( _fFunc( fTmp[10] ) );
-							_pDst[11] = ValueTypeOut( _fFunc( fTmp[11] ) );
-							_pDst[12] = ValueTypeOut( _fFunc( fTmp[12] ) );
-							_pDst[13] = ValueTypeOut( _fFunc( fTmp[13] ) );
-							_pDst[14] = ValueTypeOut( _fFunc( fTmp[14] ) );
-							_pDst[15] = ValueTypeOut( _fFunc( fTmp[15] ) );
+							pDst[0] = ValueTypeOut( _fFunc( fTmp[0] ) );
+							pDst[1] = ValueTypeOut( _fFunc( fTmp[1] ) );
+							pDst[2] = ValueTypeOut( _fFunc( fTmp[2] ) );
+							pDst[3] = ValueTypeOut( _fFunc( fTmp[3] ) );
+							pDst[4] = ValueTypeOut( _fFunc( fTmp[4] ) );
+							pDst[5] = ValueTypeOut( _fFunc( fTmp[5] ) );
+							pDst[6] = ValueTypeOut( _fFunc( fTmp[6] ) );
+							pDst[7] = ValueTypeOut( _fFunc( fTmp[7] ) );
+							pDst[8] = ValueTypeOut( _fFunc( fTmp[8] ) );
+							pDst[9] = ValueTypeOut( _fFunc( fTmp[9] ) );
+							pDst[10] = ValueTypeOut( _fFunc( fTmp[10] ) );
+							pDst[11] = ValueTypeOut( _fFunc( fTmp[11] ) );
+							pDst[12] = ValueTypeOut( _fFunc( fTmp[12] ) );
+							pDst[13] = ValueTypeOut( _fFunc( fTmp[13] ) );
+							pDst[14] = ValueTypeOut( _fFunc( fTmp[14] ) );
+							pDst[15] = ValueTypeOut( _fFunc( fTmp[15] ) );
 						}
 
 						sSize -= 16;
-						_pSrc += 16;
-						_pDst += 16;
+						pSrc += 16;
+						pDst += 16;
 					}
-
 					while ( sSize ) {
-						(*reinterpret_cast<bfloat16_t *>(_pDst)) = _tTypeIn::value_type( _fFunc( (*reinterpret_cast<const bfloat16_t *>(_pSrc)) ) );
-						++_pSrc;
-						++_pDst;
+						(*reinterpret_cast<bfloat16_t *>(pDst++)) = _tTypeIn::value_type( _fFunc( (*reinterpret_cast<const bfloat16_t *>(pSrc++)) ) );
+						--sSize;
+					}
+					return _vOut;
+				}
+			}
+			if constexpr ( IsFloat16<ValueTypeIn>() ) {
+				if ( Utilities::IsAvx512FSupported() ) {
+					nn9::float16 * pSrc = reinterpret_cast<nn9::float16 *>(&_vIn[0]);
+					ValueTypeOut * pDst = reinterpret_cast<ValueTypeOut *>(&_vOut[0]);
+					size_t sSize = _vIn.size();
+					NN9_ALIGN( 64 )
+					float fTmp[16];
+
+					while ( sSize >= 16 ) {
+						__m512 mVal = nn9::float16::Convert16Float16ToFloat32( pSrc );
+						_mm512_store_ps( fTmp, mVal );
+
+						if constexpr ( IsBFloat16<ValueTypeOut>() ) {
+							fTmp[0] = _fFunc( fTmp[0] );
+							fTmp[1] = _fFunc( fTmp[1] );
+							fTmp[2] = _fFunc( fTmp[2] );
+							fTmp[3] = _fFunc( fTmp[3] );
+							fTmp[4] = _fFunc( fTmp[4] );
+							fTmp[5] = _fFunc( fTmp[5] );
+							fTmp[6] = _fFunc( fTmp[6] );
+							fTmp[7] = _fFunc( fTmp[7] );
+							fTmp[8] = _fFunc( fTmp[8] );
+							fTmp[9] = _fFunc( fTmp[9] );
+							fTmp[10] = _fFunc( fTmp[10] );
+							fTmp[11] = _fFunc( fTmp[11] );
+							fTmp[12] = _fFunc( fTmp[12] );
+							fTmp[13] = _fFunc( fTmp[13] );
+							fTmp[14] = _fFunc( fTmp[14] );
+							fTmp[15] = _fFunc( fTmp[15] );
+
+							__m512 mDst = _mm512_load_ps( fTmp );
+							bfloat16::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(pDst), mDst );
+						}
+						else if constexpr ( IsFloat16<ValueTypeOut>() ) {
+							fTmp[0] = _fFunc( fTmp[0] );
+							fTmp[1] = _fFunc( fTmp[1] );
+							fTmp[2] = _fFunc( fTmp[2] );
+							fTmp[3] = _fFunc( fTmp[3] );
+							fTmp[4] = _fFunc( fTmp[4] );
+							fTmp[5] = _fFunc( fTmp[5] );
+							fTmp[6] = _fFunc( fTmp[6] );
+							fTmp[7] = _fFunc( fTmp[7] );
+							fTmp[8] = _fFunc( fTmp[8] );
+							fTmp[9] = _fFunc( fTmp[9] );
+							fTmp[10] = _fFunc( fTmp[10] );
+							fTmp[11] = _fFunc( fTmp[11] );
+							fTmp[12] = _fFunc( fTmp[12] );
+							fTmp[13] = _fFunc( fTmp[13] );
+							fTmp[14] = _fFunc( fTmp[14] );
+							fTmp[15] = _fFunc( fTmp[15] );
+
+							__m512 mDst = _mm512_load_ps( fTmp );
+							nn9::float16::Convert16Float32ToFloat16( reinterpret_cast<nn9::float16 *>(pDst), mDst );
+						}
+						else {
+							pDst[0] = ValueTypeOut( _fFunc( fTmp[0] ) );
+							pDst[1] = ValueTypeOut( _fFunc( fTmp[1] ) );
+							pDst[2] = ValueTypeOut( _fFunc( fTmp[2] ) );
+							pDst[3] = ValueTypeOut( _fFunc( fTmp[3] ) );
+							pDst[4] = ValueTypeOut( _fFunc( fTmp[4] ) );
+							pDst[5] = ValueTypeOut( _fFunc( fTmp[5] ) );
+							pDst[6] = ValueTypeOut( _fFunc( fTmp[6] ) );
+							pDst[7] = ValueTypeOut( _fFunc( fTmp[7] ) );
+							pDst[8] = ValueTypeOut( _fFunc( fTmp[8] ) );
+							pDst[9] = ValueTypeOut( _fFunc( fTmp[9] ) );
+							pDst[10] = ValueTypeOut( _fFunc( fTmp[10] ) );
+							pDst[11] = ValueTypeOut( _fFunc( fTmp[11] ) );
+							pDst[12] = ValueTypeOut( _fFunc( fTmp[12] ) );
+							pDst[13] = ValueTypeOut( _fFunc( fTmp[13] ) );
+							pDst[14] = ValueTypeOut( _fFunc( fTmp[14] ) );
+							pDst[15] = ValueTypeOut( _fFunc( fTmp[15] ) );
+						}
+
+						pSrc += 16;
+						sSize -= 16;
+					}
+					while ( sSize ) {
+						(*pDst++) = _tTypeIn::value_type( _fFunc( (*pSrc++) ) );
 						--sSize;
 					}
 					return _vOut;
@@ -266,15 +451,14 @@ namespace nn9 {
 			if constexpr ( IsBFloat16<ValueTypeIn>() ) {
 				if ( Utilities::IsAvx2Supported() ) {
 					// Decode 8 bfloat16_t's at once for super-fast processing.
-					const uint16_t * _pSrc = reinterpret_cast<const uint16_t *>(&_vIn[0]);
-					ValueTypeOut * _pDst = reinterpret_cast<ValueTypeOut *>(&_vOut[0]);
+					const uint16_t * pSrc = reinterpret_cast<const uint16_t *>(&_vIn[0]);
+					ValueTypeOut * pDst = reinterpret_cast<ValueTypeOut *>(&_vOut[0]);
 					size_t sSize = _vIn.size();
 					NN9_ALIGN( 32 )
 					float fTmp[8];
-					
-					// Alignment.
+
 					while ( sSize >= 8 ) {
-						__m256 mSrc = bfloat16::loadu_bf16_to_fp32_8( _pSrc );
+						__m256 mSrc = bfloat16::loadu_bf16_to_fp32_8( pSrc );
 						_mm256_store_ps( fTmp, mSrc );
 
 						if constexpr ( IsBFloat16<ValueTypeOut>() ) {
@@ -288,28 +472,97 @@ namespace nn9 {
 							fTmp[7] = _fFunc( fTmp[7] );
 
 							__m256 mDst = _mm256_load_ps( fTmp );
-							bfloat16::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pDst), mDst );
+							bfloat16::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(pDst), mDst );
+						}
+						else if constexpr ( IsFloat16<ValueTypeOut>() ) {
+							fTmp[0] = _fFunc( fTmp[0] );
+							fTmp[1] = _fFunc( fTmp[1] );
+							fTmp[2] = _fFunc( fTmp[2] );
+							fTmp[3] = _fFunc( fTmp[3] );
+							fTmp[4] = _fFunc( fTmp[4] );
+							fTmp[5] = _fFunc( fTmp[5] );
+							fTmp[6] = _fFunc( fTmp[6] );
+							fTmp[7] = _fFunc( fTmp[7] );
+
+							__m256 mDst = _mm256_load_ps( fTmp );
+							nn9::float16::Convert8Float32ToFloat16( reinterpret_cast<nn9::float16 *>(pDst), mDst );
 						}
 						else {
-							_pDst[0] = ValueTypeOut( _fFunc( fTmp[0] ) );
-							_pDst[1] = ValueTypeOut( _fFunc( fTmp[1] ) );
-							_pDst[2] = ValueTypeOut( _fFunc( fTmp[2] ) );
-							_pDst[3] = ValueTypeOut( _fFunc( fTmp[3] ) );
-							_pDst[4] = ValueTypeOut( _fFunc( fTmp[4] ) );
-							_pDst[5] = ValueTypeOut( _fFunc( fTmp[5] ) );
-							_pDst[6] = ValueTypeOut( _fFunc( fTmp[6] ) );
-							_pDst[7] = ValueTypeOut( _fFunc( fTmp[7] ) );
+							pDst[0] = ValueTypeOut( _fFunc( fTmp[0] ) );
+							pDst[1] = ValueTypeOut( _fFunc( fTmp[1] ) );
+							pDst[2] = ValueTypeOut( _fFunc( fTmp[2] ) );
+							pDst[3] = ValueTypeOut( _fFunc( fTmp[3] ) );
+							pDst[4] = ValueTypeOut( _fFunc( fTmp[4] ) );
+							pDst[5] = ValueTypeOut( _fFunc( fTmp[5] ) );
+							pDst[6] = ValueTypeOut( _fFunc( fTmp[6] ) );
+							pDst[7] = ValueTypeOut( _fFunc( fTmp[7] ) );
 						}
 
 						sSize -= 8;
-						_pSrc += 8;
-						_pDst += 8;
+						pSrc += 8;
+						pDst += 8;
 					}
-
 					while ( sSize ) {
-						(*reinterpret_cast<bfloat16_t *>(_pDst)) = _tTypeIn::value_type( _fFunc( (*reinterpret_cast<const bfloat16_t *>(_pSrc)) ) );
-						++_pSrc;
-						++_pDst;
+						(*reinterpret_cast<bfloat16_t *>(pDst++)) = _tTypeIn::value_type( _fFunc( (*reinterpret_cast<const bfloat16_t *>(pSrc++)) ) );
+						--sSize;
+					}
+					return _vOut;
+				}
+			}
+			if constexpr ( IsFloat16<ValueTypeIn>() ) {
+				if ( Utilities::IsAvx2Supported() ) {
+					nn9::float16 * pSrc = reinterpret_cast<nn9::float16 *>(&_vIn[0]);
+					ValueTypeOut * pDst = reinterpret_cast<ValueTypeOut *>(&_vOut[0]);
+					size_t sSize = _vIn.size();
+					NN9_ALIGN( 32 )
+					float fTmp[8];
+
+					while ( sSize >= 8 ) {
+						__m256 mVal = nn9::float16::Convert8Float16ToFloat32( pSrc );
+						_mm256_store_ps( fTmp, mVal );
+
+						if constexpr ( IsBFloat16<ValueTypeOut>() ) {
+							fTmp[0] = _fFunc( fTmp[0] );
+							fTmp[1] = _fFunc( fTmp[1] );
+							fTmp[2] = _fFunc( fTmp[2] );
+							fTmp[3] = _fFunc( fTmp[3] );
+							fTmp[4] = _fFunc( fTmp[4] );
+							fTmp[5] = _fFunc( fTmp[5] );
+							fTmp[6] = _fFunc( fTmp[6] );
+							fTmp[7] = _fFunc( fTmp[7] );
+
+							__m256 mDst = _mm256_load_ps( fTmp );
+							bfloat16::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(pDst), mDst );
+						}
+						else if constexpr ( IsFloat16<ValueTypeOut>() ) {
+							fTmp[0] = _fFunc( fTmp[0] );
+							fTmp[1] = _fFunc( fTmp[1] );
+							fTmp[2] = _fFunc( fTmp[2] );
+							fTmp[3] = _fFunc( fTmp[3] );
+							fTmp[4] = _fFunc( fTmp[4] );
+							fTmp[5] = _fFunc( fTmp[5] );
+							fTmp[6] = _fFunc( fTmp[6] );
+							fTmp[7] = _fFunc( fTmp[7] );
+
+							__m256 mDst = _mm256_load_ps( fTmp );
+							nn9::float16::Convert8Float32ToFloat16( reinterpret_cast<nn9::float16 *>(pDst), mDst );
+						}
+						else {
+							pDst[0] = ValueTypeOut( _fFunc( fTmp[0] ) );
+							pDst[1] = ValueTypeOut( _fFunc( fTmp[1] ) );
+							pDst[2] = ValueTypeOut( _fFunc( fTmp[2] ) );
+							pDst[3] = ValueTypeOut( _fFunc( fTmp[3] ) );
+							pDst[4] = ValueTypeOut( _fFunc( fTmp[4] ) );
+							pDst[5] = ValueTypeOut( _fFunc( fTmp[5] ) );
+							pDst[6] = ValueTypeOut( _fFunc( fTmp[6] ) );
+							pDst[7] = ValueTypeOut( _fFunc( fTmp[7] ) );
+						}
+
+						pSrc += 8;
+						sSize -= 8;
+					}
+					while ( sSize ) {
+						(*pDst++) = _tTypeIn::value_type( _fFunc( (*pSrc++) ) );
 						--sSize;
 					}
 					return _vOut;
@@ -326,8 +579,8 @@ namespace nn9 {
 		/**
 		 * Applies element-wise sqrt() to the input.
 		 * 
-		 * \param _pfInOut The array of floats to sqrt() in-place.
-		 * \param _sSize The total number of floats to which _pfInOut points.
+		 * \param _pfInOut The array of bfloat16_t's to sqrt() in-place.
+		 * \param _sSize The total number of bfloat16_t's to which _pfInOut points.
 		 **/
 		static inline void											Sqrt_BFloat16( bfloat16_t * _pfInOut, size_t _sSize ) {
 #ifdef __AVX512F__
@@ -347,6 +600,44 @@ namespace nn9 {
 				while ( _sSize >= 8 ) {
 					__m256 mVal = bfloat16::loadu_bf16_to_fp32_8( reinterpret_cast<const uint16_t *>(_pfInOut) );
 					bfloat16::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pfInOut), _mm256_sqrt_ps( mVal ) );
+
+					_pfInOut += 8;
+					_sSize -= 8;
+				}
+			}
+#endif	// #ifdef __AVX2__
+
+			while ( _sSize ) {
+				(*_pfInOut) = std::sqrt( static_cast<float>(*_pfInOut) );
+				++_pfInOut;
+				--_sSize;
+			}
+		}
+
+		/**
+		 * Applies element-wise sqrt() to the input.
+		 * 
+		 * \param _pfInOut The array of float16's to sqrt() in-place.
+		 * \param _sSize The total number of float16's to which _pfInOut points.
+		 **/
+		static inline void											Sqrt_Float16( nn9::float16 * _pfInOut, size_t _sSize ) {
+#ifdef __AVX512F__
+			if ( Utilities::IsAvx512FSupported() ) {
+				while ( _sSize >= 16 ) {
+					__m512 mVal = nn9::float16::Convert16Float16ToFloat32( _pfInOut );
+					nn9::float16::Convert16Float32ToFloat16( _pfInOut, _mm512_sqrt_ps( mVal ) );
+
+					_pfInOut += 16;
+					_sSize -= 16;
+				}
+			}
+#endif	// #ifdef __AVX512F__
+
+#ifdef __AVX2__
+			if ( Utilities::IsAvx2Supported() ) {
+				while ( _sSize >= 8 ) {
+					__m256 mVal = nn9::float16::Convert8Float16ToFloat32( _pfInOut );
+					nn9::float16::Convert8Float32ToFloat16( _pfInOut, _mm256_sqrt_ps( mVal ) );
 
 					_pfInOut += 8;
 					_sSize -= 8;
@@ -402,8 +693,8 @@ namespace nn9 {
 		/**
 		 * Applies element-wise sqrt() to the input.
 		 *
-		 * \tparam _tTypeIn The input type.  Must be float or bfloat16_t.
-		 * \tparam _tTypeOut The output type.  Must be float or bfloat16_t.
+		 * \tparam _tTypeIn The input type.  Must be float, bfloat16_t, or float16.
+		 * \tparam _tTypeOut The output type.  Must be float, bfloat16_t, or float16.
 		 * \param _pfIn The array of floats/bfloat16_t's to sqrt().
 		 * \param _pfOut The output array of floats/bfloat16_t's.
 		 * \param _sSize The total number of floats/bfloat16_t's to which _pfIn and _pfOut point.
@@ -417,12 +708,18 @@ namespace nn9 {
 					if constexpr ( IsBFloat16<_tTypeIn>() ) {
 						mVal = nn9::bfloat16::loadu_bf16_to_fp32_16( reinterpret_cast<const uint16_t *>(_pfIn) );
 					}
+					else if constexpr ( IsFloat16<_tTypeIn>() ) {
+						mVal = nn9::float16::Convert16Float16ToFloat32( _pfIn );
+					}
 					else {
 						mVal = _mm512_loadu_ps( _pfIn );
 					}
 					mVal = _mm512_sqrt_ps( mVal );
 					if constexpr ( IsBFloat16<_tTypeOut>() ) {
 						nn9::bfloat16::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pfOut), mVal );
+					}
+					else if constexpr ( IsFloat16<_tTypeOut>() ) {
+						nn9::float16::Convert16Float32ToFloat16( _pfOut, mVal );
 					}
 					else {
 						_mm512_storeu_ps( _pfOut, mVal );
@@ -443,12 +740,18 @@ namespace nn9 {
 					if constexpr ( IsBFloat16<_tTypeIn>() ) {
 						mVal = nn9::bfloat16::loadu_bf16_to_fp32_8( reinterpret_cast<const uint16_t *>(_pfIn) );
 					}
+					else if constexpr ( IsFloat16<_tTypeIn>() ) {
+						mVal = nn9::float16::Convert8Float16ToFloat32( _pfIn );
+					}
 					else {
 						mVal = _mm256_loadu_ps( _pfIn );
 					}
 					mVal = _mm256_sqrt_ps( mVal );
 					if constexpr ( IsBFloat16<_tTypeOut>() ) {
 						nn9::bfloat16::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pfOut), mVal );
+					}
+					else if constexpr ( IsFloat16<_tTypeOut>() ) {
+						nn9::float16::Convert8Float32ToFloat16( _pfOut, mVal );
 					}
 					else {
 						_mm256_storeu_ps( _pfOut, mVal );
@@ -548,8 +851,8 @@ namespace nn9 {
 		/**
 		 * Applies element-wise 1/sqrt() to the input.
 		 * 
-		 * \param _pfInOut The array of floats to 1/sqrt() in-place.
-		 * \param _sSize The total number of floats to which _pfInOut points.
+		 * \param _pfInOut The array of bfloat16_t's to 1/sqrt() in-place.
+		 * \param _sSize The total number of bfloat16_t's to which _pfInOut points.
 		 **/
 		static inline void											Rsqrt_BFloat16( bfloat16_t * _pfInOut, size_t _sSize ) {
 #ifdef __AVX512F__
@@ -569,6 +872,44 @@ namespace nn9 {
 				while ( _sSize >= 8 ) {
 					__m256 mVal = bfloat16::loadu_bf16_to_fp32_8( reinterpret_cast<const uint16_t *>(_pfInOut) );
 					bfloat16::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pfInOut), _mm256_div_ps( _mm256_set1_ps( 1.0f ), _mm256_sqrt_ps( mVal ) ) );
+
+					_pfInOut += 8;
+					_sSize -= 8;
+				}
+			}
+#endif	// #ifdef __AVX2__
+
+			while ( _sSize ) {
+				(*_pfInOut) = 1.0 / std::sqrt( static_cast<float>(*_pfInOut) );
+				++_pfInOut;
+				--_sSize;
+			}
+		}
+
+		/**
+		 * Applies element-wise 1/sqrt() to the input.
+		 * 
+		 * \param _pfInOut The array of float16's to 1/sqrt() in-place.
+		 * \param _sSize The total number of float16's to which _pfInOut points.
+		 **/
+		static inline void											Rsqrt_Float16( nn9::float16 * _pfInOut, size_t _sSize ) {
+#ifdef __AVX512F__
+			if ( Utilities::IsAvx512FSupported() ) {
+				while ( _sSize >= 16 ) {
+					__m512 mVal = nn9::float16::Convert16Float16ToFloat32( _pfInOut );
+					nn9::float16::Convert16Float32ToFloat16( _pfInOut, _mm512_div_ps( _mm512_set1_ps( 1.0f ), _mm512_sqrt_ps( mVal ) ) );
+
+					_pfInOut += 16;
+					_sSize -= 16;
+				}
+			}
+#endif	// #ifdef __AVX512F__
+
+#ifdef __AVX2__
+			if ( Utilities::IsAvx2Supported() ) {
+				while ( _sSize >= 8 ) {
+					__m256 mVal = nn9::float16::Convert8Float16ToFloat32( _pfInOut );
+					nn9::float16::Convert8Float32ToFloat16( _pfInOut, _mm256_div_ps( _mm256_set1_ps( 1.0f ), _mm256_sqrt_ps( mVal ) ) );
 
 					_pfInOut += 8;
 					_sSize -= 8;
@@ -624,8 +965,8 @@ namespace nn9 {
 		/**
 		 * Applies element-wise 1/sqrt() to the input.
 		 *
-		 * \tparam _tTypeIn The input type.  Must be float or bfloat16_t.
-		 * \tparam _tTypeOut The output type.  Must be float or bfloat16_t.
+		 * \tparam _tTypeIn The input type.  Must be float, bfloat16_t, or float16.
+		 * \tparam _tTypeOut The output type.  Must be float, bfloat16_t, or float16.
 		 * \param _pfIn The array of floats/bfloat16_t's to 1/sqrt().
 		 * \param _pfOut The output array of floats/bfloat16_t's.
 		 * \param _sSize The total number of floats/bfloat16_t's to which _pfIn and _pfOut point.
@@ -639,12 +980,18 @@ namespace nn9 {
 					if constexpr ( IsBFloat16<_tTypeIn>() ) {
 						mVal = nn9::bfloat16::loadu_bf16_to_fp32_16( reinterpret_cast<const uint16_t *>(_pfIn) );
 					}
+					else if constexpr ( IsFloat16<_tTypeIn>() ) {
+						mVal = nn9::float16::Convert16Float16ToFloat32( _pfIn );
+					}
 					else {
 						mVal = _mm512_loadu_ps( _pfIn );
 					}
 					mVal = _mm512_div_ps( _mm512_set1_ps( 1.0f ), _mm512_sqrt_ps( mVal ) );
 					if constexpr ( IsBFloat16<_tTypeOut>() ) {
 						nn9::bfloat16::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pfOut), mVal );
+					}
+					else if constexpr ( IsFloat16<_tTypeOut>() ) {
+						nn9::float16::Convert16Float32ToFloat16( _pfOut, mVal );
 					}
 					else {
 						_mm512_storeu_ps( _pfOut, mVal );
@@ -665,12 +1012,18 @@ namespace nn9 {
 					if constexpr ( IsBFloat16<_tTypeIn>() ) {
 						mVal = nn9::bfloat16::loadu_bf16_to_fp32_8( reinterpret_cast<const uint16_t *>(_pfIn) );
 					}
+					else if constexpr ( IsFloat16<_tTypeIn>() ) {
+						mVal = nn9::float16::Convert8Float16ToFloat32( _pfIn );
+					}
 					else {
 						mVal = _mm256_loadu_ps( _pfIn );
 					}
 					mVal = _mm256_div_ps( _mm256_set1_ps( 1.0f ), _mm256_sqrt_ps( mVal ) );
 					if constexpr ( IsBFloat16<_tTypeOut>() ) {
 						nn9::bfloat16::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pfOut), mVal );
+					}
+					else if constexpr ( IsFloat16<_tTypeOut>() ) {
+						nn9::float16::Convert8Float32ToFloat16( _pfOut, mVal );
 					}
 					else {
 						_mm256_storeu_ps( _pfOut, mVal );
@@ -770,8 +1123,8 @@ namespace nn9 {
 		/**
 		 * Applies element-wise x*x to the input.
 		 * 
-		 * \param _pfInOut The array of floats to x*x in-place.
-		 * \param _sSize The total number of floats to which _pfInOut points.
+		 * \param _pfInOut The array of bfloat16_t's to x*x in-place.
+		 * \param _sSize The total number of bfloat16_t's to which _pfInOut points.
 		 **/
 		static inline void											Square_BFloat16( bfloat16_t * _pfInOut, size_t _sSize ) {
 #ifdef __AVX512F__
@@ -791,6 +1144,45 @@ namespace nn9 {
 				while ( _sSize >= 8 ) {
 					__m256 mVal = bfloat16::loadu_bf16_to_fp32_8( reinterpret_cast<const uint16_t *>(_pfInOut) );
 					bfloat16::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pfInOut), _mm256_mul_ps( mVal, mVal ) );
+
+					_pfInOut += 8;
+					_sSize -= 8;
+				}
+			}
+#endif	// #ifdef __AVX2__
+
+			while ( _sSize ) {
+				float fTmp = static_cast<float>(*_pfInOut);
+				(*_pfInOut) = fTmp * fTmp;
+				++_pfInOut;
+				--_sSize;
+			}
+		}
+
+		/**
+		 * Applies element-wise x*x to the input.
+		 * 
+		 * \param _pfInOut The array of float16's to x*x in-place.
+		 * \param _sSize The total number of float16's to which _pfInOut points.
+		 **/
+		static inline void											Square_Float16( nn9::float16 * _pfInOut, size_t _sSize ) {
+#ifdef __AVX512F__
+			if ( Utilities::IsAvx512FSupported() ) {
+				while ( _sSize >= 16 ) {
+					__m512 mVal = nn9::float16::Convert16Float16ToFloat32( _pfInOut );
+					nn9::float16::Convert16Float32ToFloat16( _pfInOut, _mm512_mul_ps( mVal, mVal ) );
+
+					_pfInOut += 16;
+					_sSize -= 16;
+				}
+			}
+#endif	// #ifdef __AVX512F__
+
+#ifdef __AVX2__
+			if ( Utilities::IsAvx2Supported() ) {
+				while ( _sSize >= 8 ) {
+					__m256 mVal = nn9::float16::Convert8Float16ToFloat32( _pfInOut );
+					nn9::float16::Convert8Float32ToFloat16( _pfInOut, _mm256_mul_ps( mVal, mVal ) );
 
 					_pfInOut += 8;
 					_sSize -= 8;
@@ -848,8 +1240,8 @@ namespace nn9 {
 		/**
 		 * Applies element-wise x*x to the input.
 		 *
-		 * \tparam _tTypeIn The input type.  Must be float or bfloat16_t.
-		 * \tparam _tTypeOut The output type.  Must be float or bfloat16_t.
+		 * \tparam _tTypeIn The input type.  Must be float, bfloat16_t, or float16.
+		 * \tparam _tTypeOut The output type.  Must be float, bfloat16_t, or float16.
 		 * \param _pfIn The array of floats/bfloat16_t's to x*x.
 		 * \param _pfOut The output array of floats/bfloat16_t's.
 		 * \param _sSize The total number of floats/bfloat16_t's to which _pfIn and _pfOut point.
@@ -863,12 +1255,18 @@ namespace nn9 {
 					if constexpr ( IsBFloat16<_tTypeIn>() ) {
 						mVal = nn9::bfloat16::loadu_bf16_to_fp32_16( reinterpret_cast<const uint16_t *>(_pfIn) );
 					}
+					else if constexpr ( IsFloat16<_tTypeIn>() ) {
+						mVal = nn9::float16::Convert16Float16ToFloat32( _pfIn );
+					}
 					else {
 						mVal = _mm512_loadu_ps( _pfIn );
 					}
 					mVal = _mm512_mul_ps( mVal, mVal );
 					if constexpr ( IsBFloat16<_tTypeOut>() ) {
 						nn9::bfloat16::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pfOut), mVal );
+					}
+					else if constexpr ( IsFloat16<_tTypeOut>() ) {
+						nn9::float16::Convert16Float32ToFloat16( _pfOut, mVal );
 					}
 					else {
 						_mm512_storeu_ps( _pfOut, mVal );
@@ -889,12 +1287,18 @@ namespace nn9 {
 					if constexpr ( IsBFloat16<_tTypeIn>() ) {
 						mVal = nn9::bfloat16::loadu_bf16_to_fp32_8( reinterpret_cast<const uint16_t *>(_pfIn) );
 					}
+					else if constexpr ( IsFloat16<_tTypeIn>() ) {
+						mVal = nn9::float16::Convert8Float16ToFloat32( _pfIn );
+					}
 					else {
 						mVal = _mm256_loadu_ps( _pfIn );
 					}
 					mVal = _mm256_mul_ps( mVal, mVal );
 					if constexpr ( IsBFloat16<_tTypeOut>() ) {
 						nn9::bfloat16::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pfOut), mVal );
+					}
+					else if constexpr ( IsFloat16<_tTypeOut>() ) {
+						nn9::float16::Convert8Float32ToFloat16( _pfOut, mVal );
 					}
 					else {
 						_mm256_storeu_ps( _pfOut, mVal );
@@ -997,8 +1401,8 @@ namespace nn9 {
 		/**
 		 * Applies element-wise ceil() to the input.
 		 * 
-		 * \param _pfInOut The array of floats to ceil() in-place.
-		 * \param _sSize The total number of floats to which _pfInOut points.
+		 * \param _pfInOut The array of bfloat16_t's to ceil() in-place.
+		 * \param _sSize The total number of bfloat16_t's to which _pfInOut points.
 		 **/
 		static inline void											Ceil_BFloat16( bfloat16_t * _pfInOut, size_t _sSize ) {
 #ifdef __AVX512F__
@@ -1018,6 +1422,44 @@ namespace nn9 {
 				while ( _sSize >= 8 ) {
 					__m256 mVal = bfloat16::loadu_bf16_to_fp32_8( reinterpret_cast<const uint16_t *>(_pfInOut) );
 					bfloat16::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pfInOut), _mm256_ceil_ps( mVal ) );
+
+					_pfInOut += 8;
+					_sSize -= 8;
+				}
+			}
+#endif	// #ifdef __AVX2__
+
+			while ( _sSize ) {
+				(*_pfInOut) = std::ceil( static_cast<float>(*_pfInOut) );
+				++_pfInOut;
+				--_sSize;
+			}
+		}
+
+		/**
+		 * Applies element-wise ceil() to the input.
+		 * 
+		 * \param _pfInOut The array of float16's to ceil() in-place.
+		 * \param _sSize The total number of float16's to which _pfInOut points.
+		 **/
+		static inline void											Ceil_Float16( nn9::float16 * _pfInOut, size_t _sSize ) {
+#ifdef __AVX512F__
+			if ( Utilities::IsAvx512FSupported() ) {
+				while ( _sSize >= 16 ) {
+					__m512 mVal = nn9::float16::Convert16Float16ToFloat32( _pfInOut );
+					nn9::float16::Convert16Float32ToFloat16( _pfInOut, _mm512_ceil_ps( mVal ) );
+
+					_pfInOut += 16;
+					_sSize -= 16;
+				}
+			}
+#endif	// #ifdef __AVX512F__
+
+#ifdef __AVX2__
+			if ( Utilities::IsAvx2Supported() ) {
+				while ( _sSize >= 8 ) {
+					__m256 mVal = nn9::float16::Convert8Float16ToFloat32( _pfInOut );
+					nn9::float16::Convert8Float32ToFloat16( _pfInOut, _mm256_ceil_ps( mVal ) );
 
 					_pfInOut += 8;
 					_sSize -= 8;
@@ -1073,8 +1515,8 @@ namespace nn9 {
 		/**
 		 * Applies element-wise ceil() to the input.
 		 *
-		 * \tparam _tTypeIn The input type.  Must be float or bfloat16_t.
-		 * \tparam _tTypeOut The output type.  Must be float or bfloat16_t.
+		 * \tparam _tTypeIn The input type.  Must be float, bfloat16_t, or float16.
+		 * \tparam _tTypeOut The output type.  Must be float, bfloat16_t, or float16.
 		 * \param _pfIn The array of floats/bfloat16_t's to ceil().
 		 * \param _pfOut The output array of floats/bfloat16_t's.
 		 * \param _sSize The total number of floats/bfloat16_t's to which _pfIn and _pfOut point.
@@ -1088,12 +1530,18 @@ namespace nn9 {
 					if constexpr ( IsBFloat16<_tTypeIn>() ) {
 						mVal = nn9::bfloat16::loadu_bf16_to_fp32_16( reinterpret_cast<const uint16_t *>(_pfIn) );
 					}
+					else if constexpr ( IsFloat16<_tTypeIn>() ) {
+						mVal = nn9::float16::Convert16Float16ToFloat32( _pfIn );
+					}
 					else {
 						mVal = _mm512_loadu_ps( _pfIn );
 					}
 					mVal = _mm512_ceil_ps( mVal );
 					if constexpr ( IsBFloat16<_tTypeOut>() ) {
 						nn9::bfloat16::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pfOut), mVal );
+					}
+					else if constexpr ( IsFloat16<_tTypeOut>() ) {
+						nn9::float16::Convert16Float32ToFloat16( _pfOut, mVal );
 					}
 					else {
 						_mm512_storeu_ps( _pfOut, mVal );
@@ -1114,12 +1562,18 @@ namespace nn9 {
 					if constexpr ( IsBFloat16<_tTypeIn>() ) {
 						mVal = nn9::bfloat16::loadu_bf16_to_fp32_8( reinterpret_cast<const uint16_t *>(_pfIn) );
 					}
+					else if constexpr ( IsFloat16<_tTypeIn>() ) {
+						mVal = nn9::float16::Convert8Float16ToFloat32( _pfIn );
+					}
 					else {
 						mVal = _mm256_loadu_ps( _pfIn );
 					}
 					mVal = _mm256_ceil_ps( mVal );
 					if constexpr ( IsBFloat16<_tTypeOut>() ) {
 						nn9::bfloat16::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pfOut), mVal );
+					}
+					else if constexpr ( IsFloat16<_tTypeOut>() ) {
+						nn9::float16::Convert8Float32ToFloat16( _pfOut, mVal );
 					}
 					else {
 						_mm256_storeu_ps( _pfOut, mVal );
@@ -1219,8 +1673,8 @@ namespace nn9 {
 		/**
 		 * Applies element-wise floor() to the input.
 		 * 
-		 * \param _pfInOut The array of floats to floor() in-place.
-		 * \param _sSize The total number of floats to which _pfInOut points.
+		 * \param _pfInOut The array of bfloat16_t's to floor() in-place.
+		 * \param _sSize The total number of bfloat16_t's to which _pfInOut points.
 		 **/
 		static inline void											Floor_BFloat16( bfloat16_t * _pfInOut, size_t _sSize ) {
 #ifdef __AVX512F__
@@ -1240,6 +1694,44 @@ namespace nn9 {
 				while ( _sSize >= 8 ) {
 					__m256 mVal = bfloat16::loadu_bf16_to_fp32_8( reinterpret_cast<const uint16_t *>(_pfInOut) );
 					bfloat16::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pfInOut), _mm256_floor_ps( mVal ) );
+
+					_pfInOut += 8;
+					_sSize -= 8;
+				}
+			}
+#endif	// #ifdef __AVX2__
+
+			while ( _sSize ) {
+				(*_pfInOut) = std::floor( static_cast<float>(*_pfInOut) );
+				++_pfInOut;
+				--_sSize;
+			}
+		}
+
+		/**
+		 * Applies element-wise floor() to the input.
+		 * 
+		 * \param _pfInOut The array of float16's to floor() in-place.
+		 * \param _sSize The total number of float16's to which _pfInOut points.
+		 **/
+		static inline void											Floor_Float16( nn9::float16 * _pfInOut, size_t _sSize ) {
+#ifdef __AVX512F__
+			if ( Utilities::IsAvx512FSupported() ) {
+				while ( _sSize >= 16 ) {
+					__m512 mVal = nn9::float16::Convert16Float16ToFloat32( _pfInOut );
+					nn9::float16::Convert16Float32ToFloat16( _pfInOut, _mm512_floor_ps( mVal ) );
+
+					_pfInOut += 16;
+					_sSize -= 16;
+				}
+			}
+#endif	// #ifdef __AVX512F__
+
+#ifdef __AVX2__
+			if ( Utilities::IsAvx2Supported() ) {
+				while ( _sSize >= 8 ) {
+					__m256 mVal = nn9::float16::Convert8Float16ToFloat32( _pfInOut );
+					nn9::float16::Convert8Float32ToFloat16( _pfInOut, _mm256_floor_ps( mVal ) );
 
 					_pfInOut += 8;
 					_sSize -= 8;
@@ -1295,8 +1787,8 @@ namespace nn9 {
 		/**
 		 * Applies element-wise floor() to the input.
 		 *
-		 * \tparam _tTypeIn The input type.  Must be float or bfloat16_t.
-		 * \tparam _tTypeOut The output type.  Must be float or bfloat16_t.
+		 * \tparam _tTypeIn The input type.  Must be float, bfloat16_t, or float16.
+		 * \tparam _tTypeOut The output type.  Must be float, bfloat16_t, or float16.
 		 * \param _pfIn The array of floats/bfloat16_t's to floor().
 		 * \param _pfOut The output array of floats/bfloat16_t's.
 		 * \param _sSize The total number of floats/bfloat16_t's to which _pfIn and _pfOut point.
@@ -1310,12 +1802,18 @@ namespace nn9 {
 					if constexpr ( IsBFloat16<_tTypeIn>() ) {
 						mVal = nn9::bfloat16::loadu_bf16_to_fp32_16( reinterpret_cast<const uint16_t *>(_pfIn) );
 					}
+					else if constexpr ( IsFloat16<_tTypeIn>() ) {
+						mVal = nn9::float16::Convert16Float16ToFloat32( _pfIn );
+					}
 					else {
 						mVal = _mm512_loadu_ps( _pfIn );
 					}
 					mVal = _mm512_floor_ps( mVal );
 					if constexpr ( IsBFloat16<_tTypeOut>() ) {
 						nn9::bfloat16::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pfOut), mVal );
+					}
+					else if constexpr ( IsFloat16<_tTypeOut>() ) {
+						nn9::float16::Convert16Float32ToFloat16( _pfOut, mVal );
 					}
 					else {
 						_mm512_storeu_ps( _pfOut, mVal );
@@ -1336,12 +1834,18 @@ namespace nn9 {
 					if constexpr ( IsBFloat16<_tTypeIn>() ) {
 						mVal = nn9::bfloat16::loadu_bf16_to_fp32_8( reinterpret_cast<const uint16_t *>(_pfIn) );
 					}
+					else if constexpr ( IsFloat16<_tTypeIn>() ) {
+						mVal = nn9::float16::Convert8Float16ToFloat32( _pfIn );
+					}
 					else {
 						mVal = _mm256_loadu_ps( _pfIn );
 					}
 					mVal = _mm256_floor_ps( mVal );
 					if constexpr ( IsBFloat16<_tTypeOut>() ) {
 						nn9::bfloat16::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pfOut), mVal );
+					}
+					else if constexpr ( IsFloat16<_tTypeOut>() ) {
+						nn9::float16::Convert8Float32ToFloat16( _pfOut, mVal );
 					}
 					else {
 						_mm256_storeu_ps( _pfOut, mVal );
@@ -1441,8 +1945,8 @@ namespace nn9 {
 		/**
 		 * Applies element-wise trunc() to the input.
 		 * 
-		 * \param _pfInOut The array of floats to trunc() in-place.
-		 * \param _sSize The total number of floats to which _pfInOut points.
+		 * \param _pfInOut The array of bfloat16_t's to trunc() in-place.
+		 * \param _sSize The total number of bfloat16_t's to which _pfInOut points.
 		 **/
 		static inline void											Trunc_BFloat16( bfloat16_t * _pfInOut, size_t _sSize ) {
 #ifdef __AVX512F__
@@ -1462,6 +1966,44 @@ namespace nn9 {
 				while ( _sSize >= 8 ) {
 					__m256 mVal = bfloat16::loadu_bf16_to_fp32_8( reinterpret_cast<const uint16_t *>(_pfInOut) );
 					bfloat16::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pfInOut), _mm256_trunc_ps( mVal ) );
+
+					_pfInOut += 8;
+					_sSize -= 8;
+				}
+			}
+#endif	// #ifdef __AVX2__
+
+			while ( _sSize ) {
+				(*_pfInOut) = std::trunc( static_cast<float>(*_pfInOut) );
+				++_pfInOut;
+				--_sSize;
+			}
+		}
+
+		/**
+		 * Applies element-wise trunc() to the input.
+		 * 
+		 * \param _pfInOut The array of float16's to trunc() in-place.
+		 * \param _sSize The total number of float16's to which _pfInOut points.
+		 **/
+		static inline void											Trunc_Float16( nn9::float16 * _pfInOut, size_t _sSize ) {
+#ifdef __AVX512F__
+			if ( Utilities::IsAvx512FSupported() ) {
+				while ( _sSize >= 16 ) {
+					__m512 mVal = nn9::float16::Convert16Float16ToFloat32( _pfInOut );
+					nn9::float16::Convert16Float32ToFloat16( _pfInOut, _mm512_trunc_ps( mVal ) );
+
+					_pfInOut += 16;
+					_sSize -= 16;
+				}
+			}
+#endif	// #ifdef __AVX512F__
+
+#ifdef __AVX2__
+			if ( Utilities::IsAvx2Supported() ) {
+				while ( _sSize >= 8 ) {
+					__m256 mVal = nn9::float16::Convert8Float16ToFloat32( _pfInOut );
+					nn9::float16::Convert8Float32ToFloat16( _pfInOut, _mm256_trunc_ps( mVal ) );
 
 					_pfInOut += 8;
 					_sSize -= 8;
@@ -1517,8 +2059,8 @@ namespace nn9 {
 		/**
 		 * Applies element-wise trunc() to the input.
 		 *
-		 * \tparam _tTypeIn The input type.  Must be float or bfloat16_t.
-		 * \tparam _tTypeOut The output type.  Must be float or bfloat16_t.
+		 * \tparam _tTypeIn The input type.  Must be float, bfloat16_t, or float16.
+		 * \tparam _tTypeOut The output type.  Must be float, bfloat16_t, or float16.
 		 * \param _pfIn The array of floats/bfloat16_t's to trunc().
 		 * \param _pfOut The output array of floats/bfloat16_t's.
 		 * \param _sSize The total number of floats/bfloat16_t's to which _pfIn and _pfOut point.
@@ -1532,12 +2074,18 @@ namespace nn9 {
 					if constexpr ( IsBFloat16<_tTypeIn>() ) {
 						mVal = nn9::bfloat16::loadu_bf16_to_fp32_16( reinterpret_cast<const uint16_t *>(_pfIn) );
 					}
+					else if constexpr ( IsFloat16<_tTypeIn>() ) {
+						mVal = nn9::float16::Convert16Float16ToFloat32( _pfIn );
+					}
 					else {
 						mVal = _mm512_loadu_ps( _pfIn );
 					}
 					mVal = _mm512_trunc_ps( mVal );
 					if constexpr ( IsBFloat16<_tTypeOut>() ) {
 						nn9::bfloat16::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pfOut), mVal );
+					}
+					else if constexpr ( IsFloat16<_tTypeOut>() ) {
+						nn9::float16::Convert16Float32ToFloat16( _pfOut, mVal );
 					}
 					else {
 						_mm512_storeu_ps( _pfOut, mVal );
@@ -1558,12 +2106,18 @@ namespace nn9 {
 					if constexpr ( IsBFloat16<_tTypeIn>() ) {
 						mVal = nn9::bfloat16::loadu_bf16_to_fp32_8( reinterpret_cast<const uint16_t *>(_pfIn) );
 					}
+					else if constexpr ( IsFloat16<_tTypeIn>() ) {
+						mVal = nn9::float16::Convert8Float16ToFloat32( _pfIn );
+					}
 					else {
 						mVal = _mm256_loadu_ps( _pfIn );
 					}
 					mVal = _mm256_trunc_ps( mVal );
 					if constexpr ( IsBFloat16<_tTypeOut>() ) {
 						nn9::bfloat16::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pfOut), mVal );
+					}
+					else if constexpr ( IsFloat16<_tTypeOut>() ) {
+						nn9::float16::Convert8Float32ToFloat16( _pfOut, mVal );
 					}
 					else {
 						_mm256_storeu_ps( _pfOut, mVal );
@@ -1661,10 +2215,10 @@ namespace nn9 {
 		}
 
 		/**
-		 * Applies element-wise x+y to the input.
+		 * Applies element-wise x+s to the input.
 		 * 
-		 * \param _pfInOut The array of floats to x+y in-place.
-		 * \param _sSize The total number of floats to which _pfInOut points.
+		 * \param _pfInOut The array of bfloat16_t's to x+s in-place.
+		 * \param _sSize The total number of bfloat16_t's to which _pfInOut points.
 		 * \param _fScalar The scalar to add to the elements in _pfInOut.
 		 **/
 		static inline void											Add_BFloat16( bfloat16_t * _pfInOut, size_t _sSize, float _fScalar ) {
@@ -1685,6 +2239,45 @@ namespace nn9 {
 				while ( _sSize >= 8 ) {
 					__m256 mVal = bfloat16::loadu_bf16_to_fp32_8( reinterpret_cast<const uint16_t *>(_pfInOut) );
 					bfloat16::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pfInOut), _mm256_add_ps( _mm256_set1_ps( _fScalar ), mVal ) );
+
+					_pfInOut += 8;
+					_sSize -= 8;
+				}
+			}
+#endif	// #ifdef __AVX2__
+
+			while ( _sSize ) {
+				(*_pfInOut) = static_cast<float>(*_pfInOut) + _fScalar;
+				++_pfInOut;
+				--_sSize;
+			}
+		}
+
+		/**
+		 * Applies element-wise x+s to the input.
+		 * 
+		 * \param _pfInOut The array of float16's to x+s in-place.
+		 * \param _sSize The total number of float16's to which _pfInOut points.
+		 * \param _fScalar The scalar to add to the elements in _pfInOut.
+		 **/
+		static inline void											Add_Float16( nn9::float16 * _pfInOut, size_t _sSize, float _fScalar ) {
+#ifdef __AVX512F__
+			if ( Utilities::IsAvx512FSupported() ) {
+				while ( _sSize >= 16 ) {
+					__m512 mVal = nn9::float16::Convert16Float16ToFloat32( _pfInOut );
+					nn9::float16::Convert16Float32ToFloat16( _pfInOut, _mm512_add_ps( _mm512_set1_ps( _fScalar ), mVal ) );
+
+					_pfInOut += 16;
+					_sSize -= 16;
+				}
+			}
+#endif	// #ifdef __AVX512F__
+
+#ifdef __AVX2__
+			if ( Utilities::IsAvx2Supported() ) {
+				while ( _sSize >= 8 ) {
+					__m256 mVal = nn9::float16::Convert8Float16ToFloat32( _pfInOut );
+					nn9::float16::Convert8Float32ToFloat16( _pfInOut, _mm256_add_ps( _mm256_set1_ps( _fScalar ), mVal ) );
 
 					_pfInOut += 8;
 					_sSize -= 8;
@@ -1741,8 +2334,8 @@ namespace nn9 {
 		/**
 		 * Applies element-wise x+s to the input.
 		 *
-		 * \param _tTypeIn The input type.  Must be float or bfloat16_t.
-		 * \param _tTypeOut The output type.  Must be float or bfloat16_t.
+		 * \param _tTypeIn The input type.  Must be float, bfloat16_t, or float16.
+		 * \param _tTypeOut The output type.  Must be float, bfloat16_t, or float16.
 		 * \param _pfIn The array of floats/bfloat16_t's to x+s.
 		 * \param _pfOut The output array of floats/bfloat16_t's.
 		 * \param _sSize The total number of floats to which _pfInOut points.
@@ -1757,12 +2350,18 @@ namespace nn9 {
 					if constexpr ( IsBFloat16<_tTypeIn>() ) {
 						mVal = nn9::bfloat16::loadu_bf16_to_fp32_16( reinterpret_cast<const uint16_t *>(_pfIn) );
 					}
+					else if constexpr ( IsFloat16<_tTypeIn>() ) {
+						mVal = nn9::float16::Convert16Float16ToFloat32( _pfIn );
+					}
 					else {
 						mVal = _mm512_loadu_ps( _pfIn );
 					}
 					mVal = _mm512_add_ps( _mm512_set1_ps( _fScalar ), mVal );
 					if constexpr ( IsBFloat16<_tTypeOut>() ) {
 						nn9::bfloat16::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pfOut), mVal );
+					}
+					else if constexpr ( IsFloat16<_tTypeOut>() ) {
+						nn9::float16::Convert16Float32ToFloat16( _pfOut, mVal );
 					}
 					else {
 						_mm512_storeu_ps( _pfOut, mVal );
@@ -1783,12 +2382,18 @@ namespace nn9 {
 					if constexpr ( IsBFloat16<_tTypeIn>() ) {
 						mVal = nn9::bfloat16::loadu_bf16_to_fp32_8( reinterpret_cast<const uint16_t *>(_pfIn) );
 					}
+					else if constexpr ( IsFloat16<_tTypeIn>() ) {
+						mVal = nn9::float16::Convert8Float16ToFloat32( _pfIn );
+					}
 					else {
 						mVal = _mm256_loadu_ps( _pfIn );
 					}
 					mVal = _mm256_add_ps( _mm256_set1_ps( _fScalar ), mVal );
 					if constexpr ( IsBFloat16<_tTypeOut>() ) {
 						nn9::bfloat16::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pfOut), mVal );
+					}
+					else if constexpr ( IsFloat16<_tTypeOut>() ) {
+						nn9::float16::Convert8Float32ToFloat16( _pfOut, mVal );
 					}
 					else {
 						_mm256_storeu_ps( _pfOut, mVal );
@@ -1890,6 +2495,84 @@ namespace nn9 {
 		/**
 		 * Applies element-wise x-s to the input.
 		 * 
+		 * \param _pfInOut The array of bfloat16_t's to x-s in-place.
+		 * \param _sSize The total number of bfloat16_t's to which _pfInOut points.
+		 * \param _fScalar The scalar to sub to the elements in _pfInOut.
+		 **/
+		static inline void											Sub_BFloat16( bfloat16_t * _pfInOut, size_t _sSize, float _fScalar ) {
+#ifdef __AVX512F__
+			if ( Utilities::IsAvx512FSupported() ) {
+				while ( _sSize >= 16 ) {
+					__m512 mVal = bfloat16::loadu_bf16_to_fp32_16( reinterpret_cast<const uint16_t *>(_pfInOut) );
+					bfloat16::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pfInOut), _mm512_sub_ps( mVal, _mm512_set1_ps( _fScalar ) ) );
+
+					_pfInOut += 16;
+					_sSize -= 16;
+				}
+			}
+#endif	// #ifdef __AVX512F__
+
+#ifdef __AVX2__
+			if ( Utilities::IsAvx2Supported() ) {
+				while ( _sSize >= 8 ) {
+					__m256 mVal = bfloat16::loadu_bf16_to_fp32_8( reinterpret_cast<const uint16_t *>(_pfInOut) );
+					bfloat16::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pfInOut), _mm256_sub_ps( mVal, _mm256_set1_ps( _fScalar ) ) );
+
+					_pfInOut += 8;
+					_sSize -= 8;
+				}
+			}
+#endif	// #ifdef __AVX2__
+
+			while ( _sSize ) {
+				(*_pfInOut) = static_cast<float>(*_pfInOut) - _fScalar;
+				++_pfInOut;
+				--_sSize;
+			}
+		}
+
+		/**
+		 * Applies element-wise x-s to the input.
+		 * 
+		 * \param _pfInOut The array of float16's to x-s in-place.
+		 * \param _sSize The total number of float16's to which _pfInOut points.
+		 * \param _fScalar The scalar to sub to the elements in _pfInOut.
+		 **/
+		static inline void											Sub_Float16( nn9::float16 * _pfInOut, size_t _sSize, float _fScalar ) {
+#ifdef __AVX512F__
+			if ( Utilities::IsAvx512FSupported() ) {
+				while ( _sSize >= 16 ) {
+					__m512 mVal = nn9::float16::Convert16Float16ToFloat32( _pfInOut );
+					nn9::float16::Convert16Float32ToFloat16( _pfInOut, _mm512_sub_ps( mVal, _mm512_set1_ps( _fScalar ) ) );
+
+					_pfInOut += 16;
+					_sSize -= 16;
+				}
+			}
+#endif	// #ifdef __AVX512F__
+
+#ifdef __AVX2__
+			if ( Utilities::IsAvx2Supported() ) {
+				while ( _sSize >= 8 ) {
+					__m256 mVal = nn9::float16::Convert8Float16ToFloat32( _pfInOut );
+					nn9::float16::Convert8Float32ToFloat16( _pfInOut, _mm256_sub_ps( mVal, _mm256_set1_ps( _fScalar ) ) );
+
+					_pfInOut += 8;
+					_sSize -= 8;
+				}
+			}
+#endif	// #ifdef __AVX2__
+
+			while ( _sSize ) {
+				(*_pfInOut) = static_cast<float>(*_pfInOut) - _fScalar;
+				++_pfInOut;
+				--_sSize;
+			}
+		}
+
+		/**
+		 * Applies element-wise x-s to the input.
+		 * 
 		 * \param _pfInOut The array of floats to x-s in-place.
 		 * \param _sSize The total number of floats to which _pfInOut points.
 		 * \param _fScalar The scalar to sub to the elements in _pfInOut.
@@ -1929,8 +2612,8 @@ namespace nn9 {
 		/**
 		 * Applies element-wise x-s to the input.
 		 *
-		 * \param _tTypeIn The input type.  Must be float or bfloat16_t.
-		 * \param _tTypeOut The output type.  Must be float or bfloat16_t.
+		 * \param _tTypeIn The input type.  Must be float, bfloat16_t, or float16.
+		 * \param _tTypeOut The output type.  Must be float, bfloat16_t, or float16.
 		 * \param _pfIn The array of floats/bfloat16_t's to x-s.
 		 * \param _pfOut The output array of floats/bfloat16_t's.
 		 * \param _sSize The total number of floats to which _pfInOut points.
@@ -1945,12 +2628,18 @@ namespace nn9 {
 					if constexpr ( IsBFloat16<_tTypeIn>() ) {
 						mVal = nn9::bfloat16::loadu_bf16_to_fp32_16( reinterpret_cast<const uint16_t *>(_pfIn) );
 					}
+					else if constexpr ( IsFloat16<_tTypeIn>() ) {
+						mVal = nn9::float16::Convert16Float16ToFloat32( _pfIn );
+					}
 					else {
 						mVal = _mm512_loadu_ps( _pfIn );
 					}
 					mVal = _mm512_sub_ps( mVal, _mm512_set1_ps( _fScalar ) );
 					if constexpr ( IsBFloat16<_tTypeOut>() ) {
 						nn9::bfloat16::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pfOut), mVal );
+					}
+					else if constexpr ( IsFloat16<_tTypeOut>() ) {
+						nn9::float16::Convert16Float32ToFloat16( _pfOut, mVal );
 					}
 					else {
 						_mm512_storeu_ps( _pfOut, mVal );
@@ -1971,12 +2660,18 @@ namespace nn9 {
 					if constexpr ( IsBFloat16<_tTypeIn>() ) {
 						mVal = nn9::bfloat16::loadu_bf16_to_fp32_8( reinterpret_cast<const uint16_t *>(_pfIn) );
 					}
+					else if constexpr ( IsFloat16<_tTypeIn>() ) {
+						mVal = nn9::float16::Convert8Float16ToFloat32( _pfIn );
+					}
 					else {
 						mVal = _mm256_loadu_ps( _pfIn );
 					}
 					mVal = _mm256_sub_ps( mVal, _mm256_set1_ps( _fScalar ) );
 					if constexpr ( IsBFloat16<_tTypeOut>() ) {
 						nn9::bfloat16::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pfOut), mVal );
+					}
+					else if constexpr ( IsFloat16<_tTypeOut>() ) {
+						nn9::float16::Convert8Float32ToFloat16( _pfOut, mVal );
 					}
 					else {
 						_mm256_storeu_ps( _pfOut, mVal );
@@ -2078,6 +2773,84 @@ namespace nn9 {
 		/**
 		 * Applies element-wise x*s to the input.
 		 * 
+		 * \param _pfInOut The array of bfloat16_t's to x*s in-place.
+		 * \param _sSize The total number of bfloat16_t's to which _pfInOut points.
+		 * \param _fScalar The scalar to mul to the elements in _pfInOut.
+		 **/
+		static inline void											Mul_BFloat16( bfloat16_t * _pfInOut, size_t _sSize, float _fScalar ) {
+#ifdef __AVX512F__
+			if ( Utilities::IsAvx512FSupported() ) {
+				while ( _sSize >= 16 ) {
+					__m512 mVal = bfloat16::loadu_bf16_to_fp32_16( reinterpret_cast<const uint16_t *>(_pfInOut) );
+					bfloat16::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pfInOut), _mm512_mul_ps( mVal, _mm512_set1_ps( _fScalar ) ) );
+
+					_pfInOut += 16;
+					_sSize -= 16;
+				}
+			}
+#endif	// #ifdef __AVX512F__
+
+#ifdef __AVX2__
+			if ( Utilities::IsAvx2Supported() ) {
+				while ( _sSize >= 8 ) {
+					__m256 mVal = bfloat16::loadu_bf16_to_fp32_8( reinterpret_cast<const uint16_t *>(_pfInOut) );
+					bfloat16::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pfInOut), _mm256_mul_ps( mVal, _mm256_set1_ps( _fScalar ) ) );
+
+					_pfInOut += 8;
+					_sSize -= 8;
+				}
+			}
+#endif	// #ifdef __AVX2__
+
+			while ( _sSize ) {
+				(*_pfInOut) = static_cast<float>(*_pfInOut) * _fScalar;
+				++_pfInOut;
+				--_sSize;
+			}
+		}
+
+		/**
+		 * Applies element-wise x*s to the input.
+		 * 
+		 * \param _pfInOut The array of float16's to x*s in-place.
+		 * \param _sSize The total number of float16's to which _pfInOut points.
+		 * \param _fScalar The scalar to mul to the elements in _pfInOut.
+		 **/
+		static inline void											Mul_Float16( nn9::float16 * _pfInOut, size_t _sSize, float _fScalar ) {
+#ifdef __AVX512F__
+			if ( Utilities::IsAvx512FSupported() ) {
+				while ( _sSize >= 16 ) {
+					__m512 mVal = nn9::float16::Convert16Float16ToFloat32( _pfInOut );
+					nn9::float16::Convert16Float32ToFloat16( _pfInOut, _mm512_mul_ps( mVal, _mm512_set1_ps( _fScalar ) ) );
+
+					_pfInOut += 16;
+					_sSize -= 16;
+				}
+			}
+#endif	// #ifdef __AVX512F__
+
+#ifdef __AVX2__
+			if ( Utilities::IsAvx2Supported() ) {
+				while ( _sSize >= 8 ) {
+					__m256 mVal = nn9::float16::Convert8Float16ToFloat32( _pfInOut );
+					nn9::float16::Convert8Float32ToFloat16( _pfInOut, _mm256_mul_ps( mVal, _mm256_set1_ps( _fScalar ) ) );
+
+					_pfInOut += 8;
+					_sSize -= 8;
+				}
+			}
+#endif	// #ifdef __AVX2__
+
+			while ( _sSize ) {
+				(*_pfInOut) = static_cast<float>(*_pfInOut) * _fScalar;
+				++_pfInOut;
+				--_sSize;
+			}
+		}
+
+		/**
+		 * Applies element-wise x*s to the input.
+		 * 
 		 * \param _pfInOut The array of floats to x*s in-place.
 		 * \param _sSize The total number of floats to which _pfInOut points.
 		 * \param _fScalar The scalar to mul to the elements in _pfInOut.
@@ -2117,8 +2890,8 @@ namespace nn9 {
 		/**
 		 * Applies element-wise x*s to the input.
 		 *
-		 * \param _tTypeIn The input type.  Must be float or bfloat16_t.
-		 * \param _tTypeOut The output type.  Must be float or bfloat16_t.
+		 * \param _tTypeIn The input type.  Must be float, bfloat16_t, or float16.
+		 * \param _tTypeOut The output type.  Must be float, bfloat16_t, or float16.
 		 * \param _pfIn The array of floats/bfloat16_t's to x*s.
 		 * \param _pfOut The output array of floats/bfloat16_t's.
 		 * \param _sSize The total number of floats to which _pfInOut points.
@@ -2133,12 +2906,18 @@ namespace nn9 {
 					if constexpr ( IsBFloat16<_tTypeIn>() ) {
 						mVal = nn9::bfloat16::loadu_bf16_to_fp32_16( reinterpret_cast<const uint16_t *>(_pfIn) );
 					}
+					else if constexpr ( IsFloat16<_tTypeIn>() ) {
+						mVal = nn9::float16::Convert16Float16ToFloat32( _pfIn );
+					}
 					else {
 						mVal = _mm512_loadu_ps( _pfIn );
 					}
 					mVal = _mm512_mul_ps( mVal, _mm512_set1_ps( _fScalar ) );
 					if constexpr ( IsBFloat16<_tTypeOut>() ) {
 						nn9::bfloat16::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pfOut), mVal );
+					}
+					else if constexpr ( IsFloat16<_tTypeOut>() ) {
+						nn9::float16::Convert16Float32ToFloat16( _pfOut, mVal );
 					}
 					else {
 						_mm512_storeu_ps( _pfOut, mVal );
@@ -2159,12 +2938,18 @@ namespace nn9 {
 					if constexpr ( IsBFloat16<_tTypeIn>() ) {
 						mVal = nn9::bfloat16::loadu_bf16_to_fp32_8( reinterpret_cast<const uint16_t *>(_pfIn) );
 					}
+					else if constexpr ( IsFloat16<_tTypeIn>() ) {
+						mVal = nn9::float16::Convert8Float16ToFloat32( _pfIn );
+					}
 					else {
 						mVal = _mm256_loadu_ps( _pfIn );
 					}
 					mVal = _mm256_mul_ps( mVal, _mm256_set1_ps( _fScalar ) );
 					if constexpr ( IsBFloat16<_tTypeOut>() ) {
 						nn9::bfloat16::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pfOut), mVal );
+					}
+					else if constexpr ( IsFloat16<_tTypeOut>() ) {
+						nn9::float16::Convert8Float32ToFloat16( _pfOut, mVal );
 					}
 					else {
 						_mm256_storeu_ps( _pfOut, mVal );
@@ -2266,6 +3051,84 @@ namespace nn9 {
 		/**
 		 * Applies element-wise x/s to the input.
 		 * 
+		 * \param _pfInOut The array of bfloat16_t's to x/s in-place.
+		 * \param _sSize The total number of bfloat16_t's to which _pfInOut points.
+		 * \param _fScalar The scalar to div to the elements in _pfInOut.
+		 **/
+		static inline void											Div_BFloat16( bfloat16_t * _pfInOut, size_t _sSize, float _fScalar ) {
+#ifdef __AVX512F__
+			if ( Utilities::IsAvx512FSupported() ) {
+				while ( _sSize >= 16 ) {
+					__m512 mVal = bfloat16::loadu_bf16_to_fp32_16( reinterpret_cast<const uint16_t *>(_pfInOut) );
+					bfloat16::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pfInOut), _mm512_div_ps( mVal, _mm512_set1_ps( _fScalar ) ) );
+
+					_pfInOut += 16;
+					_sSize -= 16;
+				}
+			}
+#endif	// #ifdef __AVX512F__
+
+#ifdef __AVX2__
+			if ( Utilities::IsAvx2Supported() ) {
+				while ( _sSize >= 8 ) {
+					__m256 mVal = bfloat16::loadu_bf16_to_fp32_8( reinterpret_cast<const uint16_t *>(_pfInOut) );
+					bfloat16::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pfInOut), _mm256_div_ps( mVal, _mm256_set1_ps( _fScalar ) ) );
+
+					_pfInOut += 8;
+					_sSize -= 8;
+				}
+			}
+#endif	// #ifdef __AVX2__
+
+			while ( _sSize ) {
+				(*_pfInOut) = static_cast<float>(*_pfInOut) / _fScalar;
+				++_pfInOut;
+				--_sSize;
+			}
+		}
+
+		/**
+		 * Applies element-wise x/s to the input.
+		 * 
+		 * \param _pfInOut The array of float16's to x/s in-place.
+		 * \param _sSize The total number of float16's to which _pfInOut points.
+		 * \param _fScalar The scalar to div to the elements in _pfInOut.
+		 **/
+		static inline void											Div_Float16( nn9::float16 * _pfInOut, size_t _sSize, float _fScalar ) {
+#ifdef __AVX512F__
+			if ( Utilities::IsAvx512FSupported() ) {
+				while ( _sSize >= 16 ) {
+					__m512 mVal = nn9::float16::Convert16Float16ToFloat32( _pfInOut );
+					nn9::float16::Convert16Float32ToFloat16( _pfInOut, _mm512_div_ps( mVal, _mm512_set1_ps( _fScalar ) ) );
+
+					_pfInOut += 16;
+					_sSize -= 16;
+				}
+			}
+#endif	// #ifdef __AVX512F__
+
+#ifdef __AVX2__
+			if ( Utilities::IsAvx2Supported() ) {
+				while ( _sSize >= 8 ) {
+					__m256 mVal = nn9::float16::Convert8Float16ToFloat32( _pfInOut );
+					nn9::float16::Convert8Float32ToFloat16( _pfInOut, _mm256_div_ps( mVal, _mm256_set1_ps( _fScalar ) ) );
+
+					_pfInOut += 8;
+					_sSize -= 8;
+				}
+			}
+#endif	// #ifdef __AVX2__
+
+			while ( _sSize ) {
+				(*_pfInOut) = static_cast<float>(*_pfInOut) / _fScalar;
+				++_pfInOut;
+				--_sSize;
+			}
+		}
+
+		/**
+		 * Applies element-wise x/s to the input.
+		 * 
 		 * \param _pfInOut The array of floats to x/s in-place.
 		 * \param _sSize The total number of floats to which _pfInOut points.
 		 * \param _fScalar The scalar to div to the elements in _pfInOut.
@@ -2305,8 +3168,8 @@ namespace nn9 {
 		/**
 		 * Applies element-wise x/s to the input.
 		 *
-		 * \param _tTypeIn The input type.  Must be float or bfloat16_t.
-		 * \param _tTypeOut The output type.  Must be float or bfloat16_t.
+		 * \param _tTypeIn The input type.  Must be float, bfloat16_t, or float16.
+		 * \param _tTypeOut The output type.  Must be float, bfloat16_t, or float16.
 		 * \param _pfIn The array of floats/bfloat16_t's to x/s.
 		 * \param _pfOut The output array of floats/bfloat16_t's.
 		 * \param _sSize The total number of floats to which _pfInOut points.
@@ -2321,12 +3184,18 @@ namespace nn9 {
 					if constexpr ( IsBFloat16<_tTypeIn>() ) {
 						mVal = nn9::bfloat16::loadu_bf16_to_fp32_16( reinterpret_cast<const uint16_t *>(_pfIn) );
 					}
+					else if constexpr ( IsFloat16<_tTypeIn>() ) {
+						mVal = nn9::float16::Convert16Float16ToFloat32( _pfIn );
+					}
 					else {
 						mVal = _mm512_loadu_ps( _pfIn );
 					}
 					mVal = _mm512_div_ps( mVal, _mm512_set1_ps( _fScalar ) );
 					if constexpr ( IsBFloat16<_tTypeOut>() ) {
 						nn9::bfloat16::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pfOut), mVal );
+					}
+					else if constexpr ( IsFloat16<_tTypeOut>() ) {
+						nn9::float16::Convert16Float32ToFloat16( _pfOut, mVal );
 					}
 					else {
 						_mm512_storeu_ps( _pfOut, mVal );
@@ -2347,12 +3216,18 @@ namespace nn9 {
 					if constexpr ( IsBFloat16<_tTypeIn>() ) {
 						mVal = nn9::bfloat16::loadu_bf16_to_fp32_8( reinterpret_cast<const uint16_t *>(_pfIn) );
 					}
+					else if constexpr ( IsFloat16<_tTypeIn>() ) {
+						mVal = nn9::float16::Convert8Float16ToFloat32( _pfIn );
+					}
 					else {
 						mVal = _mm256_loadu_ps( _pfIn );
 					}
 					mVal = _mm256_div_ps( mVal, _mm256_set1_ps( _fScalar ) );
 					if constexpr ( IsBFloat16<_tTypeOut>() ) {
 						nn9::bfloat16::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pfOut), mVal );
+					}
+					else if constexpr ( IsFloat16<_tTypeOut>() ) {
+						nn9::float16::Convert8Float32ToFloat16( _pfOut, mVal );
 					}
 					else {
 						_mm256_storeu_ps( _pfOut, mVal );
@@ -2451,6 +3326,10 @@ namespace nn9 {
 			}
 		}
 
+
+		// ===============================
+		// Basic Operations
+		// ===============================
 		/**
 		 * Compute absolute values using pure C++.
 		 *
@@ -3354,6 +4233,10 @@ namespace nn9 {
 		template <typename _tType>
 		static _tType &												Square( _tType &_vValues ) {
 			using ValueType = typename _tType::value_type;
+			if constexpr ( IsFloat16<ValueType>() ) {
+				Square_Float16( &_vValues[0], _vValues.size() );
+				return _vValues;
+			}
 			if constexpr ( IsBFloat16<ValueType>() ) {
 				Square_BFloat16( &_vValues[0], _vValues.size() );
 				return _vValues;
@@ -3398,16 +4281,17 @@ namespace nn9 {
 			using ValueTypeIn = typename _tTypeIn::value_type;
 			using ValueTypeOut = typename _tTypeOut::value_type;
 			if constexpr ( (IsBFloat16<ValueTypeIn>() || Is32BitFloat<ValueTypeIn>()) &&
+				(IsFloat16<ValueTypeIn>() || Is32itFloat<ValueTypeIn>()) &&
 				(IsBFloat16<ValueTypeOut>() || Is32BitFloat<ValueTypeOut>()) ) {
 #ifdef NN9_SAFETY_CHECK
-				if ( _vIn.size() != _vOut.size() ) { throw std::runtime_error( "Math::Sqrt: Input and outputs must have the same number of elements." ); }
+				if ( _vIn.size() != _vOut.size() ) { throw std::runtime_error( "Math::Square: Input and outputs must have the same number of elements." ); }
 #endif	// #ifdef NN9_SAFETY_CHECK
 				Square_Float( &_vIn[0], &_vOut[0], _vIn.size() );
 				return _vOut;
 			}
 			if constexpr ( Is64BitFloat<ValueTypeIn>() && Is64BitFloat<ValueTypeOut>() ) {
 #ifdef NN9_SAFETY_CHECK
-				if ( _vIn.size() != _vOut.size() ) { throw std::runtime_error( "Math::Sqrt: Input and outputs must have the same number of elements." ); }
+				if ( _vIn.size() != _vOut.size() ) { throw std::runtime_error( "Math::Square: Input and outputs must have the same number of elements." ); }
 #endif	// #ifdef NN9_SAFETY_CHECK
 				Square_Double( &_vIn[0], &_vOut[0], _vIn.size() );
 				return _vOut;
@@ -3447,6 +4331,10 @@ namespace nn9 {
 		template <typename _tType>
 		static _tType &												Sqrt( _tType &_vValues ) {
 			using ValueType = typename _tType::value_type;
+			if constexpr ( IsFloat16<ValueType>() ) {
+				Sqrt_Float16( &_vValues[0], _vValues.size() );
+				return _vValues;
+			}
 			if constexpr ( IsBFloat16<ValueType>() ) {
 				Sqrt_BFloat16( &_vValues[0], _vValues.size() );
 				return _vValues;
@@ -3491,6 +4379,7 @@ namespace nn9 {
 			using ValueTypeIn = typename _tTypeIn::value_type;
 			using ValueTypeOut = typename _tTypeOut::value_type;
 			if constexpr ( (IsBFloat16<ValueTypeIn>() || Is32BitFloat<ValueTypeIn>()) &&
+				(IsFloat16<ValueTypeIn>() || Is32itFloat<ValueTypeIn>()) &&
 				(IsBFloat16<ValueTypeOut>() || Is32BitFloat<ValueTypeOut>()) ) {
 #ifdef NN9_SAFETY_CHECK
 				if ( _vIn.size() != _vOut.size() ) { throw std::runtime_error( "Math::Sqrt: Input and outputs must have the same number of elements." ); }
@@ -3540,6 +4429,10 @@ namespace nn9 {
 		template <typename _tType>
 		static _tType &												Rsqrt( _tType &_vValues ) {
 			using ValueType = typename _tType::value_type;
+			if constexpr ( IsFloat16<ValueType>() ) {
+				Rsqrt_Float16( &_vValues[0], _vValues.size() );
+				return _vValues;
+			}
 			if constexpr ( IsBFloat16<ValueType>() ) {
 				Rsqrt_BFloat16( &_vValues[0], _vValues.size() );
 				return _vValues;
@@ -3584,6 +4477,7 @@ namespace nn9 {
 			using ValueTypeIn = typename _tTypeIn::value_type;
 			using ValueTypeOut = typename _tTypeOut::value_type;
 			if constexpr ( (IsBFloat16<ValueTypeIn>() || Is32BitFloat<ValueTypeIn>()) &&
+				(IsFloat16<ValueTypeIn>() || Is32itFloat<ValueTypeIn>()) &&
 				(IsBFloat16<ValueTypeOut>() || Is32BitFloat<ValueTypeOut>()) ) {
 #ifdef NN9_SAFETY_CHECK
 				if ( _vIn.size() != _vOut.size() ) { throw std::runtime_error( "Math::Rsqrt: Input and outputs must have the same number of elements." ); }
@@ -4015,6 +4909,10 @@ namespace nn9 {
 		template <typename _tType>
 		static _tType &												Ceil( _tType &_vValues ) {
 			using ValueType = typename _tType::value_type;
+			if constexpr ( IsFloat16<ValueType>() ) {
+				Ceil_Float16( &_vValues[0], _vValues.size() );
+				return _vValues;
+			}
 			if constexpr ( IsBFloat16<ValueType>() ) {
 				Ceil_BFloat16( &_vValues[0], _vValues.size() );
 				return _vValues;
@@ -4059,6 +4957,7 @@ namespace nn9 {
 			using ValueTypeIn = typename _tTypeIn::value_type;
 			using ValueTypeOut = typename _tTypeOut::value_type;
 			if constexpr ( (IsBFloat16<ValueTypeIn>() || Is32BitFloat<ValueTypeIn>()) &&
+				(IsFloat16<ValueTypeIn>() || Is32itFloat<ValueTypeIn>()) &&
 				(IsBFloat16<ValueTypeOut>() || Is32BitFloat<ValueTypeOut>()) ) {
 #ifdef NN9_SAFETY_CHECK
 				if ( _vIn.size() != _vOut.size() ) { throw std::runtime_error( "Math::Ceil: Input and outputs must have the same number of elements." ); }
@@ -4108,6 +5007,10 @@ namespace nn9 {
 		template <typename _tType>
 		static _tType &												Floor( _tType &_vValues ) {
 			using ValueType = typename _tType::value_type;
+			if constexpr ( IsFloat16<ValueType>() ) {
+				Floor_Float16( &_vValues[0], _vValues.size() );
+				return _vValues;
+			}
 			if constexpr ( IsBFloat16<ValueType>() ) {
 				Floor_BFloat16( &_vValues[0], _vValues.size() );
 				return _vValues;
@@ -4152,6 +5055,7 @@ namespace nn9 {
 			using ValueTypeIn = typename _tTypeIn::value_type;
 			using ValueTypeOut = typename _tTypeOut::value_type;
 			if constexpr ( (IsBFloat16<ValueTypeIn>() || Is32BitFloat<ValueTypeIn>()) &&
+				(IsFloat16<ValueTypeIn>() || Is32itFloat<ValueTypeIn>()) &&
 				(IsBFloat16<ValueTypeOut>() || Is32BitFloat<ValueTypeOut>()) ) {
 #ifdef NN9_SAFETY_CHECK
 				if ( _vIn.size() != _vOut.size() ) { throw std::runtime_error( "Math::Floor: Input and outputs must have the same number of elements." ); }
@@ -4201,6 +5105,10 @@ namespace nn9 {
 		template <typename _tType>
 		static _tType &												Trunc( _tType &_vValues ) {
 			using ValueType = typename _tType::value_type;
+			if constexpr ( IsFloat16<ValueType>() ) {
+				Trunc_Float16( &_vValues[0], _vValues.size() );
+				return _vValues;
+			}
 			if constexpr ( IsBFloat16<ValueType>() ) {
 				Trunc_BFloat16( &_vValues[0], _vValues.size() );
 				return _vValues;
@@ -4245,6 +5153,7 @@ namespace nn9 {
 			using ValueTypeIn = typename _tTypeIn::value_type;
 			using ValueTypeOut = typename _tTypeOut::value_type;
 			if constexpr ( (IsBFloat16<ValueTypeIn>() || Is32BitFloat<ValueTypeIn>()) &&
+				(IsFloat16<ValueTypeIn>() || Is32itFloat<ValueTypeIn>()) &&
 				(IsBFloat16<ValueTypeOut>() || Is32BitFloat<ValueTypeOut>()) ) {
 #ifdef NN9_SAFETY_CHECK
 				if ( _vIn.size() != _vOut.size() ) { throw std::runtime_error( "Math::Trunc: Input and outputs must have the same number of elements." ); }
@@ -4541,6 +5450,10 @@ namespace nn9 {
 		template <typename _tType, typename _tScalarType>
 		static _tType &												Add( _tType &_vValues, _tScalarType _stScalar ) {
 			using ValueType = typename _tType::value_type;
+			if constexpr ( IsFloat16<ValueType>() ) {
+				Add_Float16( &_vValues[0], _vValues.size(), static_cast<float>(_stScalar) );
+				return _vValues;
+			}
 			if constexpr ( IsBFloat16<ValueType>() ) {
 				Add_BFloat16( &_vValues[0], _vValues.size(), static_cast<float>(_stScalar) );
 				return _vValues;
@@ -4589,6 +5502,7 @@ namespace nn9 {
 			using ValueTypeIn = typename _tTypeIn::value_type;
 			using ValueTypeOut = typename _tTypeOut::value_type;
 			if constexpr ( (IsBFloat16<ValueTypeIn>() || Is32BitFloat<ValueTypeIn>()) &&
+				(IsFloat16<ValueTypeIn>() || Is32itFloat<ValueTypeIn>()) &&
 				(IsBFloat16<ValueTypeOut>() || Is32BitFloat<ValueTypeOut>()) ) {
 #ifdef NN9_SAFETY_CHECK
 				if ( _vIn.size() != _vOut.size() ) { throw std::runtime_error( "Math::Add: Input and outputs must have the same number of elements." ); }
@@ -4642,6 +5556,10 @@ namespace nn9 {
 		template <typename _tType, typename _tScalarType>
 		static _tType &												Sub( _tType &_vValues, _tScalarType _stScalar ) {
 			using ValueType = typename _tType::value_type;
+			if constexpr ( IsFloat16<ValueType>() ) {
+				Sub_Float16( &_vValues[0], _vValues.size(), static_cast<float>(_stScalar) );
+				return _vValues;
+			}
 			if constexpr ( IsBFloat16<ValueType>() ) {
 				Sub_BFloat16( &_vValues[0], _vValues.size(), static_cast<float>(_stScalar) );
 				return _vValues;
@@ -4690,6 +5608,7 @@ namespace nn9 {
 			using ValueTypeIn = typename _tTypeIn::value_type;
 			using ValueTypeOut = typename _tTypeOut::value_type;
 			if constexpr ( (IsBFloat16<ValueTypeIn>() || Is32BitFloat<ValueTypeIn>()) &&
+				(IsFloat16<ValueTypeIn>() || Is32itFloat<ValueTypeIn>()) &&
 				(IsBFloat16<ValueTypeOut>() || Is32BitFloat<ValueTypeOut>()) ) {
 #ifdef NN9_SAFETY_CHECK
 				if ( _vIn.size() != _vOut.size() ) { throw std::runtime_error( "Math::Sub: Input and outputs must have the same number of elements." ); }
@@ -4743,6 +5662,10 @@ namespace nn9 {
 		template <typename _tType, typename _tScalarType>
 		static _tType &												Mul( _tType &_vValues, _tScalarType _stScalar ) {
 			using ValueType = typename _tType::value_type;
+			if constexpr ( IsFloat16<ValueType>() ) {
+				Mul_Float16( &_vValues[0], _vValues.size(), static_cast<float>(_stScalar) );
+				return _vValues;
+			}
 			if constexpr ( IsBFloat16<ValueType>() ) {
 				Mul_BFloat16( &_vValues[0], _vValues.size(), static_cast<float>(_stScalar) );
 				return _vValues;
@@ -4791,6 +5714,7 @@ namespace nn9 {
 			using ValueTypeIn = typename _tTypeIn::value_type;
 			using ValueTypeOut = typename _tTypeOut::value_type;
 			if constexpr ( (IsBFloat16<ValueTypeIn>() || Is32BitFloat<ValueTypeIn>()) &&
+				(IsFloat16<ValueTypeIn>() || Is32itFloat<ValueTypeIn>()) &&
 				(IsBFloat16<ValueTypeOut>() || Is32BitFloat<ValueTypeOut>()) ) {
 #ifdef NN9_SAFETY_CHECK
 				if ( _vIn.size() != _vOut.size() ) { throw std::runtime_error( "Math::Mul: Input and outputs must have the same number of elements." ); }
@@ -4844,6 +5768,10 @@ namespace nn9 {
 		template <typename _tType, typename _tScalarType>
 		static _tType &												Div( _tType &_vValues, _tScalarType _stScalar ) {
 			using ValueType = typename _tType::value_type;
+			if constexpr ( IsFloat16<ValueType>() ) {
+				Div_Float16( &_vValues[0], _vValues.size(), static_cast<float>(_stScalar) );
+				return _vValues;
+			}
 			if constexpr ( IsBFloat16<ValueType>() ) {
 				Div_BFloat16( &_vValues[0], _vValues.size(), static_cast<float>(_stScalar) );
 				return _vValues;
@@ -4892,6 +5820,7 @@ namespace nn9 {
 			using ValueTypeIn = typename _tTypeIn::value_type;
 			using ValueTypeOut = typename _tTypeOut::value_type;
 			if constexpr ( (IsBFloat16<ValueTypeIn>() || Is32BitFloat<ValueTypeIn>()) &&
+				(IsFloat16<ValueTypeIn>() || Is32itFloat<ValueTypeIn>()) &&
 				(IsBFloat16<ValueTypeOut>() || Is32BitFloat<ValueTypeOut>()) ) {
 #ifdef NN9_SAFETY_CHECK
 				if ( _vIn.size() != _vOut.size() ) { throw std::runtime_error( "Math::Div: Input and outputs must have the same number of elements." ); }

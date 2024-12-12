@@ -158,17 +158,17 @@ namespace nn9 {
 
 #ifdef __AVX512F__
 		/**
-		 * This function loads 16 float16 values from the source array, converts them to float32,
-		 * and stores the results in the destination array.
+		 * Loads 16 float16 values from the source array, converts them to float32,
+		 *	and stores the results in the destination array.
 		 *
-		 * \param _pf16Src Pointer to the source array containing 16 uint16_t values representing float16 numbers.
+		 * \param _pf16Src Pointer to the source array containing 16 float16 values.
 		 * \return Returns a register with the loaded values.
 		 */
 		static inline __m512					Convert16Float16ToFloat32( const float16 * _pf16Src );
 
 		/**
-		 * This function loads 16 float16 values from the source array, converts them to float32,
-		 * and stores the results in the destination array.
+		 * Loads 16 float16 values from the source array, converts them to float32,
+		 *	and stores the results in the destination array.
 		 *
 		 * \param _pui16Src Pointer to the source array containing 16 uint16_t values representing float16 numbers.
 		 * \return Returns a register with the loaded values.
@@ -178,8 +178,8 @@ namespace nn9 {
 		}
 
 		/**
-		 * This function loads 16 float16 values from the source array, converts them to float32,
-		 * and stores the results in the destination array.
+		 * Loads 16 float16 values from the source array, converts them to float32,
+		 *	and stores the results in the destination array.
 		 *
 		 * \param _pf16Src Pointer to the source array containing 16 uint16_t values representing float16 numbers.
 		 * \param _pfDst Pointer to the destination array where 16 float16 values will be stored as uint16_t.
@@ -191,8 +191,8 @@ namespace nn9 {
 		}
 
 		/**
-		 * This function loads 16 float16 values from the source array, converts them to float32,
-		 * and stores the results in the destination array.
+		 * Loads 16 float16 values from the source array, converts them to float32,
+		 *	and stores the results in the destination array.
 		 *
 		 * \param _pui16Src Pointer to the source array containing 16 uint16_t values representing float16 numbers.
 		 * \param _pfDst Pointer to the destination array where 16 float16 values will be stored as uint16_t.
@@ -203,27 +203,64 @@ namespace nn9 {
 		}
 
 		/**
-		 * This function takes 16 float32 values from the source array, converts them to float16,
-		 * and stores the results in the destination array as uint16_t.
+		 * Takes 16 float32 values from the source array, converts them to float16,
+		 *	and stores the results in the destination array as uint16_t.
 		 *
 		 * \param _pfSrc Pointer to the source array containing 16 float32 values.
 		 * \return Returns a register with the loaded values.
 		 */
-		static inline __m256i					Convert16Float32ToFloat16( const float * _pfSrc );
+		static inline void						Convert16Float32ToFloat16( float16 * _pf16Dst, __m512 _mf32Val );
+
+#endif	// #ifdef __AVX512F__
+
+#ifdef __AVX2__
+		// Helper function to invert a mask (for <=, etc.)
+		static inline __m256i					mm256_not_si256( __m256i a ) {
+			return _mm256_xor_si256( a, _mm256_set1_epi32( -1 ) );
+		}
+
+		// Create a mask for (a <= b) using (a <= b) <=> !(a > b)
+		static inline __m256i					mm256_cmple_epi32( __m256i a, __m256i b ) {
+			__m256i gt = _mm256_cmpgt_epi32(a, b); // 0xFFFFFFFF where a > b, else 0x0
+			return mm256_not_si256( gt );            // Invert it to get <=
+		}
+
+		// Create a mask for (a != 0) using (a != 0) <=> !(a == 0)
+		static inline __m256i					mm256_cmpneq_epi32_zero( __m256i a ) {
+			__m256i eq = _mm256_cmpeq_epi32(a, _mm256_setzero_si256());
+			return mm256_not_si256( eq );
+		}
+
+		// Blend using a mask: if mask bit is set, select from b, else from a
+		// mask should be 0xFFFFFFFF for true, 0x00000000 for false.
+		static inline __m256i					mm256_blendv_epi32( __m256i a, __m256i b, __m256i mask ) {
+			return _mm256_blendv_epi8( a, b, mask );
+		}
+
+		// Helper: a != b
+		static inline __m256i					mm256_cmpneq_epi32( __m256i a, __m256i b ) {
+			__m256i eq = _mm256_cmpeq_epi32(a, b);
+			return mm256_not_si256( eq );
+		}
 
 		/**
-		 * This function takes 16 float32 values from the source array, converts them to float16,
-		 * and stores the results in the destination array as uint16_t.
+		 * Loads 8 float16 values from the source array, converts them to float32,
+		 *	and stores the results in the destination array.
+		 *
+		 * \param _pf16Src Pointer to the source array containing 8 float16 values.
+		 * \return Returns a register with the loaded values.
+		 */
+		static inline __m256					Convert8Float16ToFloat32( const float16 * _pf16Src );
+
+		/**
+		 * Takes 8 float32 values from the source array, converts them to float16,
+		 *	and stores the results in the destination array as uint16_t.
 		 *
 		 * \param _pfSrc Pointer to the source array containing 16 float32 values.
-		 * \param _pui16Dst Pointer to the destination array where 16 float16 values will be stored as uint16_t.
-		 * \return Returns _pui16Dst.
+		 * \return Returns a register with the loaded values.
 		 */
-		static inline uint16_t *				Convert16Float32ToFloat16( const float * _pfSrc, uint16_t * _pui16Dst ) {
-			_mm256_storeu_si256( reinterpret_cast<__m256i *>(_pui16Dst), Convert16Float32ToFloat16( _pfSrc ) );
-			return _pui16Dst;
-		}
-#endif	// #ifdef __AVX512F__
+		static inline void						Convert8Float32ToFloat16( float16 * _pf16Dst, __m256 _mf32Val );
+#endif	// #ifdef __AVX2__
 
 
 		// ===============================
@@ -385,10 +422,10 @@ namespace nn9 {
 
 #ifdef __AVX512F__
 	/**
-	 * This function loads 16 float16 values from the source array, converts them to float32,
-	 * and stores the results in the destination array.
+	 * Loads 16 float16 values from the source array, converts them to float32,
+	 *  and stores the results in the destination array.
 	 *
-	 * \param _pf16Src Pointer to the source array containing 16 uint16_t values representing float16 numbers.
+	 * \param _pf16Src Pointer to the source array containing 16 float16 values.
 	 * \param _pfDst Pointer to the destination array where 16 float32 results will be stored.
 	 */
 	inline __m512 float16::Convert16Float16ToFloat32( const float16 * _pf16Src ) {
@@ -466,17 +503,15 @@ namespace nn9 {
 	}
 
 	/**
-	 * This function takes 16 float32 values from the source array, converts them to float16,
-	 * and stores the results in the destination array as uint16_t.
+	 * Takes 16 float32 values from the source array, converts them to float16,
+	 *  and stores the results in the destination array as uint16_t.
 	 *
 	 * \param _pfSrc Pointer to the source array containing 16 float32 values.
 	 */
-	inline __m256i float16::Convert16Float32ToFloat16( const float * _pfSrc ) {
-		// Load 16 float32 values.
-		__m512 mf32Val = _mm512_loadu_ps( _pfSrc );
+	inline void float16::Convert16Float32ToFloat16( float16 * _pf16Dst, __m512 _mf32Val ) {
 
 		// Reinterpret as integers and add rounding bias.
-		__m512i mBits = _mm512_castps_si512( mf32Val );
+		__m512i mBits = _mm512_castps_si512( _mf32Val );
 		__m512i mBitsRounded = _mm512_add_epi32( mBits, _mm512_set1_epi32( 0x00001000 ) );
 
 		// Extract sign, exponent, mantissa.
@@ -493,7 +528,7 @@ namespace nn9 {
 		//__mmask16 mExpoEq255 = _mm512_cmp_epi32_mask( mExpo, _mm512_set1_epi32( 255 ), _MM_CMPINT_EQ );
 
 		// NaN detection.
-		__mmask16 mIsNan = _mm512_cmp_ps_mask( mf32Val, mf32Val, _CMP_UNORD_Q );
+		__mmask16 mIsNan = _mm512_cmp_ps_mask( _mf32Val, _mf32Val, _CMP_UNORD_Q );
 
 		// Compute normalized numbers.
 		__m512i mNorm = _mm512_slli_epi32( _mm512_sub_epi32( mExpo, _mm512_set1_epi32( 112 ) ), 10 );
@@ -549,14 +584,195 @@ namespace nn9 {
 		// For NaN, set to 0x7FFF.
 		mui16Tmp = _mm512_mask_mov_epi32( mui16Tmp, mIsNan, _mm512_set1_epi32( 0x7FFF ) );
 
-		// Convert to uint16_t.
-		return _mm512_cvtepi32_epi16( mui16Tmp );
-
 		// Store result.
-		//_mm256_storeu_si256( reinterpret_cast<__m256i *>(_pui16Dst), mf16 );
+		_mm256_storeu_si256( reinterpret_cast<__m256i *>(_pf16Dst), _mm512_cvtepi32_epi16( mui16Tmp ) );
 	}
 
 #endif	// #ifdef __AVX512F__
+
+#ifdef __AVX2__
+	/**
+	 * Loads 8 float16 values from the source array, converts them to float32,
+	 *  and stores the results in the destination array.
+	 *
+	 * \param _pf16Src Pointer to the source array containing 8 float16 values.
+	 * \return Returns a register with the loaded values.
+	 */
+	inline __m256 float16::Convert8Float16ToFloat32( const float16 * _pf16Src ) {
+		// Load 8 uint16_t values (16 bytes).
+		__m128i halfVec = _mm_loadu_si128( reinterpret_cast<const __m128i *>(_pf16Src) );
+
+		// Convert the lower four half floats to 32-bit.
+		__m128i lower16 = _mm_cvtepu16_epi32( halfVec );
+
+		// Shift right by 8 bytes to access the upper four half floats.
+		__m128i upperHalf = _mm_srli_si128( halfVec, 8 );
+		__m128i upper16 = _mm_cvtepu16_epi32( upperHalf );
+
+		// Combine the lower and upper conversions into a single __m256i.
+		__m256i mui32Val = _mm256_set_m128i( upper16, lower16 );
+
+		// Extract sign, exponent, and mantissa.
+		__m256i mSign = _mm256_slli_epi32( _mm256_and_si256( mui32Val, _mm256_set1_epi32( 0x8000 ) ), 16 );
+		__m256i mExpo = _mm256_and_si256( mui32Val, _mm256_set1_epi32( 0x7C00 ) );
+		__m256i mMant = _mm256_and_si256( mui32Val, _mm256_set1_epi32( 0x03FF ) );
+
+		// Shift mantissa to float32 position.
+		__m256i mMantShifted = _mm256_slli_epi32( mMant, 13 );
+
+		// Convert mantissa to float to compute leading zeros.
+		__m256 mfManTmp = _mm256_cvtepi32_ps( mMantShifted );
+		__m256i mfManTmpBits = _mm256_castps_si256( mfManTmp );
+		__m256i mui32LdZ0 = _mm256_srli_epi32( mfManTmpBits, 23 );
+
+		// Create masks (normal, subnormal, zero, inf, nan).
+		__m256i zero = _mm256_setzero_si256();
+		__m256i expoEqZero = _mm256_cmpeq_epi32( mExpo, zero );
+		__m256i mantEqZero = _mm256_cmpeq_epi32( mMant, zero );
+		__m256i mNormal = mm256_cmpneq_epi32( mExpo, zero );
+		__m256i mSubnormal = _mm256_and_si256( expoEqZero, mm256_cmpneq_epi32( mMant, zero ) );
+		__m256i mZero = _mm256_and_si256( expoEqZero, mantEqZero );
+
+		__m256i expo7C00 = _mm256_set1_epi32( 0x7C00 );
+		__m256i mInf = _mm256_cmpeq_epi32( mExpo, expo7C00 );
+		__m256i mNan = _mm256_and_si256( mInf, mm256_cmpneq_epi32( mMant, zero ) );
+
+		// Normalized numbers.
+		__m256i adjExpo = _mm256_add_epi32( _mm256_srli_epi32( mExpo, 10 ), _mm256_set1_epi32( 112 ) );
+		__m256i mExpoNormal = _mm256_slli_epi32( adjExpo, 23 );
+		__m256i mui32TmpNormal = _mm256_or_si256( mSign, _mm256_or_si256( mExpoNormal, mMantShifted ) );
+
+		// Subnormal numbers.
+		__m256i mui32LdZ0Minus37 = _mm256_sub_epi32( mui32LdZ0, _mm256_set1_epi32( 37 ) );
+		__m256i mExpoSubnormal = _mm256_slli_epi32( mui32LdZ0Minus37, 23 );
+		__m256i mShiftAmount = _mm256_sub_epi32( _mm256_set1_epi32( 150 ), mui32LdZ0 );
+		__m256i mMantSubnormalMask = _mm256_set1_epi32( 0x007FE000 );
+		__m256i mMantSubnormal = _mm256_and_si256( _mm256_sllv_epi32( mMantShifted, mShiftAmount ), mMantSubnormalMask );
+		__m256i mui32TmpSubnormal = _mm256_or_si256( mSign, _mm256_or_si256( mExpoSubnormal, mMantSubnormal ) );
+
+		// Initialize result.
+		__m256i mui32Tmp = zero;
+
+		// Apply conditions using blend.
+		mui32Tmp = mm256_blendv_epi32( mui32Tmp, mui32TmpNormal, mNormal );
+		mui32Tmp = mm256_blendv_epi32( mui32Tmp, mui32TmpSubnormal, mSubnormal );
+		mui32Tmp = mm256_blendv_epi32( mui32Tmp, mSign, mZero );
+
+		// NaNs: or with 0x7FC00000.
+		__m256i nanVal = _mm256_set1_epi32( 0x7FC00000 );
+		mui32Tmp = mm256_blendv_epi32( mui32Tmp, _mm256_or_si256( mui32Tmp, nanVal ), mNan );
+
+		// Infinities.
+		__m256i notNan = mm256_not_si256( mNan );
+		__m256i m_inf_only = _mm256_and_si256( notNan, mInf );
+		__m256i infVal = _mm256_or_si256( mSign, _mm256_set1_epi32( 0x7F800000 ) );
+		mui32Tmp = mm256_blendv_epi32( mui32Tmp, infVal, m_inf_only );
+
+		// Convert to float32.
+		return _mm256_castsi256_ps( mui32Tmp );
+	}
+
+	/**
+	 * Takes 8 float32 values from the source array, converts them to float16,
+	 *	and stores the results in the destination array as uint16_t.
+	 *
+	 * \param _pfSrc Pointer to the source array containing 16 float32 values.
+	 * \return Returns a register with the loaded values.
+	 */
+	inline void float16::Convert8Float32ToFloat16( float16 * _pf16Dst, __m256 _mf32Val ) {
+		// Reinterpret as integers and add rounding bias.
+		__m256i mBits = _mm256_castps_si256( _mf32Val );
+		__m256i mBitsRounded = _mm256_add_epi32( mBits, _mm256_set1_epi32( 0x00001000 ) );
+
+		// Extract sign, exponent, mantissa.
+		__m256i mSign = _mm256_srli_epi32( _mm256_and_si256( mBitsRounded, _mm256_set1_epi32( 0x80000000 ) ), 16 );
+		__m256i mExpo = _mm256_srli_epi32( _mm256_and_si256( mBitsRounded, _mm256_set1_epi32( 0x7F800000 ) ), 23 );
+		__m256i mMant = _mm256_and_si256( mBitsRounded, _mm256_set1_epi32( 0x007FFFFF ) );
+
+		// Compute masks for comparisons.
+		__m256i mExpoGt112 = _mm256_cmpgt_epi32( mExpo, _mm256_set1_epi32( 112 ) );
+		__m256i mExpoGt101 = _mm256_cmpgt_epi32( mExpo, _mm256_set1_epi32( 101 ) );
+		__m256i mExpoGt143 = _mm256_cmpgt_epi32( mExpo, _mm256_set1_epi32( 143 ) );
+		__m256i mExpoLe101 = mm256_cmple_epi32( mExpo, _mm256_set1_epi32( 101 ) );
+
+		// NaN detection: NaN != NaN.
+		__m256 nan_mask_ps = _mm256_cmp_ps( _mf32Val, _mf32Val, _CMP_UNORD_Q );
+		__m256i mIsNan = _mm256_castps_si256( nan_mask_ps );
+
+		// Compute normalized numbers.
+		__m256i mNorm = _mm256_slli_epi32( _mm256_sub_epi32( mExpo, _mm256_set1_epi32( 112 ) ), 10 );
+		mNorm = _mm256_and_si256( mNorm, _mm256_set1_epi32( 0x7C00 ) );
+		mNorm = _mm256_or_si256( mNorm, _mm256_srli_epi32( mMant, 13 ) );
+		mNorm = _mm256_or_si256( mNorm, mSign );
+
+		// Compute subnormal numbers.
+		__m256i mMantSubnorm = _mm256_add_epi32( mMant, _mm256_set1_epi32( 0x007FF000 ) );
+		__m256i mShift = _mm256_sub_epi32( _mm256_set1_epi32( 125 ), mExpo );
+		// Shift right by mShift.
+		// For variable shifts in AVX2, use _mm256_srlv_epi32.
+		__m256i mSubnormTemp = _mm256_srlv_epi32( mMantSubnorm, mShift );
+		mSubnormTemp = _mm256_srli_epi32( _mm256_add_epi32( mSubnormTemp, _mm256_set1_epi32( 1 ) ), 1 );
+		mSubnormTemp = _mm256_and_si256( mSubnormTemp, _mm256_set1_epi32( 0x03FF ) );
+		__m256i mSubnorm = _mm256_or_si256( mSubnormTemp, mSign );
+
+		// Special cases (NaN and Infinity).
+		__m256i mSpecial = _mm256_set1_epi32( 0x7FFF );
+
+		// Initialize result.
+		__m256i mui16Tmp = _mm256_setzero_si256();
+
+		// Conditions:
+		// Infinity and NaN check:
+		// We'll fix these after setting normal cases
+
+		// Special cases: Exponent > 143.
+		mui16Tmp = mm256_blendv_epi32( mui16Tmp, mSpecial, mExpoGt143 );
+
+		// Normalized numbers: Exponent > 112 and not special.
+		// Already handled special if expo > 143, so just ensure that.
+		// normal means expo > 112 and expo ≤ 143.
+		__m256i not_mExpoGt143 = mm256_not_si256( mExpoGt143 );
+		__m256i mNormMask = _mm256_and_si256( mExpoGt112, not_mExpoGt143 );
+		mui16Tmp = mm256_blendv_epi32( mui16Tmp, mNorm, mNormMask );
+
+		// Subnormal: 101 < Exponent ≤ 112.
+		// This means (expo > 101) & (expo ≤ 112), and not special.
+		__m256i not_mExpoGt112 = mm256_not_si256( mExpoGt112 );
+		__m256i mSubnormMask = _mm256_and_si256( _mm256_and_si256( not_mExpoGt112, mExpoGt101 ), not_mExpoGt143 );
+		mui16Tmp = mm256_blendv_epi32( mui16Tmp, mSubnorm, mSubnormMask );
+
+		// Zeros: Exponent ≤ 101.
+		mui16Tmp = mm256_blendv_epi32( mui16Tmp, mSign, mExpoLe101 );
+
+		// Infinity:
+		// Identify infinity bits: if bits have 0x7C00 in exponent field and not NaN
+		// Infinity after conversion: Check if upper 5 bits (exponent) = 0x7C00
+		// We'll check final mui16Tmp bits:
+		__m256i exp_mask = _mm256_and_si256( mui16Tmp, _mm256_set1_epi32( 0x7C00 ) );
+		__m256i eq_7c00 = _mm256_cmpeq_epi32( exp_mask, _mm256_set1_epi32( 0x7C00 ) );
+		__m256i not_nan = mm256_not_si256( mIsNan );
+		__m256i mIsInfMask = _mm256_and_si256( eq_7c00, not_nan );
+
+		__m256i infVal = _mm256_or_si256( mSign, _mm256_set1_epi32( 0x7C00 ) );
+		mui16Tmp = mm256_blendv_epi32( mui16Tmp, infVal, mIsInfMask );
+
+		// For NaN, set to 0x7FFF.
+		mui16Tmp = mm256_blendv_epi32( mui16Tmp, _mm256_set1_epi32( 0x7FFF ), mIsNan );
+
+
+		// Extract the lower and upper 128 bits.
+		__m128i low128 = _mm256_castsi256_si128( mui16Tmp );
+		__m128i high128 = _mm256_extracti128_si256( mui16Tmp, 1 );
+
+		// Now pack these 8 int32 values (4 in low128, 4 in high128) into 8 int16 values.
+		__m128i result_16 = _mm_packs_epi32( low128, high128 );
+
+		// Store result (8 uint16_t).
+		_mm_storeu_si128( reinterpret_cast<__m128i *>(_pf16Dst), result_16 );
+	}
+
+#endif	// #ifdef __AVX2__
+
 
 }	// namespace nn9
 
