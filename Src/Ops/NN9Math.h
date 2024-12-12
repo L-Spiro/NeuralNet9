@@ -402,11 +402,11 @@ namespace nn9 {
 		/**
 		 * Applies element-wise sqrt() to the input.
 		 *
-		 * \param _tTypeIn The input type.  Must be float or bfloat16_t.
-		 * \param _tTypeOut The output type.  Must be float or bfloat16_t.
+		 * \tparam _tTypeIn The input type.  Must be float or bfloat16_t.
+		 * \tparam _tTypeOut The output type.  Must be float or bfloat16_t.
 		 * \param _pfIn The array of floats/bfloat16_t's to sqrt().
 		 * \param _pfOut The output array of floats/bfloat16_t's.
-		 * \param _sSize The total number of floats to which _pfInOut points.
+		 * \param _sSize The total number of floats/bfloat16_t's to which _pfIn and _pfOut point.
 		 **/
 		template <typename _tTypeIn, typename _tTypeOut>
 		static inline void											Sqrt_Float( const _tTypeIn * _pfIn, _tTypeOut * _pfOut, size_t _sSize ) {
@@ -470,8 +470,8 @@ namespace nn9 {
 		/**
 		 * Applies element-wise sqrt() to the input.
 		 * 
-		 * \param _pdInOut The array of floats to sqrt() in-place.
-		 * \param _sSize The total number of floats to which _pdInOut points.
+		 * \param _pdInOut The array of doubles to sqrt() in-place.
+		 * \param _sSize The total number of doubles to which _pdInOut points.
 		 **/
 		static inline void											Sqrt_Double( double * _pdInOut, size_t _sSize ) {
 #ifdef __AVX512F__
@@ -510,7 +510,7 @@ namespace nn9 {
 		 *
 		 * \param _pfIn The array of doubles to sqrt().
 		 * \param _pfOut The output array of doubles.
-		 * \param _sSize The total number of floats to which _pfInOut points.
+		 * \param _sSize The total number of doubles to which _pfIn and _pfOut point.
 		 **/
 		static inline void											Sqrt_Double( const double * _pfIn, double * _pfOut, size_t _sSize ) {
 #ifdef __AVX512F__
@@ -624,11 +624,11 @@ namespace nn9 {
 		/**
 		 * Applies element-wise 1/sqrt() to the input.
 		 *
-		 * \param _tTypeIn The input type.  Must be float or bfloat16_t.
-		 * \param _tTypeOut The output type.  Must be float or bfloat16_t.
+		 * \tparam _tTypeIn The input type.  Must be float or bfloat16_t.
+		 * \tparam _tTypeOut The output type.  Must be float or bfloat16_t.
 		 * \param _pfIn The array of floats/bfloat16_t's to 1/sqrt().
 		 * \param _pfOut The output array of floats/bfloat16_t's.
-		 * \param _sSize The total number of floats to which _pfInOut points.
+		 * \param _sSize The total number of floats/bfloat16_t's to which _pfIn and _pfOut point.
 		 **/
 		template <typename _tTypeIn, typename _tTypeOut>
 		static inline void											Rsqrt_Float( const _tTypeIn * _pfIn, _tTypeOut * _pfOut, size_t _sSize ) {
@@ -692,8 +692,8 @@ namespace nn9 {
 		/**
 		 * Applies element-wise 1/sqrt() to the input.
 		 * 
-		 * \param _pdInOut The array of floats to 1/sqrt() in-place.
-		 * \param _sSize The total number of floats to which _pdInOut points.
+		 * \param _pdInOut The array of doubles to 1/sqrt() in-place.
+		 * \param _sSize The total number of doubles to which _pdInOut points.
 		 **/
 		static inline void											Rsqrt_Double( double * _pdInOut, size_t _sSize ) {
 #ifdef __AVX512F__
@@ -732,7 +732,7 @@ namespace nn9 {
 		 *
 		 * \param _pfIn The array of doubles to 1/sqrt().
 		 * \param _pfOut The output array of doubles.
-		 * \param _sSize The total number of floats to which _pfInOut points.
+		 * \param _sSize The total number of doubles to which _pfIn and _pfOut point.
 		 **/
 		static inline void											Rsqrt_Double( const double * _pfIn, double * _pfOut, size_t _sSize ) {
 #ifdef __AVX512F__
@@ -848,11 +848,11 @@ namespace nn9 {
 		/**
 		 * Applies element-wise x*x to the input.
 		 *
-		 * \param _tTypeIn The input type.  Must be float or bfloat16_t.
-		 * \param _tTypeOut The output type.  Must be float or bfloat16_t.
+		 * \tparam _tTypeIn The input type.  Must be float or bfloat16_t.
+		 * \tparam _tTypeOut The output type.  Must be float or bfloat16_t.
 		 * \param _pfIn The array of floats/bfloat16_t's to x*x.
 		 * \param _pfOut The output array of floats/bfloat16_t's.
-		 * \param _sSize The total number of floats to which _pfInOut points.
+		 * \param _sSize The total number of floats/bfloat16_t's to which _pfIn and _pfOut point.
 		 **/
 		template <typename _tTypeIn, typename _tTypeOut>
 		static inline void											Square_Float( const _tTypeIn * _pfIn, _tTypeOut * _pfOut, size_t _sSize ) {
@@ -917,8 +917,8 @@ namespace nn9 {
 		/**
 		 * Applies element-wise x*x to the input.
 		 * 
-		 * \param _pdInOut The array of floats to x*x in-place.
-		 * \param _sSize The total number of floats to which _pdInOut points.
+		 * \param _pdInOut The array of doubles to x*x in-place.
+		 * \param _sSize The total number of doubles to which _pdInOut points.
 		 **/
 		static inline void											Square_Double( double * _pdInOut, size_t _sSize ) {
 #ifdef __AVX512F__
@@ -958,7 +958,7 @@ namespace nn9 {
 		 *
 		 * \param _pfIn The array of doubles to x*x.
 		 * \param _pfOut The output array of doubles.
-		 * \param _sSize The total number of floats to which _pfInOut points.
+		 * \param _sSize The total number of doubles to which _pfIn and _pfOut point.
 		 **/
 		static inline void											Square_Double( const double * _pfIn, double * _pfOut, size_t _sSize ) {
 #ifdef __AVX512F__
@@ -1073,11 +1073,11 @@ namespace nn9 {
 		/**
 		 * Applies element-wise ceil() to the input.
 		 *
-		 * \param _tTypeIn The input type.  Must be float or bfloat16_t.
-		 * \param _tTypeOut The output type.  Must be float or bfloat16_t.
+		 * \tparam _tTypeIn The input type.  Must be float or bfloat16_t.
+		 * \tparam _tTypeOut The output type.  Must be float or bfloat16_t.
 		 * \param _pfIn The array of floats/bfloat16_t's to ceil().
 		 * \param _pfOut The output array of floats/bfloat16_t's.
-		 * \param _sSize The total number of floats to which _pfInOut points.
+		 * \param _sSize The total number of floats/bfloat16_t's to which _pfIn and _pfOut point.
 		 **/
 		template <typename _tTypeIn, typename _tTypeOut>
 		static inline void											Ceil_Float( const _tTypeIn * _pfIn, _tTypeOut * _pfOut, size_t _sSize ) {
@@ -1141,8 +1141,8 @@ namespace nn9 {
 		/**
 		 * Applies element-wise ceil() to the input.
 		 * 
-		 * \param _pdInOut The array of floats to ceil() in-place.
-		 * \param _sSize The total number of floats to which _pdInOut points.
+		 * \param _pdInOut The array of doubles to ceil() in-place.
+		 * \param _sSize The total number of doubles to which _pdInOut points.
 		 **/
 		static inline void											Ceil_Double( double * _pdInOut, size_t _sSize ) {
 #ifdef __AVX512F__
@@ -1172,6 +1172,46 @@ namespace nn9 {
 			while ( _sSize ) {
 				(*_pdInOut) = std::ceil( (*_pdInOut) );
 				++_pdInOut;
+				--_sSize;
+			}
+		}
+
+		/**
+		 * Applies element-wise ceil() to the input.
+		 *
+		 * \param _pfIn The array of doubles to ceil().
+		 * \param _pfOut The output array of doubles.
+		 * \param _sSize The total number of doubles to which _pfIn and _pfOut point.
+		 **/
+		static inline void											Ceil_Double( const double * _pfIn, double * _pfOut, size_t _sSize ) {
+#ifdef __AVX512F__
+			if ( Utilities::IsAvx512FSupported() ) {
+				while ( _sSize >= 8 ) {
+					__m512d mVal = _mm512_loadu_pd( _pfIn );
+					_mm512_storeu_pd( _pfOut, _mm512_ceil_pd( mVal ) );
+
+					_pfIn += 8;
+					_pfOut += 8;
+					_sSize -= 8;
+				}
+			}
+#endif	// #ifdef __AVX512F__
+
+#ifdef __AVX2__
+			if ( Utilities::IsAvx2Supported() ) {
+				while ( _sSize >= 4 ) {
+					__m256d mVal = _mm256_loadu_pd( _pfIn );
+					_mm256_storeu_pd( _pfOut, _mm256_ceil_pd( mVal ) );
+
+					_pfIn += 4;
+					_pfOut += 4;
+					_sSize -= 4;
+				}
+			}
+#endif	// #ifdef __AVX2__
+
+			while ( _sSize ) {
+				(*_pfOut++) = std::ceil( (*_pfIn++) );
 				--_sSize;
 			}
 		}
@@ -1255,11 +1295,11 @@ namespace nn9 {
 		/**
 		 * Applies element-wise floor() to the input.
 		 *
-		 * \param _tTypeIn The input type.  Must be float or bfloat16_t.
-		 * \param _tTypeOut The output type.  Must be float or bfloat16_t.
+		 * \tparam _tTypeIn The input type.  Must be float or bfloat16_t.
+		 * \tparam _tTypeOut The output type.  Must be float or bfloat16_t.
 		 * \param _pfIn The array of floats/bfloat16_t's to floor().
 		 * \param _pfOut The output array of floats/bfloat16_t's.
-		 * \param _sSize The total number of floats to which _pfInOut points.
+		 * \param _sSize The total number of floats/bfloat16_t's to which _pfIn and _pfOut point.
 		 **/
 		template <typename _tTypeIn, typename _tTypeOut>
 		static inline void											Floor_Float( const _tTypeIn * _pfIn, _tTypeOut * _pfOut, size_t _sSize ) {
@@ -1323,8 +1363,8 @@ namespace nn9 {
 		/**
 		 * Applies element-wise floor() to the input.
 		 * 
-		 * \param _pdInOut The array of floats to floor() in-place.
-		 * \param _sSize The total number of floats to which _pdInOut points.
+		 * \param _pdInOut The array of doubles to floor() in-place.
+		 * \param _sSize The total number of doubles to which _pdInOut points.
 		 **/
 		static inline void											Floor_Double( double * _pdInOut, size_t _sSize ) {
 #ifdef __AVX512F__
@@ -1354,6 +1394,46 @@ namespace nn9 {
 			while ( _sSize ) {
 				(*_pdInOut) = std::floor( (*_pdInOut) );
 				++_pdInOut;
+				--_sSize;
+			}
+		}
+
+		/**
+		 * Applies element-wise floor() to the input.
+		 *
+		 * \param _pfIn The array of doubles to floor().
+		 * \param _pfOut The output array of doubles.
+		 * \param _sSize The total number of doubles to which _pfIn and _pfOut point.
+		 **/
+		static inline void											Floor_Double( const double * _pfIn, double * _pfOut, size_t _sSize ) {
+#ifdef __AVX512F__
+			if ( Utilities::IsAvx512FSupported() ) {
+				while ( _sSize >= 8 ) {
+					__m512d mVal = _mm512_loadu_pd( _pfIn );
+					_mm512_storeu_pd( _pfOut, _mm512_floor_pd( mVal ) );
+
+					_pfIn += 8;
+					_pfOut += 8;
+					_sSize -= 8;
+				}
+			}
+#endif	// #ifdef __AVX512F__
+
+#ifdef __AVX2__
+			if ( Utilities::IsAvx2Supported() ) {
+				while ( _sSize >= 4 ) {
+					__m256d mVal = _mm256_loadu_pd( _pfIn );
+					_mm256_storeu_pd( _pfOut, _mm256_floor_pd( mVal ) );
+
+					_pfIn += 4;
+					_pfOut += 4;
+					_sSize -= 4;
+				}
+			}
+#endif	// #ifdef __AVX2__
+
+			while ( _sSize ) {
+				(*_pfOut++) = std::floor( (*_pfIn++) );
 				--_sSize;
 			}
 		}
@@ -1437,11 +1517,11 @@ namespace nn9 {
 		/**
 		 * Applies element-wise trunc() to the input.
 		 *
-		 * \param _tTypeIn The input type.  Must be float or bfloat16_t.
-		 * \param _tTypeOut The output type.  Must be float or bfloat16_t.
+		 * \tparam _tTypeIn The input type.  Must be float or bfloat16_t.
+		 * \tparam _tTypeOut The output type.  Must be float or bfloat16_t.
 		 * \param _pfIn The array of floats/bfloat16_t's to trunc().
 		 * \param _pfOut The output array of floats/bfloat16_t's.
-		 * \param _sSize The total number of floats to which _pfInOut points.
+		 * \param _sSize The total number of floats/bfloat16_t's to which _pfIn and _pfOut point.
 		 **/
 		template <typename _tTypeIn, typename _tTypeOut>
 		static inline void											Trunc_Float( const _tTypeIn * _pfIn, _tTypeOut * _pfOut, size_t _sSize ) {
@@ -1505,8 +1585,8 @@ namespace nn9 {
 		/**
 		 * Applies element-wise trunc() to the input.
 		 * 
-		 * \param _pdInOut The array of floats to trunc() in-place.
-		 * \param _sSize The total number of floats to which _pdInOut points.
+		 * \param _pdInOut The array of doubles to trunc() in-place.
+		 * \param _sSize The total number of doubles to which _pdInOut points.
 		 **/
 		static inline void											Trunc_Double( double * _pdInOut, size_t _sSize ) {
 #ifdef __AVX512F__
@@ -1536,6 +1616,837 @@ namespace nn9 {
 			while ( _sSize ) {
 				(*_pdInOut) = std::trunc( (*_pdInOut) );
 				++_pdInOut;
+				--_sSize;
+			}
+		}
+
+		/**
+		 * Applies element-wise trunc() to the input.
+		 *
+		 * \param _pfIn The array of doubles to trunc().
+		 * \param _pfOut The output array of doubles.
+		 * \param _sSize The total number of doubles to which _pfIn and _pfOut point.
+		 **/
+		static inline void											Trunc_Double( const double * _pfIn, double * _pfOut, size_t _sSize ) {
+#ifdef __AVX512F__
+			if ( Utilities::IsAvx512FSupported() ) {
+				while ( _sSize >= 8 ) {
+					__m512d mVal = _mm512_loadu_pd( _pfIn );
+					_mm512_storeu_pd( _pfOut, _mm512_trunc_pd( mVal ) );
+
+					_pfIn += 8;
+					_pfOut += 8;
+					_sSize -= 8;
+				}
+			}
+#endif	// #ifdef __AVX512F__
+
+#ifdef __AVX2__
+			if ( Utilities::IsAvx2Supported() ) {
+				while ( _sSize >= 4 ) {
+					__m256d mVal = _mm256_loadu_pd( _pfIn );
+					_mm256_storeu_pd( _pfOut, _mm256_trunc_pd( mVal ) );
+
+					_pfIn += 4;
+					_pfOut += 4;
+					_sSize -= 4;
+				}
+			}
+#endif	// #ifdef __AVX2__
+
+			while ( _sSize ) {
+				(*_pfOut++) = std::trunc( (*_pfIn++) );
+				--_sSize;
+			}
+		}
+
+		/**
+		 * Applies element-wise x+y to the input.
+		 * 
+		 * \param _pfInOut The array of floats to x+y in-place.
+		 * \param _sSize The total number of floats to which _pfInOut points.
+		 * \param _fScalar The scalar to add to the elements in _pfInOut.
+		 **/
+		static inline void											Add_BFloat16( bfloat16_t * _pfInOut, size_t _sSize, float _fScalar ) {
+#ifdef __AVX512F__
+			if ( Utilities::IsAvx512FSupported() ) {
+				while ( _sSize >= 16 ) {
+					__m512 mVal = bfloat16::loadu_bf16_to_fp32_16( reinterpret_cast<const uint16_t *>(_pfInOut) );
+					bfloat16::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pfInOut), _mm512_add_ps( _mm512_set1_ps( _fScalar ), mVal ) );
+
+					_pfInOut += 16;
+					_sSize -= 16;
+				}
+			}
+#endif	// #ifdef __AVX512F__
+
+#ifdef __AVX2__
+			if ( Utilities::IsAvx2Supported() ) {
+				while ( _sSize >= 8 ) {
+					__m256 mVal = bfloat16::loadu_bf16_to_fp32_8( reinterpret_cast<const uint16_t *>(_pfInOut) );
+					bfloat16::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pfInOut), _mm256_add_ps( _mm256_set1_ps( _fScalar ), mVal ) );
+
+					_pfInOut += 8;
+					_sSize -= 8;
+				}
+			}
+#endif	// #ifdef __AVX2__
+
+			while ( _sSize ) {
+				(*_pfInOut) = static_cast<float>(*_pfInOut) + _fScalar;
+				++_pfInOut;
+				--_sSize;
+			}
+		}
+
+		/**
+		 * Applies element-wise x+s to the input.
+		 * 
+		 * \param _pfInOut The array of floats to x+s in-place.
+		 * \param _sSize The total number of floats to which _pfInOut points.
+		 * \param _fScalar The scalar to add to the elements in _pfInOut.
+		 **/
+		static inline void											Add_Float( float * _pfInOut, size_t _sSize, float _fScalar ) {
+#ifdef __AVX512F__
+			if ( Utilities::IsAvx512FSupported() ) {
+				while ( _sSize >= 16 ) {
+					__m512 mVal = _mm512_loadu_ps( _pfInOut );
+					_mm512_storeu_ps( _pfInOut, _mm512_add_ps( _mm512_set1_ps( _fScalar ), mVal ) );
+
+					_pfInOut += 16;
+					_sSize -= 16;
+				}
+			}
+#endif	// #ifdef __AVX512F__
+
+#ifdef __AVX2__
+			if ( Utilities::IsAvx2Supported() ) {
+				while ( _sSize >= 8 ) {
+					__m256 mVal = _mm256_loadu_ps( _pfInOut );
+					_mm256_storeu_ps( _pfInOut, _mm256_add_ps( _mm256_set1_ps( _fScalar ), mVal ) );
+
+					_pfInOut += 8;
+					_sSize -= 8;
+				}
+			}
+#endif	// #ifdef __AVX2__
+
+			while ( _sSize ) {
+				(*_pfInOut) = static_cast<float>(*_pfInOut) + _fScalar;
+				++_pfInOut;
+				--_sSize;
+			}
+		}
+
+		/**
+		 * Applies element-wise x+s to the input.
+		 *
+		 * \param _tTypeIn The input type.  Must be float or bfloat16_t.
+		 * \param _tTypeOut The output type.  Must be float or bfloat16_t.
+		 * \param _pfIn The array of floats/bfloat16_t's to x+s.
+		 * \param _pfOut The output array of floats/bfloat16_t's.
+		 * \param _sSize The total number of floats to which _pfInOut points.
+		 * \param _fScalar The scalar to add to the elements in _pfIn.
+		 **/
+		template <typename _tTypeIn, typename _tTypeOut>
+		static inline void											Add_Float( const _tTypeIn * _pfIn, _tTypeOut * _pfOut, size_t _sSize, float _fScalar ) {
+#ifdef __AVX512F__
+			if ( Utilities::IsAvx512FSupported() ) {
+				while ( _sSize >= 16 ) {
+					__m512 mVal;
+					if constexpr ( IsBFloat16<_tTypeIn>() ) {
+						mVal = nn9::bfloat16::loadu_bf16_to_fp32_16( reinterpret_cast<const uint16_t *>(_pfIn) );
+					}
+					else {
+						mVal = _mm512_loadu_ps( _pfIn );
+					}
+					mVal = _mm512_add_ps( _mm512_set1_ps( _fScalar ), mVal );
+					if constexpr ( IsBFloat16<_tTypeOut>() ) {
+						nn9::bfloat16::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pfOut), mVal );
+					}
+					else {
+						_mm512_storeu_ps( _pfOut, mVal );
+					}
+					
+
+					_pfIn += 16;
+					_pfOut += 16;
+					_sSize -= 16;
+				}
+			}
+#endif	// #ifdef __AVX512F__
+
+#ifdef __AVX2__
+			if ( Utilities::IsAvx2Supported() ) {
+				while ( _sSize >= 8 ) {
+					__m256 mVal;
+					if constexpr ( IsBFloat16<_tTypeIn>() ) {
+						mVal = nn9::bfloat16::loadu_bf16_to_fp32_8( reinterpret_cast<const uint16_t *>(_pfIn) );
+					}
+					else {
+						mVal = _mm256_loadu_ps( _pfIn );
+					}
+					mVal = _mm256_add_ps( _mm256_set1_ps( _fScalar ), mVal );
+					if constexpr ( IsBFloat16<_tTypeOut>() ) {
+						nn9::bfloat16::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pfOut), mVal );
+					}
+					else {
+						_mm256_storeu_ps( _pfOut, mVal );
+					}
+
+					_pfIn += 8;
+					_pfOut += 8;
+					_sSize -= 8;
+				}
+			}
+#endif	// #ifdef __AVX2__
+
+			while ( _sSize ) {
+				(*_pfOut++) = static_cast<float>(*_pfIn++) + _fScalar;
+				--_sSize;
+			}
+		}
+
+		/**
+		 * Applies element-wise x+s to the input.
+		 * 
+		 * \param _pdInOut The array of floats to x+s in-place.
+		 * \param _sSize The total number of floats to which _pdInOut points.
+		 * \param _dScalar The scalar to add to the elements in _pfInOut.
+		 **/
+		static inline void											Add_Double( double * _pdInOut, size_t _sSize, double _dScalar ) {
+#ifdef __AVX512F__
+			if ( Utilities::IsAvx512FSupported() ) {
+				while ( _sSize >= 8 ) {
+					__m512d mVal = _mm512_loadu_pd( _pdInOut );
+					_mm512_storeu_pd( _pdInOut, _mm512_add_pd( _mm512_set1_pd( _dScalar ), mVal ) );
+
+					_pdInOut += 8;
+					_sSize -= 8;
+				}
+			}
+#endif	// #ifdef __AVX512F__
+
+#ifdef __AVX2__
+			if ( Utilities::IsAvx2Supported() ) {
+				while ( _sSize >= 4 ) {
+					__m256d mVal = _mm256_loadu_pd( _pdInOut );
+					_mm256_storeu_pd( _pdInOut, _mm256_add_pd( _mm256_set1_pd( _dScalar ), mVal ) );
+
+					_pdInOut += 4;
+					_sSize -= 4;
+				}
+			}
+#endif	// #ifdef __AVX2__
+
+			while ( _sSize ) {
+				(*_pdInOut) = (*_pdInOut) + _dScalar;
+				++_pdInOut;
+				--_sSize;
+			}
+		}
+
+		/**
+		 * Applies element-wise x+s to the input.
+		 *
+		 * \param _pfIn The array of doubles to x+s.
+		 * \param _pfOut The output array of doubles.
+		 * \param _sSize The total number of doubles to which _pfIn and _pfOut point.
+		 * \param _dScalar The scalar to add to the elements in _pfIn.
+		 **/
+		static inline void											Add_Double( const double * _pfIn, double * _pfOut, size_t _sSize, double _dScalar ) {
+#ifdef __AVX512F__
+			if ( Utilities::IsAvx512FSupported() ) {
+				while ( _sSize >= 8 ) {
+					__m512d mVal = _mm512_loadu_pd( _pfIn );
+					_mm512_storeu_pd( _pfOut, _mm512_add_pd( _mm512_set1_pd( _dScalar ), mVal ) );
+
+					_pfIn += 8;
+					_pfOut += 8;
+					_sSize -= 8;
+				}
+			}
+#endif	// #ifdef __AVX512F__
+
+#ifdef __AVX2__
+			if ( Utilities::IsAvx2Supported() ) {
+				while ( _sSize >= 4 ) {
+					__m256d mVal = _mm256_loadu_pd( _pfIn );
+					_mm256_storeu_pd( _pfOut, _mm256_add_pd( _mm256_set1_pd( _dScalar ), mVal ) );
+
+					_pfIn += 4;
+					_pfOut += 4;
+					_sSize -= 4;
+				}
+			}
+#endif	// #ifdef __AVX2__
+
+			while ( _sSize ) {
+				(*_pfOut++) = (*_pfIn++) + _dScalar;
+				--_sSize;
+			}
+		}
+
+		/**
+		 * Applies element-wise x-s to the input.
+		 * 
+		 * \param _pfInOut The array of floats to x-s in-place.
+		 * \param _sSize The total number of floats to which _pfInOut points.
+		 * \param _fScalar The scalar to sub to the elements in _pfInOut.
+		 **/
+		static inline void											Sub_Float( float * _pfInOut, size_t _sSize, float _fScalar ) {
+#ifdef __AVX512F__
+			if ( Utilities::IsAvx512FSupported() ) {
+				while ( _sSize >= 16 ) {
+					__m512 mVal = _mm512_loadu_ps( _pfInOut );
+					_mm512_storeu_ps( _pfInOut, _mm512_sub_ps( mVal, _mm512_set1_ps( _fScalar ) ) );
+
+					_pfInOut += 16;
+					_sSize -= 16;
+				}
+			}
+#endif	// #ifdef __AVX512F__
+
+#ifdef __AVX2__
+			if ( Utilities::IsAvx2Supported() ) {
+				while ( _sSize >= 8 ) {
+					__m256 mVal = _mm256_loadu_ps( _pfInOut );
+					_mm256_storeu_ps( _pfInOut, _mm256_sub_ps( mVal, _mm256_set1_ps( _fScalar ) ) );
+
+					_pfInOut += 8;
+					_sSize -= 8;
+				}
+			}
+#endif	// #ifdef __AVX2__
+
+			while ( _sSize ) {
+				(*_pfInOut) = static_cast<float>(*_pfInOut) - _fScalar;
+				++_pfInOut;
+				--_sSize;
+			}
+		}
+
+		/**
+		 * Applies element-wise x-s to the input.
+		 *
+		 * \param _tTypeIn The input type.  Must be float or bfloat16_t.
+		 * \param _tTypeOut The output type.  Must be float or bfloat16_t.
+		 * \param _pfIn The array of floats/bfloat16_t's to x-s.
+		 * \param _pfOut The output array of floats/bfloat16_t's.
+		 * \param _sSize The total number of floats to which _pfInOut points.
+		 * \param _fScalar The scalar to sub to the elements in _pfIn.
+		 **/
+		template <typename _tTypeIn, typename _tTypeOut>
+		static inline void											Sub_Float( const _tTypeIn * _pfIn, _tTypeOut * _pfOut, size_t _sSize, float _fScalar ) {
+#ifdef __AVX512F__
+			if ( Utilities::IsAvx512FSupported() ) {
+				while ( _sSize >= 16 ) {
+					__m512 mVal;
+					if constexpr ( IsBFloat16<_tTypeIn>() ) {
+						mVal = nn9::bfloat16::loadu_bf16_to_fp32_16( reinterpret_cast<const uint16_t *>(_pfIn) );
+					}
+					else {
+						mVal = _mm512_loadu_ps( _pfIn );
+					}
+					mVal = _mm512_sub_ps( mVal, _mm512_set1_ps( _fScalar ) );
+					if constexpr ( IsBFloat16<_tTypeOut>() ) {
+						nn9::bfloat16::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pfOut), mVal );
+					}
+					else {
+						_mm512_storeu_ps( _pfOut, mVal );
+					}
+					
+
+					_pfIn += 16;
+					_pfOut += 16;
+					_sSize -= 16;
+				}
+			}
+#endif	// #ifdef __AVX512F__
+
+#ifdef __AVX2__
+			if ( Utilities::IsAvx2Supported() ) {
+				while ( _sSize >= 8 ) {
+					__m256 mVal;
+					if constexpr ( IsBFloat16<_tTypeIn>() ) {
+						mVal = nn9::bfloat16::loadu_bf16_to_fp32_8( reinterpret_cast<const uint16_t *>(_pfIn) );
+					}
+					else {
+						mVal = _mm256_loadu_ps( _pfIn );
+					}
+					mVal = _mm256_sub_ps( mVal, _mm256_set1_ps( _fScalar ) );
+					if constexpr ( IsBFloat16<_tTypeOut>() ) {
+						nn9::bfloat16::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pfOut), mVal );
+					}
+					else {
+						_mm256_storeu_ps( _pfOut, mVal );
+					}
+
+					_pfIn += 8;
+					_pfOut += 8;
+					_sSize -= 8;
+				}
+			}
+#endif	// #ifdef __AVX2__
+
+			while ( _sSize ) {
+				(*_pfOut++) = static_cast<float>(*_pfIn++) - _fScalar;
+				--_sSize;
+			}
+		}
+
+		/**
+		 * Applies element-wise x-s to the input.
+		 * 
+		 * \param _pdInOut The array of floats to x-s in-place.
+		 * \param _sSize The total number of floats to which _pdInOut points.
+		 * \param _dScalar The scalar to sub to the elements in _pfInOut.
+		 **/
+		static inline void											Sub_Double( double * _pdInOut, size_t _sSize, double _dScalar ) {
+#ifdef __AVX512F__
+			if ( Utilities::IsAvx512FSupported() ) {
+				while ( _sSize >= 8 ) {
+					__m512d mVal = _mm512_loadu_pd( _pdInOut );
+					_mm512_storeu_pd( _pdInOut, _mm512_sub_pd( mVal, _mm512_set1_pd( _dScalar ) ) );
+
+					_pdInOut += 8;
+					_sSize -= 8;
+				}
+			}
+#endif	// #ifdef __AVX512F__
+
+#ifdef __AVX2__
+			if ( Utilities::IsAvx2Supported() ) {
+				while ( _sSize >= 4 ) {
+					__m256d mVal = _mm256_loadu_pd( _pdInOut );
+					_mm256_storeu_pd( _pdInOut, _mm256_sub_pd( mVal, _mm256_set1_pd( _dScalar ) ) );
+
+					_pdInOut += 4;
+					_sSize -= 4;
+				}
+			}
+#endif	// #ifdef __AVX2__
+
+			while ( _sSize ) {
+				(*_pdInOut) = (*_pdInOut) - _dScalar;
+				++_pdInOut;
+				--_sSize;
+			}
+		}
+
+		/**
+		 * Applies element-wise x-s to the input.
+		 *
+		 * \param _pfIn The array of doubles to x-s.
+		 * \param _pfOut The output array of doubles.
+		 * \param _sSize The total number of doubles to which _pfIn and _pfOut point.
+		 * \param _dScalar The scalar to sub to the elements in _pfIn.
+		 **/
+		static inline void											Sub_Double( const double * _pfIn, double * _pfOut, size_t _sSize, double _dScalar ) {
+#ifdef __AVX512F__
+			if ( Utilities::IsAvx512FSupported() ) {
+				while ( _sSize >= 8 ) {
+					__m512d mVal = _mm512_loadu_pd( _pfIn );
+					_mm512_storeu_pd( _pfOut, _mm512_sub_pd( mVal, _mm512_set1_pd( _dScalar ) ) );
+
+					_pfIn += 8;
+					_pfOut += 8;
+					_sSize -= 8;
+				}
+			}
+#endif	// #ifdef __AVX512F__
+
+#ifdef __AVX2__
+			if ( Utilities::IsAvx2Supported() ) {
+				while ( _sSize >= 4 ) {
+					__m256d mVal = _mm256_loadu_pd( _pfIn );
+					_mm256_storeu_pd( _pfOut, _mm256_sub_pd( mVal, _mm256_set1_pd( _dScalar ) ) );
+
+					_pfIn += 4;
+					_pfOut += 4;
+					_sSize -= 4;
+				}
+			}
+#endif	// #ifdef __AVX2__
+
+			while ( _sSize ) {
+				(*_pfOut++) = (*_pfIn++) - _dScalar;
+				--_sSize;
+			}
+		}
+
+		/**
+		 * Applies element-wise x*s to the input.
+		 * 
+		 * \param _pfInOut The array of floats to x*s in-place.
+		 * \param _sSize The total number of floats to which _pfInOut points.
+		 * \param _fScalar The scalar to mul to the elements in _pfInOut.
+		 **/
+		static inline void											Mul_Float( float * _pfInOut, size_t _sSize, float _fScalar ) {
+#ifdef __AVX512F__
+			if ( Utilities::IsAvx512FSupported() ) {
+				while ( _sSize >= 16 ) {
+					__m512 mVal = _mm512_loadu_ps( _pfInOut );
+					_mm512_storeu_ps( _pfInOut, _mm512_mul_ps( mVal, _mm512_set1_ps( _fScalar ) ) );
+
+					_pfInOut += 16;
+					_sSize -= 16;
+				}
+			}
+#endif	// #ifdef __AVX512F__
+
+#ifdef __AVX2__
+			if ( Utilities::IsAvx2Supported() ) {
+				while ( _sSize >= 8 ) {
+					__m256 mVal = _mm256_loadu_ps( _pfInOut );
+					_mm256_storeu_ps( _pfInOut, _mm256_mul_ps( mVal, _mm256_set1_ps( _fScalar ) ) );
+
+					_pfInOut += 8;
+					_sSize -= 8;
+				}
+			}
+#endif	// #ifdef __AVX2__
+
+			while ( _sSize ) {
+				(*_pfInOut) = static_cast<float>(*_pfInOut) * _fScalar;
+				++_pfInOut;
+				--_sSize;
+			}
+		}
+
+		/**
+		 * Applies element-wise x*s to the input.
+		 *
+		 * \param _tTypeIn The input type.  Must be float or bfloat16_t.
+		 * \param _tTypeOut The output type.  Must be float or bfloat16_t.
+		 * \param _pfIn The array of floats/bfloat16_t's to x*s.
+		 * \param _pfOut The output array of floats/bfloat16_t's.
+		 * \param _sSize The total number of floats to which _pfInOut points.
+		 * \param _fScalar The scalar to mul to the elements in _pfIn.
+		 **/
+		template <typename _tTypeIn, typename _tTypeOut>
+		static inline void											Mul_Float( const _tTypeIn * _pfIn, _tTypeOut * _pfOut, size_t _sSize, float _fScalar ) {
+#ifdef __AVX512F__
+			if ( Utilities::IsAvx512FSupported() ) {
+				while ( _sSize >= 16 ) {
+					__m512 mVal;
+					if constexpr ( IsBFloat16<_tTypeIn>() ) {
+						mVal = nn9::bfloat16::loadu_bf16_to_fp32_16( reinterpret_cast<const uint16_t *>(_pfIn) );
+					}
+					else {
+						mVal = _mm512_loadu_ps( _pfIn );
+					}
+					mVal = _mm512_mul_ps( mVal, _mm512_set1_ps( _fScalar ) );
+					if constexpr ( IsBFloat16<_tTypeOut>() ) {
+						nn9::bfloat16::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pfOut), mVal );
+					}
+					else {
+						_mm512_storeu_ps( _pfOut, mVal );
+					}
+					
+
+					_pfIn += 16;
+					_pfOut += 16;
+					_sSize -= 16;
+				}
+			}
+#endif	// #ifdef __AVX512F__
+
+#ifdef __AVX2__
+			if ( Utilities::IsAvx2Supported() ) {
+				while ( _sSize >= 8 ) {
+					__m256 mVal;
+					if constexpr ( IsBFloat16<_tTypeIn>() ) {
+						mVal = nn9::bfloat16::loadu_bf16_to_fp32_8( reinterpret_cast<const uint16_t *>(_pfIn) );
+					}
+					else {
+						mVal = _mm256_loadu_ps( _pfIn );
+					}
+					mVal = _mm256_mul_ps( mVal, _mm256_set1_ps( _fScalar ) );
+					if constexpr ( IsBFloat16<_tTypeOut>() ) {
+						nn9::bfloat16::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pfOut), mVal );
+					}
+					else {
+						_mm256_storeu_ps( _pfOut, mVal );
+					}
+
+					_pfIn += 8;
+					_pfOut += 8;
+					_sSize -= 8;
+				}
+			}
+#endif	// #ifdef __AVX2__
+
+			while ( _sSize ) {
+				(*_pfOut++) = static_cast<float>(*_pfIn++) * _fScalar;
+				--_sSize;
+			}
+		}
+
+		/**
+		 * Applies element-wise x*s to the input.
+		 * 
+		 * \param _pdInOut The array of floats to x*s in-place.
+		 * \param _sSize The total number of floats to which _pdInOut points.
+		 * \param _dScalar The scalar to mul to the elements in _pfInOut.
+		 **/
+		static inline void											Mul_Double( double * _pdInOut, size_t _sSize, double _dScalar ) {
+#ifdef __AVX512F__
+			if ( Utilities::IsAvx512FSupported() ) {
+				while ( _sSize >= 8 ) {
+					__m512d mVal = _mm512_loadu_pd( _pdInOut );
+					_mm512_storeu_pd( _pdInOut, _mm512_mul_pd( mVal, _mm512_set1_pd( _dScalar ) ) );
+
+					_pdInOut += 8;
+					_sSize -= 8;
+				}
+			}
+#endif	// #ifdef __AVX512F__
+
+#ifdef __AVX2__
+			if ( Utilities::IsAvx2Supported() ) {
+				while ( _sSize >= 4 ) {
+					__m256d mVal = _mm256_loadu_pd( _pdInOut );
+					_mm256_storeu_pd( _pdInOut, _mm256_mul_pd( mVal, _mm256_set1_pd( _dScalar ) ) );
+
+					_pdInOut += 4;
+					_sSize -= 4;
+				}
+			}
+#endif	// #ifdef __AVX2__
+
+			while ( _sSize ) {
+				(*_pdInOut) = (*_pdInOut) * _dScalar;
+				++_pdInOut;
+				--_sSize;
+			}
+		}
+
+		/**
+		 * Applies element-wise x*s to the input.
+		 *
+		 * \param _pfIn The array of doubles to x*s.
+		 * \param _pfOut The output array of doubles.
+		 * \param _sSize The total number of doubles to which _pfIn and _pfOut point.
+		 * \param _dScalar The scalar to mul to the elements in _pfIn.
+		 **/
+		static inline void											Mul_Double( const double * _pfIn, double * _pfOut, size_t _sSize, double _dScalar ) {
+#ifdef __AVX512F__
+			if ( Utilities::IsAvx512FSupported() ) {
+				while ( _sSize >= 8 ) {
+					__m512d mVal = _mm512_loadu_pd( _pfIn );
+					_mm512_storeu_pd( _pfOut, _mm512_mul_pd( mVal, _mm512_set1_pd( _dScalar ) ) );
+
+					_pfIn += 8;
+					_pfOut += 8;
+					_sSize -= 8;
+				}
+			}
+#endif	// #ifdef __AVX512F__
+
+#ifdef __AVX2__
+			if ( Utilities::IsAvx2Supported() ) {
+				while ( _sSize >= 4 ) {
+					__m256d mVal = _mm256_loadu_pd( _pfIn );
+					_mm256_storeu_pd( _pfOut, _mm256_mul_pd( mVal, _mm256_set1_pd( _dScalar ) ) );
+
+					_pfIn += 4;
+					_pfOut += 4;
+					_sSize -= 4;
+				}
+			}
+#endif	// #ifdef __AVX2__
+
+			while ( _sSize ) {
+				(*_pfOut++) = (*_pfIn++) * _dScalar;
+				--_sSize;
+			}
+		}
+
+		/**
+		 * Applies element-wise x/s to the input.
+		 * 
+		 * \param _pfInOut The array of floats to x/s in-place.
+		 * \param _sSize The total number of floats to which _pfInOut points.
+		 * \param _fScalar The scalar to div to the elements in _pfInOut.
+		 **/
+		static inline void											Div_Float( float * _pfInOut, size_t _sSize, float _fScalar ) {
+#ifdef __AVX512F__
+			if ( Utilities::IsAvx512FSupported() ) {
+				while ( _sSize >= 16 ) {
+					__m512 mVal = _mm512_loadu_ps( _pfInOut );
+					_mm512_storeu_ps( _pfInOut, _mm512_div_ps( mVal, _mm512_set1_ps( _fScalar ) ) );
+
+					_pfInOut += 16;
+					_sSize -= 16;
+				}
+			}
+#endif	// #ifdef __AVX512F__
+
+#ifdef __AVX2__
+			if ( Utilities::IsAvx2Supported() ) {
+				while ( _sSize >= 8 ) {
+					__m256 mVal = _mm256_loadu_ps( _pfInOut );
+					_mm256_storeu_ps( _pfInOut, _mm256_div_ps( mVal, _mm256_set1_ps( _fScalar ) ) );
+
+					_pfInOut += 8;
+					_sSize -= 8;
+				}
+			}
+#endif	// #ifdef __AVX2__
+
+			while ( _sSize ) {
+				(*_pfInOut) = static_cast<float>(*_pfInOut) / _fScalar;
+				++_pfInOut;
+				--_sSize;
+			}
+		}
+
+		/**
+		 * Applies element-wise x/s to the input.
+		 *
+		 * \param _tTypeIn The input type.  Must be float or bfloat16_t.
+		 * \param _tTypeOut The output type.  Must be float or bfloat16_t.
+		 * \param _pfIn The array of floats/bfloat16_t's to x/s.
+		 * \param _pfOut The output array of floats/bfloat16_t's.
+		 * \param _sSize The total number of floats to which _pfInOut points.
+		 * \param _fScalar The scalar to div to the elements in _pfIn.
+		 **/
+		template <typename _tTypeIn, typename _tTypeOut>
+		static inline void											Div_Float( const _tTypeIn * _pfIn, _tTypeOut * _pfOut, size_t _sSize, float _fScalar ) {
+#ifdef __AVX512F__
+			if ( Utilities::IsAvx512FSupported() ) {
+				while ( _sSize >= 16 ) {
+					__m512 mVal;
+					if constexpr ( IsBFloat16<_tTypeIn>() ) {
+						mVal = nn9::bfloat16::loadu_bf16_to_fp32_16( reinterpret_cast<const uint16_t *>(_pfIn) );
+					}
+					else {
+						mVal = _mm512_loadu_ps( _pfIn );
+					}
+					mVal = _mm512_div_ps( mVal, _mm512_set1_ps( _fScalar ) );
+					if constexpr ( IsBFloat16<_tTypeOut>() ) {
+						nn9::bfloat16::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pfOut), mVal );
+					}
+					else {
+						_mm512_storeu_ps( _pfOut, mVal );
+					}
+					
+
+					_pfIn += 16;
+					_pfOut += 16;
+					_sSize -= 16;
+				}
+			}
+#endif	// #ifdef __AVX512F__
+
+#ifdef __AVX2__
+			if ( Utilities::IsAvx2Supported() ) {
+				while ( _sSize >= 8 ) {
+					__m256 mVal;
+					if constexpr ( IsBFloat16<_tTypeIn>() ) {
+						mVal = nn9::bfloat16::loadu_bf16_to_fp32_8( reinterpret_cast<const uint16_t *>(_pfIn) );
+					}
+					else {
+						mVal = _mm256_loadu_ps( _pfIn );
+					}
+					mVal = _mm256_div_ps( mVal, _mm256_set1_ps( _fScalar ) );
+					if constexpr ( IsBFloat16<_tTypeOut>() ) {
+						nn9::bfloat16::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pfOut), mVal );
+					}
+					else {
+						_mm256_storeu_ps( _pfOut, mVal );
+					}
+
+					_pfIn += 8;
+					_pfOut += 8;
+					_sSize -= 8;
+				}
+			}
+#endif	// #ifdef __AVX2__
+
+			while ( _sSize ) {
+				(*_pfOut++) = static_cast<float>(*_pfIn++) / _fScalar;
+				--_sSize;
+			}
+		}
+
+		/**
+		 * Applies element-wise x/s to the input.
+		 * 
+		 * \param _pdInOut The array of floats to x/s in-place.
+		 * \param _sSize The total number of floats to which _pdInOut points.
+		 * \param _dScalar The scalar to div to the elements in _pfInOut.
+		 **/
+		static inline void											Div_Double( double * _pdInOut, size_t _sSize, double _dScalar ) {
+#ifdef __AVX512F__
+			if ( Utilities::IsAvx512FSupported() ) {
+				while ( _sSize >= 8 ) {
+					__m512d mVal = _mm512_loadu_pd( _pdInOut );
+					_mm512_storeu_pd( _pdInOut, _mm512_div_pd( mVal, _mm512_set1_pd( _dScalar ) ) );
+
+					_pdInOut += 8;
+					_sSize -= 8;
+				}
+			}
+#endif	// #ifdef __AVX512F__
+
+#ifdef __AVX2__
+			if ( Utilities::IsAvx2Supported() ) {
+				while ( _sSize >= 4 ) {
+					__m256d mVal = _mm256_loadu_pd( _pdInOut );
+					_mm256_storeu_pd( _pdInOut, _mm256_div_pd( mVal, _mm256_set1_pd( _dScalar ) ) );
+
+					_pdInOut += 4;
+					_sSize -= 4;
+				}
+			}
+#endif	// #ifdef __AVX2__
+
+			while ( _sSize ) {
+				(*_pdInOut) = (*_pdInOut) / _dScalar;
+				++_pdInOut;
+				--_sSize;
+			}
+		}
+
+		/**
+		 * Applies element-wise x/s to the input.
+		 *
+		 * \param _pfIn The array of doubles to x/s.
+		 * \param _pfOut The output array of doubles.
+		 * \param _sSize The total number of doubles to which _pfIn and _pfOut point.
+		 * \param _dScalar The scalar to div to the elements in _pfIn.
+		 **/
+		static inline void											Div_Double( const double * _pfIn, double * _pfOut, size_t _sSize, double _dScalar ) {
+#ifdef __AVX512F__
+			if ( Utilities::IsAvx512FSupported() ) {
+				while ( _sSize >= 8 ) {
+					__m512d mVal = _mm512_loadu_pd( _pfIn );
+					_mm512_storeu_pd( _pfOut, _mm512_div_pd( mVal, _mm512_set1_pd( _dScalar ) ) );
+
+					_pfIn += 8;
+					_pfOut += 8;
+					_sSize -= 8;
+				}
+			}
+#endif	// #ifdef __AVX512F__
+
+#ifdef __AVX2__
+			if ( Utilities::IsAvx2Supported() ) {
+				while ( _sSize >= 4 ) {
+					__m256d mVal = _mm256_loadu_pd( _pfIn );
+					_mm256_storeu_pd( _pfOut, _mm256_div_pd( mVal, _mm256_set1_pd( _dScalar ) ) );
+
+					_pfIn += 4;
+					_pfOut += 4;
+					_sSize -= 4;
+				}
+			}
+#endif	// #ifdef __AVX2__
+
+			while ( _sSize ) {
+				(*_pfOut++) = (*_pfIn++) / _dScalar;
 				--_sSize;
 			}
 		}
@@ -1668,6 +2579,7 @@ namespace nn9 {
 			}
 			return _vValues;
 		}
+
 
 		// ===============================
 		// Sin/Cos/Tan
@@ -2428,8 +3340,9 @@ namespace nn9 {
 			return _vOut;
 		}
 
+
 		// ===============================
-		// Square/Sqrt/Rsqrt
+		// Exponential
 		// ===============================
 		/**
 		 * Computes element-wise square().
@@ -2709,6 +3622,385 @@ namespace nn9 {
 			}
 			return _vOut;
 		}
+
+		/**
+		 * Computes element-wise exp().
+		 * 
+		 * \tparam _tType The view/container type.
+		 * \param _vValues The input/output view.
+		 * \return Returns _vValues.
+		 */
+		template <typename _tType>
+		static _tType &												Exp( _tType &_vValues ) {
+			return Func<_tType>( _vValues, [](auto x) { return std::exp( static_cast<double>(x) ); } );
+		}
+
+		/**
+		 * Applies Exp() to an array of inputs.
+		 * 
+		 * \param _tType The view/container type.
+		 * \param _vValues The input/output view to modify.
+		 * \return Returns _vValues.
+		 **/
+		template <typename _tType>
+		static std::vector<_tType> &								Exp( std::vector<_tType> &_vValues ) {
+			for ( auto & aThis : _vValues ) {
+				Exp( aThis );
+			}
+			return _vValues;
+		}
+
+		/**
+		 * Computes element-wise exp().
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut>
+		static _tTypeOut &											Exp( const _tTypeIn &_vIn, _tTypeOut &_vOut ) {
+			return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return std::exp( static_cast<double>(x) ); } );
+		}
+
+		/**
+		 * Applies Exp() to an array of inputs and outputs.
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \throw If NN9_SAFETY_CHECK, throws if _vIn and _vOut are not the same lengths.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut>
+		static std::vector<_tTypeOut> &								Exp( const std::vector<_tTypeIn> &_vIn, std::vector<_tTypeOut> &_vOut ) {
+#ifdef NN9_SAFETY_CHECK
+			if ( _vIn.size() != _vOut.size() ) { throw std::runtime_error( "Math::Exp: Input and outputs must have the same number of elements." ); }
+#endif	// #ifdef NN9_SAFETY_CHECK
+
+			for ( size_t i = 0; i < _vIn.size(); ++i ) {
+				Exp( _vIn[i], _vOut[i] );
+			}
+			return _vOut;
+		}
+
+		/**
+		 * Computes element-wise expm1().
+		 * 
+		 * \tparam _tType The view/container type.
+		 * \param _vValues The input/output view.
+		 * \return Returns _vValues.
+		 */
+		template <typename _tType>
+		static _tType &												Expm1( _tType &_vValues ) {
+			return Func<_tType>( _vValues, [](auto x) { return std::expm1( static_cast<double>(x) ); } );
+		}
+
+		/**
+		 * Applies Expm1() to an array of inputs.
+		 * 
+		 * \param _tType The view/container type.
+		 * \param _vValues The input/output view to modify.
+		 * \return Returns _vValues.
+		 **/
+		template <typename _tType>
+		static std::vector<_tType> &								Expm1( std::vector<_tType> &_vValues ) {
+			for ( auto & aThis : _vValues ) {
+				Expm1( aThis );
+			}
+			return _vValues;
+		}
+
+		/**
+		 * Computes element-wise expm1().
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut>
+		static _tTypeOut &											Expm1( const _tTypeIn &_vIn, _tTypeOut &_vOut ) {
+			return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return std::expm1( static_cast<double>(x) ); } );
+		}
+
+		/**
+		 * Applies Expm1() to an array of inputs and outputs.
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \throw If NN9_SAFETY_CHECK, throws if _vIn and _vOut are not the same lengths.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut>
+		static std::vector<_tTypeOut> &								Expm1( const std::vector<_tTypeIn> &_vIn, std::vector<_tTypeOut> &_vOut ) {
+#ifdef NN9_SAFETY_CHECK
+			if ( _vIn.size() != _vOut.size() ) { throw std::runtime_error( "Math::Expm1: Input and outputs must have the same number of elements." ); }
+#endif	// #ifdef NN9_SAFETY_CHECK
+
+			for ( size_t i = 0; i < _vIn.size(); ++i ) {
+				Expm1( _vIn[i], _vOut[i] );
+			}
+			return _vOut;
+		}
+
+		/**
+		 * Computes element-wise log().
+		 * 
+		 * \tparam _tType The view/container type.
+		 * \param _vValues The input/output view.
+		 * \return Returns _vValues.
+		 */
+		template <typename _tType>
+		static _tType &												Log( _tType &_vValues ) {
+			return Func<_tType>( _vValues, [](auto x) { return std::log( static_cast<double>(x) ); } );
+		}
+
+		/**
+		 * Applies Log() to an array of inputs.
+		 * 
+		 * \param _tType The view/container type.
+		 * \param _vValues The input/output view to modify.
+		 * \return Returns _vValues.
+		 **/
+		template <typename _tType>
+		static std::vector<_tType> &								Log( std::vector<_tType> &_vValues ) {
+			for ( auto & aThis : _vValues ) {
+				Log( aThis );
+			}
+			return _vValues;
+		}
+
+		/**
+		 * Computes element-wise log().
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut>
+		static _tTypeOut &											Log( const _tTypeIn &_vIn, _tTypeOut &_vOut ) {
+			return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return std::log( static_cast<double>(x) ); } );
+		}
+
+		/**
+		 * Applies Log() to an array of inputs and outputs.
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \throw If NN9_SAFETY_CHECK, throws if _vIn and _vOut are not the same lengths.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut>
+		static std::vector<_tTypeOut> &								Log( const std::vector<_tTypeIn> &_vIn, std::vector<_tTypeOut> &_vOut ) {
+#ifdef NN9_SAFETY_CHECK
+			if ( _vIn.size() != _vOut.size() ) { throw std::runtime_error( "Math::Log: Input and outputs must have the same number of elements." ); }
+#endif	// #ifdef NN9_SAFETY_CHECK
+
+			for ( size_t i = 0; i < _vIn.size(); ++i ) {
+				Log( _vIn[i], _vOut[i] );
+			}
+			return _vOut;
+		}
+
+		/**
+		 * Computes element-wise log2().
+		 * 
+		 * \tparam _tType The view/container type.
+		 * \param _vValues The input/output view.
+		 * \return Returns _vValues.
+		 */
+		template <typename _tType>
+		static _tType &												Log2( _tType &_vValues ) {
+			return Func<_tType>( _vValues, [](auto x) { return std::log2( static_cast<double>(x) ); } );
+		}
+
+		/**
+		 * Applies Log2() to an array of inputs.
+		 * 
+		 * \param _tType The view/container type.
+		 * \param _vValues The input/output view to modify.
+		 * \return Returns _vValues.
+		 **/
+		template <typename _tType>
+		static std::vector<_tType> &								Log2( std::vector<_tType> &_vValues ) {
+			for ( auto & aThis : _vValues ) {
+				Log2( aThis );
+			}
+			return _vValues;
+		}
+
+		/**
+		 * Computes element-wise log2().
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut>
+		static _tTypeOut &											Log2( const _tTypeIn &_vIn, _tTypeOut &_vOut ) {
+			return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return std::log2( static_cast<double>(x) ); } );
+		}
+
+		/**
+		 * Applies Log2() to an array of inputs and outputs.
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \throw If NN9_SAFETY_CHECK, throws if _vIn and _vOut are not the same lengths.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut>
+		static std::vector<_tTypeOut> &								Log2( const std::vector<_tTypeIn> &_vIn, std::vector<_tTypeOut> &_vOut ) {
+#ifdef NN9_SAFETY_CHECK
+			if ( _vIn.size() != _vOut.size() ) { throw std::runtime_error( "Math::Log2: Input and outputs must have the same number of elements." ); }
+#endif	// #ifdef NN9_SAFETY_CHECK
+
+			for ( size_t i = 0; i < _vIn.size(); ++i ) {
+				Log2( _vIn[i], _vOut[i] );
+			}
+			return _vOut;
+		}
+
+		/**
+		 * Computes element-wise log10().
+		 * 
+		 * \tparam _tType The view/container type.
+		 * \param _vValues The input/output view.
+		 * \return Returns _vValues.
+		 */
+		template <typename _tType>
+		static _tType &												Log10( _tType &_vValues ) {
+			return Func<_tType>( _vValues, [](auto x) { return std::log10( static_cast<double>(x) ); } );
+		}
+
+		/**
+		 * Applies Log10() to an array of inputs.
+		 * 
+		 * \param _tType The view/container type.
+		 * \param _vValues The input/output view to modify.
+		 * \return Returns _vValues.
+		 **/
+		template <typename _tType>
+		static std::vector<_tType> &								Log10( std::vector<_tType> &_vValues ) {
+			for ( auto & aThis : _vValues ) {
+				Log10( aThis );
+			}
+			return _vValues;
+		}
+
+		/**
+		 * Computes element-wise log10().
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut>
+		static _tTypeOut &											Log10( const _tTypeIn &_vIn, _tTypeOut &_vOut ) {
+			return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return std::log10( static_cast<double>(x) ); } );
+		}
+
+		/**
+		 * Applies Log10() to an array of inputs and outputs.
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \throw If NN9_SAFETY_CHECK, throws if _vIn and _vOut are not the same lengths.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut>
+		static std::vector<_tTypeOut> &								Log10( const std::vector<_tTypeIn> &_vIn, std::vector<_tTypeOut> &_vOut ) {
+#ifdef NN9_SAFETY_CHECK
+			if ( _vIn.size() != _vOut.size() ) { throw std::runtime_error( "Math::Log10: Input and outputs must have the same number of elements." ); }
+#endif	// #ifdef NN9_SAFETY_CHECK
+
+			for ( size_t i = 0; i < _vIn.size(); ++i ) {
+				Log10( _vIn[i], _vOut[i] );
+			}
+			return _vOut;
+		}
+
+		/**
+		 * Computes element-wise log1p().
+		 * 
+		 * \tparam _tType The view/container type.
+		 * \param _vValues The input/output view.
+		 * \return Returns _vValues.
+		 */
+		template <typename _tType>
+		static _tType &												Log1p( _tType &_vValues ) {
+			return Func<_tType>( _vValues, [](auto x) { return std::log1p( static_cast<double>(x) ); } );
+		}
+
+		/**
+		 * Applies Log1p() to an array of inputs.
+		 * 
+		 * \param _tType The view/container type.
+		 * \param _vValues The input/output view to modify.
+		 * \return Returns _vValues.
+		 **/
+		template <typename _tType>
+		static std::vector<_tType> &								Log1p( std::vector<_tType> &_vValues ) {
+			for ( auto & aThis : _vValues ) {
+				Log1p( aThis );
+			}
+			return _vValues;
+		}
+
+		/**
+		 * Computes element-wise log1p().
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut>
+		static _tTypeOut &											Log1p( const _tTypeIn &_vIn, _tTypeOut &_vOut ) {
+			return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return std::log1p( static_cast<double>(x) ); } );
+		}
+
+		/**
+		 * Applies Log1p() to an array of inputs and outputs.
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \throw If NN9_SAFETY_CHECK, throws if _vIn and _vOut are not the same lengths.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut>
+		static std::vector<_tTypeOut> &								Log1p( const std::vector<_tTypeIn> &_vIn, std::vector<_tTypeOut> &_vOut ) {
+#ifdef NN9_SAFETY_CHECK
+			if ( _vIn.size() != _vOut.size() ) { throw std::runtime_error( "Math::Log1p: Input and outputs must have the same number of elements." ); }
+#endif	// #ifdef NN9_SAFETY_CHECK
+
+			for ( size_t i = 0; i < _vIn.size(); ++i ) {
+				Log1p( _vIn[i], _vOut[i] );
+			}
+			return _vOut;
+		}
+
 
 		// ===============================
 		// Rounding
@@ -3083,7 +4375,8 @@ namespace nn9 {
 		/**
 		 * Applies KahanSum() to an array of inputs.
 		 * 
-		 * \param _tType The view/container type.
+		 * \tparam _tType The view/container type.
+		 * \tparam _tOutType The output view/container type.
 		 * \param _vValues The input view/container.
 		 * \param _vOut The output view/container.
 		 * \throw If NN9_SAFETY_CHECK, throws if _vValues and _vOut are not the same lengths.
@@ -3214,7 +4507,8 @@ namespace nn9 {
 		/**
 		 * Applies Sum() to an array of inputs.
 		 * 
-		 * \param _tType The view/container type.
+		 * \tparam _tType The view/container type.
+		 * \tparam _tOutType The output view/container type.
 		 * \param _vValues The input view/container.
 		 * \param _vOut The output view/container.
 		 * \throw If NN9_SAFETY_CHECK, throws if _vValues and _vOut are not the same lengths.
@@ -3230,6 +4524,420 @@ namespace nn9 {
 			}
 			return _vOut;
 		}
+
+
+		// ===============================
+		// Scalars
+		// ===============================
+		/**
+		 * Computes element-wise add.
+		 * 
+		 * \tparam _tType The view/container type.
+		 * \tparam _tScalarType The scalar type.
+		 * \param _vValues The input/output view.
+		 * \param _stScalar The scalar to add element-wise.
+		 * \return Returns _vValues.
+		 */
+		template <typename _tType, typename _tScalarType>
+		static _tType &												Add( _tType &_vValues, _tScalarType _stScalar ) {
+			using ValueType = typename _tType::value_type;
+			if constexpr ( IsBFloat16<ValueType>() ) {
+				Add_BFloat16( &_vValues[0], _vValues.size(), static_cast<float>(_stScalar) );
+				return _vValues;
+			}
+			if constexpr ( Is32BitFloat<ValueType>() ) {
+				Add_Float( &_vValues[0], _vValues.size(), static_cast<float>(_stScalar) );
+				return _vValues;
+			}
+			if constexpr ( Is64BitFloat<ValueType>() ) {
+				Add_Double( &_vValues[0], _vValues.size(), static_cast<double>(_stScalar) );
+				return _vValues;
+			}
+			return Func<_tType>( _vValues, [_stScalar](auto x) { return x + _stScalar; } );
+		}
+
+		/**
+		 * Applies Add() to an array of inputs.
+		 * 
+		 * \tparam _tType The view/container type.
+		 * \tparam _tScalarType The scalar type.
+		 * \param _vValues The input/output view to modify.
+		 * \param _stScalar The scalar to add element-wise.
+		 * \return Returns _vValues.
+		 **/
+		template <typename _tType, typename _tScalarType>
+		static std::vector<_tType> &								Add( std::vector<_tType> &_vValues, _tScalarType _stScalar ) {
+			for ( auto & aThis : _vValues ) {
+				Add( aThis, _stScalar );
+			}
+			return _vValues;
+		}
+
+		/**
+		 * Computes element-wise add.
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \tparam _tScalarType The scalar type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \param _stScalar The scalar to add element-wise.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut, typename _tScalarType>
+		static _tTypeOut &											Add( const _tTypeIn &_vIn, _tTypeOut &_vOut, _tScalarType _stScalar ) {
+			using ValueTypeIn = typename _tTypeIn::value_type;
+			using ValueTypeOut = typename _tTypeOut::value_type;
+			if constexpr ( (IsBFloat16<ValueTypeIn>() || Is32BitFloat<ValueTypeIn>()) &&
+				(IsBFloat16<ValueTypeOut>() || Is32BitFloat<ValueTypeOut>()) ) {
+#ifdef NN9_SAFETY_CHECK
+				if ( _vIn.size() != _vOut.size() ) { throw std::runtime_error( "Math::Add: Input and outputs must have the same number of elements." ); }
+#endif	// #ifdef NN9_SAFETY_CHECK
+				Add_Float( &_vIn[0], &_vOut[0], _vIn.size() );
+				return _vOut;
+			}
+			if constexpr ( Is64BitFloat<ValueTypeIn>() && Is64BitFloat<ValueTypeOut>() ) {
+#ifdef NN9_SAFETY_CHECK
+				if ( _vIn.size() != _vOut.size() ) { throw std::runtime_error( "Math::Add: Input and outputs must have the same number of elements." ); }
+#endif	// #ifdef NN9_SAFETY_CHECK
+				Add_Double( &_vIn[0], &_vOut[0], _vIn.size() );
+				return _vOut;
+			}
+			return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [_stScalar](auto x) { return x + _stScalar; } );
+		}
+
+		/**
+		 * Applies Add() to an array of inputs and outputs.
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \tparam _tScalarType The scalar type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \param _stScalar The scalar to add element-wise.
+		 * \throw If NN9_SAFETY_CHECK, throws if _vIn and _vOut are not the same lengths.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut, typename _tScalarType>
+		static std::vector<_tTypeOut> &								Add( const std::vector<_tTypeIn> &_vIn, std::vector<_tTypeOut> &_vOut, _tScalarType _stScalar ) {
+#ifdef NN9_SAFETY_CHECK
+			if ( _vIn.size() != _vOut.size() ) { throw std::runtime_error( "Math::Add: Input and outputs must have the same number of elements." ); }
+#endif	// #ifdef NN9_SAFETY_CHECK
+
+			for ( size_t i = 0; i < _vIn.size(); ++i ) {
+				Add( _vIn[i], _vOut[i], _stScalar );
+			}
+			return _vOut;
+		}
+
+		/**
+		 * Computes element-wise sub.
+		 * 
+		 * \tparam _tType The view/container type.
+		 * \tparam _tScalarType The scalar type.
+		 * \param _vValues The input/output view.
+		 * \param _stScalar The scalar to sub element-wise.
+		 * \return Returns _vValues.
+		 */
+		template <typename _tType, typename _tScalarType>
+		static _tType &												Sub( _tType &_vValues, _tScalarType _stScalar ) {
+			using ValueType = typename _tType::value_type;
+			if constexpr ( IsBFloat16<ValueType>() ) {
+				Sub_BFloat16( &_vValues[0], _vValues.size(), static_cast<float>(_stScalar) );
+				return _vValues;
+			}
+			if constexpr ( Is32BitFloat<ValueType>() ) {
+				Sub_Float( &_vValues[0], _vValues.size(), static_cast<float>(_stScalar) );
+				return _vValues;
+			}
+			if constexpr ( Is64BitFloat<ValueType>() ) {
+				Sub_Double( &_vValues[0], _vValues.size(), static_cast<double>(_stScalar) );
+				return _vValues;
+			}
+			return Func<_tType>( _vValues, [_stScalar](auto x) { return x - _stScalar; } );
+		}
+
+		/**
+		 * Applies Sub() to an array of inputs.
+		 * 
+		 * \tparam _tType The view/container type.
+		 * \tparam _tScalarType The scalar type.
+		 * \param _vValues The input/output view to modify.
+		 * \param _stScalar The scalar to sub element-wise.
+		 * \return Returns _vValues.
+		 **/
+		template <typename _tType, typename _tScalarType>
+		static std::vector<_tType> &								Sub( std::vector<_tType> &_vValues, _tScalarType _stScalar ) {
+			for ( auto & aThis : _vValues ) {
+				Sub( aThis, _stScalar );
+			}
+			return _vValues;
+		}
+
+		/**
+		 * Computes element-wise sub.
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \tparam _tScalarType The scalar type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \param _stScalar The scalar to sub element-wise.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut, typename _tScalarType>
+		static _tTypeOut &											Sub( const _tTypeIn &_vIn, _tTypeOut &_vOut, _tScalarType _stScalar ) {
+			using ValueTypeIn = typename _tTypeIn::value_type;
+			using ValueTypeOut = typename _tTypeOut::value_type;
+			if constexpr ( (IsBFloat16<ValueTypeIn>() || Is32BitFloat<ValueTypeIn>()) &&
+				(IsBFloat16<ValueTypeOut>() || Is32BitFloat<ValueTypeOut>()) ) {
+#ifdef NN9_SAFETY_CHECK
+				if ( _vIn.size() != _vOut.size() ) { throw std::runtime_error( "Math::Sub: Input and outputs must have the same number of elements." ); }
+#endif	// #ifdef NN9_SAFETY_CHECK
+				Sub_Float( &_vIn[0], &_vOut[0], _vIn.size() );
+				return _vOut;
+			}
+			if constexpr ( Is64BitFloat<ValueTypeIn>() && Is64BitFloat<ValueTypeOut>() ) {
+#ifdef NN9_SAFETY_CHECK
+				if ( _vIn.size() != _vOut.size() ) { throw std::runtime_error( "Math::Sub: Input and outputs must have the same number of elements." ); }
+#endif	// #ifdef NN9_SAFETY_CHECK
+				Sub_Double( &_vIn[0], &_vOut[0], _vIn.size() );
+				return _vOut;
+			}
+			return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [_stScalar](auto x) { return x - _stScalar; } );
+		}
+
+		/**
+		 * Applies Sub() to an array of inputs and outputs.
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \tparam _tScalarType The scalar type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \param _stScalar The scalar to sub element-wise.
+		 * \throw If NN9_SAFETY_CHECK, throws if _vIn and _vOut are not the same lengths.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut, typename _tScalarType>
+		static std::vector<_tTypeOut> &								Sub( const std::vector<_tTypeIn> &_vIn, std::vector<_tTypeOut> &_vOut, _tScalarType _stScalar ) {
+#ifdef NN9_SAFETY_CHECK
+			if ( _vIn.size() != _vOut.size() ) { throw std::runtime_error( "Math::Sub: Input and outputs must have the same number of elements." ); }
+#endif	// #ifdef NN9_SAFETY_CHECK
+
+			for ( size_t i = 0; i < _vIn.size(); ++i ) {
+				Sub( _vIn[i], _vOut[i], _stScalar );
+			}
+			return _vOut;
+		}
+
+		/**
+		 * Computes element-wise mul.
+		 * 
+		 * \tparam _tType The view/container type.
+		 * \tparam _tScalarType The scalar type.
+		 * \param _vValues The input/output view.
+		 * \param _stScalar The scalar to mul element-wise.
+		 * \return Returns _vValues.
+		 */
+		template <typename _tType, typename _tScalarType>
+		static _tType &												Mul( _tType &_vValues, _tScalarType _stScalar ) {
+			using ValueType = typename _tType::value_type;
+			if constexpr ( IsBFloat16<ValueType>() ) {
+				Mul_BFloat16( &_vValues[0], _vValues.size(), static_cast<float>(_stScalar) );
+				return _vValues;
+			}
+			if constexpr ( Is32BitFloat<ValueType>() ) {
+				Mul_Float( &_vValues[0], _vValues.size(), static_cast<float>(_stScalar) );
+				return _vValues;
+			}
+			if constexpr ( Is64BitFloat<ValueType>() ) {
+				Mul_Double( &_vValues[0], _vValues.size(), static_cast<double>(_stScalar) );
+				return _vValues;
+			}
+			return Func<_tType>( _vValues, [_stScalar](auto x) { return x * _stScalar; } );
+		}
+
+		/**
+		 * Applies Mul() to an array of inputs.
+		 * 
+		 * \tparam _tType The view/container type.
+		 * \tparam _tScalarType The scalar type.
+		 * \param _vValues The input/output view to modify.
+		 * \param _stScalar The scalar to mul element-wise.
+		 * \return Returns _vValues.
+		 **/
+		template <typename _tType, typename _tScalarType>
+		static std::vector<_tType> &								Mul( std::vector<_tType> &_vValues, _tScalarType _stScalar ) {
+			for ( auto & aThis : _vValues ) {
+				Mul( aThis, _stScalar );
+			}
+			return _vValues;
+		}
+
+		/**
+		 * Computes element-wise mul.
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \tparam _tScalarType The scalar type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \param _stScalar The scalar to mul element-wise.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut, typename _tScalarType>
+		static _tTypeOut &											Mul( const _tTypeIn &_vIn, _tTypeOut &_vOut, _tScalarType _stScalar ) {
+			using ValueTypeIn = typename _tTypeIn::value_type;
+			using ValueTypeOut = typename _tTypeOut::value_type;
+			if constexpr ( (IsBFloat16<ValueTypeIn>() || Is32BitFloat<ValueTypeIn>()) &&
+				(IsBFloat16<ValueTypeOut>() || Is32BitFloat<ValueTypeOut>()) ) {
+#ifdef NN9_SAFETY_CHECK
+				if ( _vIn.size() != _vOut.size() ) { throw std::runtime_error( "Math::Mul: Input and outputs must have the same number of elements." ); }
+#endif	// #ifdef NN9_SAFETY_CHECK
+				Mul_Float( &_vIn[0], &_vOut[0], _vIn.size() );
+				return _vOut;
+			}
+			if constexpr ( Is64BitFloat<ValueTypeIn>() && Is64BitFloat<ValueTypeOut>() ) {
+#ifdef NN9_SAFETY_CHECK
+				if ( _vIn.size() != _vOut.size() ) { throw std::runtime_error( "Math::Mul: Input and outputs must have the same number of elements." ); }
+#endif	// #ifdef NN9_SAFETY_CHECK
+				Mul_Double( &_vIn[0], &_vOut[0], _vIn.size() );
+				return _vOut;
+			}
+			return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [_stScalar](auto x) { return x * _stScalar; } );
+		}
+
+		/**
+		 * Applies Mul() to an array of inputs and outputs.
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \tparam _tScalarType The scalar type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \param _stScalar The scalar to mul element-wise.
+		 * \throw If NN9_SAFETY_CHECK, throws if _vIn and _vOut are not the same lengths.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut, typename _tScalarType>
+		static std::vector<_tTypeOut> &								Mul( const std::vector<_tTypeIn> &_vIn, std::vector<_tTypeOut> &_vOut, _tScalarType _stScalar ) {
+#ifdef NN9_SAFETY_CHECK
+			if ( _vIn.size() != _vOut.size() ) { throw std::runtime_error( "Math::Mul: Input and outputs must have the same number of elements." ); }
+#endif	// #ifdef NN9_SAFETY_CHECK
+
+			for ( size_t i = 0; i < _vIn.size(); ++i ) {
+				Mul( _vIn[i], _vOut[i], _stScalar );
+			}
+			return _vOut;
+		}
+
+		/**
+		 * Computes element-wise div.
+		 * 
+		 * \tparam _tType The view/container type.
+		 * \tparam _tScalarType The scalar type.
+		 * \param _vValues The input/output view.
+		 * \param _stScalar The scalar to div element-wise.
+		 * \return Returns _vValues.
+		 */
+		template <typename _tType, typename _tScalarType>
+		static _tType &												Div( _tType &_vValues, _tScalarType _stScalar ) {
+			using ValueType = typename _tType::value_type;
+			if constexpr ( IsBFloat16<ValueType>() ) {
+				Div_BFloat16( &_vValues[0], _vValues.size(), static_cast<float>(_stScalar) );
+				return _vValues;
+			}
+			if constexpr ( Is32BitFloat<ValueType>() ) {
+				Div_Float( &_vValues[0], _vValues.size(), static_cast<float>(_stScalar) );
+				return _vValues;
+			}
+			if constexpr ( Is64BitFloat<ValueType>() ) {
+				Div_Double( &_vValues[0], _vValues.size(), static_cast<double>(_stScalar) );
+				return _vValues;
+			}
+			return Func<_tType>( _vValues, [_stScalar](auto x) { return x / _stScalar; } );
+		}
+
+		/**
+		 * Applies Div() to an array of inputs.
+		 * 
+		 * \tparam _tType The view/container type.
+		 * \tparam _tScalarType The scalar type.
+		 * \param _vValues The input/output view to modify.
+		 * \param _stScalar The scalar to div element-wise.
+		 * \return Returns _vValues.
+		 **/
+		template <typename _tType, typename _tScalarType>
+		static std::vector<_tType> &								Div( std::vector<_tType> &_vValues, _tScalarType _stScalar ) {
+			for ( auto & aThis : _vValues ) {
+				Div( aThis, _stScalar );
+			}
+			return _vValues;
+		}
+
+		/**
+		 * Computes element-wise div.
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \tparam _tScalarType The scalar type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \param _stScalar The scalar to div element-wise.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut, typename _tScalarType>
+		static _tTypeOut &											Div( const _tTypeIn &_vIn, _tTypeOut &_vOut, _tScalarType _stScalar ) {
+			using ValueTypeIn = typename _tTypeIn::value_type;
+			using ValueTypeOut = typename _tTypeOut::value_type;
+			if constexpr ( (IsBFloat16<ValueTypeIn>() || Is32BitFloat<ValueTypeIn>()) &&
+				(IsBFloat16<ValueTypeOut>() || Is32BitFloat<ValueTypeOut>()) ) {
+#ifdef NN9_SAFETY_CHECK
+				if ( _vIn.size() != _vOut.size() ) { throw std::runtime_error( "Math::Div: Input and outputs must have the same number of elements." ); }
+#endif	// #ifdef NN9_SAFETY_CHECK
+				Div_Float( &_vIn[0], &_vOut[0], _vIn.size() );
+				return _vOut;
+			}
+			if constexpr ( Is64BitFloat<ValueTypeIn>() && Is64BitFloat<ValueTypeOut>() ) {
+#ifdef NN9_SAFETY_CHECK
+				if ( _vIn.size() != _vOut.size() ) { throw std::runtime_error( "Math::Div: Input and outputs must have the same number of elements." ); }
+#endif	// #ifdef NN9_SAFETY_CHECK
+				Div_Double( &_vIn[0], &_vOut[0], _vIn.size() );
+				return _vOut;
+			}
+			return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [_stScalar](auto x) { return x / _stScalar; } );
+		}
+
+		/**
+		 * Applies Div() to an array of inputs and outputs.
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \tparam _tScalarType The scalar type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \param _stScalar The scalar to div element-wise.
+		 * \throw If NN9_SAFETY_CHECK, throws if _vIn and _vOut are not the same lengths.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut, typename _tScalarType>
+		static std::vector<_tTypeOut> &								Div( const std::vector<_tTypeIn> &_vIn, std::vector<_tTypeOut> &_vOut, _tScalarType _stScalar ) {
+#ifdef NN9_SAFETY_CHECK
+			if ( _vIn.size() != _vOut.size() ) { throw std::runtime_error( "Math::Div: Input and outputs must have the same number of elements." ); }
+#endif	// #ifdef NN9_SAFETY_CHECK
+
+			for ( size_t i = 0; i < _vIn.size(); ++i ) {
+				Div( _vIn[i], _vOut[i], _stScalar );
+			}
+			return _vOut;
+		}
+
+
+		// ===============================
+		// Element-wise Algebra
+		// ===============================
+
 	};
 
 }	// namespace nn9
