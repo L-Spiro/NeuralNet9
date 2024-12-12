@@ -29,6 +29,9 @@ namespace nn9 {
 	public :
 
 		// == Functions.
+		// ===============================
+		// Utilities
+		// ===============================
 		/**
 		 * A constexpr function that checks if T is a 64-bit float type.
 		 *
@@ -1652,6 +1655,24 @@ namespace nn9 {
 		}
 
 		/**
+		 * Applies Abs() to an array of inputs.
+		 * 
+		 * \param _tType The view/container type.
+		 * \param _vValues The input/output view to modify.
+		 * \return Returns _vValues.
+		 **/
+		template <typename _tType>
+		static std::vector<_tType> &								Abs( std::vector<_tType> &_vValues ) {
+			for ( auto & aThis : _vValues ) {
+				Abs( aThis );
+			}
+			return _vValues;
+		}
+
+		// ===============================
+		// Sin/Cos/Tan
+		// ===============================
+		/**
 		 * Computes element-wise acos().
 		 * 
 		 * \tparam _tType The view/container type.
@@ -1664,17 +1685,54 @@ namespace nn9 {
 		}
 
 		/**
+		 * Applies Acos() to an array of inputs.
+		 * 
+		 * \param _tType The view/container type.
+		 * \param _vValues The input/output view to modify.
+		 * \return Returns _vValues.
+		 **/
+		template <typename _tType>
+		static std::vector<_tType> &								Acos( std::vector<_tType> &_vValues ) {
+			for ( auto & aThis : _vValues ) {
+				Acos( aThis );
+			}
+			return _vValues;
+		}
+
+		/**
 		 * Computes element-wise acos().
 		 * 
 		 * \tparam _tTypeIn The input view/container type.
 		 * \tparam _tTypeOut The output view/container type.
 		 * \param _vIn The input view.
 		 * \param _vOut The output view.
-		 * \return Returns _vValues.
+		 * \return Returns _vOut.
 		 */
 		template <typename _tTypeIn, typename _tTypeOut>
 		static _tTypeOut &											Acos( const _tTypeIn &_vIn, _tTypeOut &_vOut ) {
 			return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return std::acos( static_cast<double>(x) ); } );
+		}
+
+		/**
+		 * Applies Acos() to an array of inputs and outputs.
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \throw If NN9_SAFETY_CHECK, throws if _vIn and _vOut are not the same lengths.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut>
+		static std::vector<_tTypeOut> &								Acos( const std::vector<_tTypeIn> &_vIn, std::vector<_tTypeOut> &_vOut ) {
+#ifdef NN9_SAFETY_CHECK
+			if ( _vIn.size() != _vOut.size() ) { throw std::runtime_error( "Math::Acos: Input and outputs must have the same number of elements." ); }
+#endif	// #ifdef NN9_SAFETY_CHECK
+
+			for ( size_t i = 0; i < _vIn.size(); ++i ) {
+				Acos( _vIn[i], _vOut[i] );
+			}
+			return _vOut;
 		}
 
 		/**
@@ -1690,17 +1748,54 @@ namespace nn9 {
 		}
 
 		/**
+		 * Applies Asin() to an array of inputs.
+		 * 
+		 * \param _tType The view/container type.
+		 * \param _vValues The input/output view to modify.
+		 * \return Returns _vValues.
+		 **/
+		template <typename _tType>
+		static std::vector<_tType> &								Asin( std::vector<_tType> &_vValues ) {
+			for ( auto & aThis : _vValues ) {
+				Asin( aThis );
+			}
+			return _vValues;
+		}
+
+		/**
 		 * Computes element-wise asin().
 		 * 
 		 * \tparam _tTypeIn The input view/container type.
 		 * \tparam _tTypeOut The output view/container type.
 		 * \param _vIn The input view.
 		 * \param _vOut The output view.
-		 * \return Returns _vValues.
+		 * \return Returns _vOut.
 		 */
 		template <typename _tTypeIn, typename _tTypeOut>
 		static _tTypeOut &											Asin( const _tTypeIn &_vIn, _tTypeOut &_vOut ) {
 			return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return std::asin( static_cast<double>(x) ); } );
+		}
+
+		/**
+		 * Applies Asin() to an array of inputs and outputs.
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \throw If NN9_SAFETY_CHECK, throws if _vIn and _vOut are not the same lengths.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut>
+		static std::vector<_tTypeOut> &								Asin( const std::vector<_tTypeIn> &_vIn, std::vector<_tTypeOut> &_vOut ) {
+#ifdef NN9_SAFETY_CHECK
+			if ( _vIn.size() != _vOut.size() ) { throw std::runtime_error( "Math::Asin: Input and outputs must have the same number of elements." ); }
+#endif	// #ifdef NN9_SAFETY_CHECK
+
+			for ( size_t i = 0; i < _vIn.size(); ++i ) {
+				Asin( _vIn[i], _vOut[i] );
+			}
+			return _vOut;
 		}
 
 		/**
@@ -1716,17 +1811,54 @@ namespace nn9 {
 		}
 
 		/**
+		 * Applies Atan() to an array of inputs.
+		 * 
+		 * \param _tType The view/container type.
+		 * \param _vValues The input/output view to modify.
+		 * \return Returns _vValues.
+		 **/
+		template <typename _tType>
+		static std::vector<_tType> &								Atan( std::vector<_tType> &_vValues ) {
+			for ( auto & aThis : _vValues ) {
+				Atan( aThis );
+			}
+			return _vValues;
+		}
+
+		/**
 		 * Computes element-wise atan().
 		 * 
 		 * \tparam _tTypeIn The input view/container type.
 		 * \tparam _tTypeOut The output view/container type.
 		 * \param _vIn The input view.
 		 * \param _vOut The output view.
-		 * \return Returns _vValues.
+		 * \return Returns _vOut.
 		 */
 		template <typename _tTypeIn, typename _tTypeOut>
 		static _tTypeOut &											Atan( const _tTypeIn &_vIn, _tTypeOut &_vOut ) {
 			return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return std::atan( static_cast<double>(x) ); } );
+		}
+
+		/**
+		 * Applies Atan() to an array of inputs and outputs.
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \throw If NN9_SAFETY_CHECK, throws if _vIn and _vOut are not the same lengths.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut>
+		static std::vector<_tTypeOut> &								Atan( const std::vector<_tTypeIn> &_vIn, std::vector<_tTypeOut> &_vOut ) {
+#ifdef NN9_SAFETY_CHECK
+			if ( _vIn.size() != _vOut.size() ) { throw std::runtime_error( "Math::Atan: Input and outputs must have the same number of elements." ); }
+#endif	// #ifdef NN9_SAFETY_CHECK
+
+			for ( size_t i = 0; i < _vIn.size(); ++i ) {
+				Atan( _vIn[i], _vOut[i] );
+			}
+			return _vOut;
 		}
 
 		/**
@@ -1742,17 +1874,54 @@ namespace nn9 {
 		}
 
 		/**
+		 * Applies Acosh() to an array of inputs.
+		 * 
+		 * \param _tType The view/container type.
+		 * \param _vValues The input/output view to modify.
+		 * \return Returns _vValues.
+		 **/
+		template <typename _tType>
+		static std::vector<_tType> &								Acosh( std::vector<_tType> &_vValues ) {
+			for ( auto & aThis : _vValues ) {
+				Acosh( aThis );
+			}
+			return _vValues;
+		}
+
+		/**
 		 * Computes element-wise acosh().
 		 * 
 		 * \tparam _tTypeIn The input view/container type.
 		 * \tparam _tTypeOut The output view/container type.
 		 * \param _vIn The input view.
 		 * \param _vOut The output view.
-		 * \return Returns _vValues.
+		 * \return Returns _vOut.
 		 */
 		template <typename _tTypeIn, typename _tTypeOut>
 		static _tTypeOut &											Acosh( const _tTypeIn &_vIn, _tTypeOut &_vOut ) {
 			return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return std::acosh( static_cast<double>(x) ); } );
+		}
+
+		/**
+		 * Applies Acosh() to an array of inputs and outputs.
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \throw If NN9_SAFETY_CHECK, throws if _vIn and _vOut are not the same lengths.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut>
+		static std::vector<_tTypeOut> &								Acosh( const std::vector<_tTypeIn> &_vIn, std::vector<_tTypeOut> &_vOut ) {
+#ifdef NN9_SAFETY_CHECK
+			if ( _vIn.size() != _vOut.size() ) { throw std::runtime_error( "Math::Acosh: Input and outputs must have the same number of elements." ); }
+#endif	// #ifdef NN9_SAFETY_CHECK
+
+			for ( size_t i = 0; i < _vIn.size(); ++i ) {
+				Acosh( _vIn[i], _vOut[i] );
+			}
+			return _vOut;
 		}
 
 		/**
@@ -1768,17 +1937,54 @@ namespace nn9 {
 		}
 
 		/**
+		 * Applies Asinh() to an array of inputs.
+		 * 
+		 * \param _tType The view/container type.
+		 * \param _vValues The input/output view to modify.
+		 * \return Returns _vValues.
+		 **/
+		template <typename _tType>
+		static std::vector<_tType> &								Asinh( std::vector<_tType> &_vValues ) {
+			for ( auto & aThis : _vValues ) {
+				Asinh( aThis );
+			}
+			return _vValues;
+		}
+
+		/**
 		 * Computes element-wise asinh().
 		 * 
 		 * \tparam _tTypeIn The input view/container type.
 		 * \tparam _tTypeOut The output view/container type.
 		 * \param _vIn The input view.
 		 * \param _vOut The output view.
-		 * \return Returns _vValues.
+		 * \return Returns _vOut.
 		 */
 		template <typename _tTypeIn, typename _tTypeOut>
 		static _tTypeOut &											Asinh( const _tTypeIn &_vIn, _tTypeOut &_vOut ) {
 			return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return std::asinh( static_cast<double>(x) ); } );
+		}
+
+		/**
+		 * Applies Asinh() to an array of inputs and outputs.
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \throw If NN9_SAFETY_CHECK, throws if _vIn and _vOut are not the same lengths.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut>
+		static std::vector<_tTypeOut> &								Asinh( const std::vector<_tTypeIn> &_vIn, std::vector<_tTypeOut> &_vOut ) {
+#ifdef NN9_SAFETY_CHECK
+			if ( _vIn.size() != _vOut.size() ) { throw std::runtime_error( "Math::Asinh: Input and outputs must have the same number of elements." ); }
+#endif	// #ifdef NN9_SAFETY_CHECK
+
+			for ( size_t i = 0; i < _vIn.size(); ++i ) {
+				Asinh( _vIn[i], _vOut[i] );
+			}
+			return _vOut;
 		}
 
 		/**
@@ -1794,17 +2000,54 @@ namespace nn9 {
 		}
 
 		/**
+		 * Applies Atanh() to an array of inputs.
+		 * 
+		 * \param _tType The view/container type.
+		 * \param _vValues The input/output view to modify.
+		 * \return Returns _vValues.
+		 **/
+		template <typename _tType>
+		static std::vector<_tType> &								Atanh( std::vector<_tType> &_vValues ) {
+			for ( auto & aThis : _vValues ) {
+				Atanh( aThis );
+			}
+			return _vValues;
+		}
+
+		/**
 		 * Computes element-wise atanh().
 		 * 
 		 * \tparam _tTypeIn The input view/container type.
 		 * \tparam _tTypeOut The output view/container type.
 		 * \param _vIn The input view.
 		 * \param _vOut The output view.
-		 * \return Returns _vValues.
+		 * \return Returns _vOut.
 		 */
 		template <typename _tTypeIn, typename _tTypeOut>
 		static _tTypeOut &											Atanh( const _tTypeIn &_vIn, _tTypeOut &_vOut ) {
 			return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return std::atanh( static_cast<double>(x) ); } );
+		}
+
+		/**
+		 * Applies Atanh() to an array of inputs and outputs.
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \throw If NN9_SAFETY_CHECK, throws if _vIn and _vOut are not the same lengths.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut>
+		static std::vector<_tTypeOut> &								Atanh( const std::vector<_tTypeIn> &_vIn, std::vector<_tTypeOut> &_vOut ) {
+#ifdef NN9_SAFETY_CHECK
+			if ( _vIn.size() != _vOut.size() ) { throw std::runtime_error( "Math::Atanh: Input and outputs must have the same number of elements." ); }
+#endif	// #ifdef NN9_SAFETY_CHECK
+
+			for ( size_t i = 0; i < _vIn.size(); ++i ) {
+				Atanh( _vIn[i], _vOut[i] );
+			}
+			return _vOut;
 		}
 
 		/**
@@ -1820,17 +2063,117 @@ namespace nn9 {
 		}
 
 		/**
+		 * Applies Cos() to an array of inputs.
+		 * 
+		 * \param _tType The view/container type.
+		 * \param _vValues The input/output view to modify.
+		 * \return Returns _vValues.
+		 **/
+		template <typename _tType>
+		static std::vector<_tType> &								Cos( std::vector<_tType> &_vValues ) {
+			for ( auto & aThis : _vValues ) {
+				Cos( aThis );
+			}
+			return _vValues;
+		}
+
+		/**
 		 * Computes element-wise cos().
 		 * 
 		 * \tparam _tTypeIn The input view/container type.
 		 * \tparam _tTypeOut The output view/container type.
 		 * \param _vIn The input view.
 		 * \param _vOut The output view.
-		 * \return Returns _vValues.
+		 * \return Returns _vOut.
 		 */
 		template <typename _tTypeIn, typename _tTypeOut>
 		static _tTypeOut &											Cos( const _tTypeIn &_vIn, _tTypeOut &_vOut ) {
 			return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return std::cos( static_cast<double>(x) ); } );
+		}
+
+		/**
+		 * Applies Cos() to an array of inputs and outputs.
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \throw If NN9_SAFETY_CHECK, throws if _vIn and _vOut are not the same lengths.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut>
+		static std::vector<_tTypeOut> &								Cos( const std::vector<_tTypeIn> &_vIn, std::vector<_tTypeOut> &_vOut ) {
+#ifdef NN9_SAFETY_CHECK
+			if ( _vIn.size() != _vOut.size() ) { throw std::runtime_error( "Math::Cos: Input and outputs must have the same number of elements." ); }
+#endif	// #ifdef NN9_SAFETY_CHECK
+
+			for ( size_t i = 0; i < _vIn.size(); ++i ) {
+				Cos( _vIn[i], _vOut[i] );
+			}
+			return _vOut;
+		}
+
+		/**
+		 * Computes element-wise cosh().
+		 * 
+		 * \tparam _tType The view/container type.
+		 * \param _vValues The input/output view.
+		 * \return Returns _vValues.
+		 */
+		template <typename _tType>
+		static _tType &												Cosh( _tType &_vValues ) {
+			return Func<_tType>( _vValues, [](auto x) { return std::cosh( static_cast<double>(x) ); } );
+		}
+
+		/**
+		 * Applies Cosh() to an array of inputs.
+		 * 
+		 * \param _tType The view/container type.
+		 * \param _vValues The input/output view to modify.
+		 * \return Returns _vValues.
+		 **/
+		template <typename _tType>
+		static std::vector<_tType> &								Cosh( std::vector<_tType> &_vValues ) {
+			for ( auto & aThis : _vValues ) {
+				Cosh( aThis );
+			}
+			return _vValues;
+		}
+
+		/**
+		 * Computes element-wise cosh().
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut>
+		static _tTypeOut &											Cosh( const _tTypeIn &_vIn, _tTypeOut &_vOut ) {
+			return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return std::cosh( static_cast<double>(x) ); } );
+		}
+
+		/**
+		 * Applies Cosh() to an array of inputs and outputs.
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \throw If NN9_SAFETY_CHECK, throws if _vIn and _vOut are not the same lengths.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut>
+		static std::vector<_tTypeOut> &								Cosh( const std::vector<_tTypeIn> &_vIn, std::vector<_tTypeOut> &_vOut ) {
+#ifdef NN9_SAFETY_CHECK
+			if ( _vIn.size() != _vOut.size() ) { throw std::runtime_error( "Math::Cosh: Input and outputs must have the same number of elements." ); }
+#endif	// #ifdef NN9_SAFETY_CHECK
+
+			for ( size_t i = 0; i < _vIn.size(); ++i ) {
+				Cosh( _vIn[i], _vOut[i] );
+			}
+			return _vOut;
 		}
 
 		/**
@@ -1846,17 +2189,117 @@ namespace nn9 {
 		}
 
 		/**
+		 * Applies Sin() to an array of inputs.
+		 * 
+		 * \param _tType The view/container type.
+		 * \param _vValues The input/output view to modify.
+		 * \return Returns _vValues.
+		 **/
+		template <typename _tType>
+		static std::vector<_tType> &								Sin( std::vector<_tType> &_vValues ) {
+			for ( auto & aThis : _vValues ) {
+				Sin( aThis );
+			}
+			return _vValues;
+		}
+
+		/**
 		 * Computes element-wise sin().
 		 * 
 		 * \tparam _tTypeIn The input view/container type.
 		 * \tparam _tTypeOut The output view/container type.
 		 * \param _vIn The input view.
 		 * \param _vOut The output view.
-		 * \return Returns _vValues.
+		 * \return Returns _vOut.
 		 */
 		template <typename _tTypeIn, typename _tTypeOut>
 		static _tTypeOut &											Sin( const _tTypeIn &_vIn, _tTypeOut &_vOut ) {
 			return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return std::sin( static_cast<double>(x) ); } );
+		}
+
+		/**
+		 * Applies Sin() to an array of inputs and outputs.
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \throw If NN9_SAFETY_CHECK, throws if _vIn and _vOut are not the same lengths.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut>
+		static std::vector<_tTypeOut> &								Sin( const std::vector<_tTypeIn> &_vIn, std::vector<_tTypeOut> &_vOut ) {
+#ifdef NN9_SAFETY_CHECK
+			if ( _vIn.size() != _vOut.size() ) { throw std::runtime_error( "Math::Sin: Input and outputs must have the same number of elements." ); }
+#endif	// #ifdef NN9_SAFETY_CHECK
+
+			for ( size_t i = 0; i < _vIn.size(); ++i ) {
+				Sin( _vIn[i], _vOut[i] );
+			}
+			return _vOut;
+		}
+
+		/**
+		 * Computes element-wise sinh().
+		 * 
+		 * \tparam _tType The view/container type.
+		 * \param _vValues The input/output view.
+		 * \return Returns _vValues.
+		 */
+		template <typename _tType>
+		static _tType &												Sinh( _tType &_vValues ) {
+			return Func<_tType>( _vValues, [](auto x) { return std::sinh( static_cast<double>(x) ); } );
+		}
+
+		/**
+		 * Applies Sinh() to an array of inputs.
+		 * 
+		 * \param _tType The view/container type.
+		 * \param _vValues The input/output view to modify.
+		 * \return Returns _vValues.
+		 **/
+		template <typename _tType>
+		static std::vector<_tType> &								Sinh( std::vector<_tType> &_vValues ) {
+			for ( auto & aThis : _vValues ) {
+				Sinh( aThis );
+			}
+			return _vValues;
+		}
+
+		/**
+		 * Computes element-wise sinh().
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut>
+		static _tTypeOut &											Sinh( const _tTypeIn &_vIn, _tTypeOut &_vOut ) {
+			return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return std::sinh( static_cast<double>(x) ); } );
+		}
+
+		/**
+		 * Applies Sinh() to an array of inputs and outputs.
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \throw If NN9_SAFETY_CHECK, throws if _vIn and _vOut are not the same lengths.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut>
+		static std::vector<_tTypeOut> &								Sinh( const std::vector<_tTypeIn> &_vIn, std::vector<_tTypeOut> &_vOut ) {
+#ifdef NN9_SAFETY_CHECK
+			if ( _vIn.size() != _vOut.size() ) { throw std::runtime_error( "Math::Sinh: Input and outputs must have the same number of elements." ); }
+#endif	// #ifdef NN9_SAFETY_CHECK
+
+			for ( size_t i = 0; i < _vIn.size(); ++i ) {
+				Sinh( _vIn[i], _vOut[i] );
+			}
+			return _vOut;
 		}
 
 		/**
@@ -1872,19 +2315,122 @@ namespace nn9 {
 		}
 
 		/**
+		 * Applies Tan() to an array of inputs.
+		 * 
+		 * \param _tType The view/container type.
+		 * \param _vValues The input/output view to modify.
+		 * \return Returns _vValues.
+		 **/
+		template <typename _tType>
+		static std::vector<_tType> &								Tan( std::vector<_tType> &_vValues ) {
+			for ( auto & aThis : _vValues ) {
+				Tan( aThis );
+			}
+			return _vValues;
+		}
+
+		/**
 		 * Computes element-wise tan().
 		 * 
 		 * \tparam _tTypeIn The input view/container type.
 		 * \tparam _tTypeOut The output view/container type.
 		 * \param _vIn The input view.
 		 * \param _vOut The output view.
-		 * \return Returns _vValues.
+		 * \return Returns _vOut.
 		 */
 		template <typename _tTypeIn, typename _tTypeOut>
 		static _tTypeOut &											Tan( const _tTypeIn &_vIn, _tTypeOut &_vOut ) {
 			return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return std::tan( static_cast<double>(x) ); } );
 		}
 
+		/**
+		 * Applies Tan() to an array of inputs and outputs.
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \throw If NN9_SAFETY_CHECK, throws if _vIn and _vOut are not the same lengths.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut>
+		static std::vector<_tTypeOut> &								Tan( const std::vector<_tTypeIn> &_vIn, std::vector<_tTypeOut> &_vOut ) {
+#ifdef NN9_SAFETY_CHECK
+			if ( _vIn.size() != _vOut.size() ) { throw std::runtime_error( "Math::Tan: Input and outputs must have the same number of elements." ); }
+#endif	// #ifdef NN9_SAFETY_CHECK
+
+			for ( size_t i = 0; i < _vIn.size(); ++i ) {
+				Tan( _vIn[i], _vOut[i] );
+			}
+			return _vOut;
+		}
+
+		/**
+		 * Computes element-wise tanh().
+		 * 
+		 * \tparam _tType The view/container type.
+		 * \param _vValues The input/output view.
+		 * \return Returns _vValues.
+		 */
+		template <typename _tType>
+		static _tType &												Tanh( _tType &_vValues ) {
+			return Func<_tType>( _vValues, [](auto x) { return std::tanh( static_cast<double>(x) ); } );
+		}
+
+		/**
+		 * Applies Tanh() to an array of inputs.
+		 * 
+		 * \param _tType The view/container type.
+		 * \param _vValues The input/output view to modify.
+		 * \return Returns _vValues.
+		 **/
+		template <typename _tType>
+		static std::vector<_tType> &								Tanh( std::vector<_tType> &_vValues ) {
+			for ( auto & aThis : _vValues ) {
+				Tanh( aThis );
+			}
+			return _vValues;
+		}
+
+		/**
+		 * Computes element-wise tanh().
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut>
+		static _tTypeOut &											Tanh( const _tTypeIn &_vIn, _tTypeOut &_vOut ) {
+			return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return std::tanh( static_cast<double>(x) ); } );
+		}
+
+		/**
+		 * Applies Tanh() to an array of inputs and outputs.
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \throw If NN9_SAFETY_CHECK, throws if _vIn and _vOut are not the same lengths.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut>
+		static std::vector<_tTypeOut> &								Tanh( const std::vector<_tTypeIn> &_vIn, std::vector<_tTypeOut> &_vOut ) {
+#ifdef NN9_SAFETY_CHECK
+			if ( _vIn.size() != _vOut.size() ) { throw std::runtime_error( "Math::Tanh: Input and outputs must have the same number of elements." ); }
+#endif	// #ifdef NN9_SAFETY_CHECK
+
+			for ( size_t i = 0; i < _vIn.size(); ++i ) {
+				Tanh( _vIn[i], _vOut[i] );
+			}
+			return _vOut;
+		}
+
+		// ===============================
+		// Square/Sqrt/Rsqrt
+		// ===============================
 		/**
 		 * Computes element-wise square().
 		 * 
@@ -1911,13 +2457,28 @@ namespace nn9 {
 		}
 
 		/**
+		 * Applies Square() to an array of inputs.
+		 * 
+		 * \param _tType The view/container type.
+		 * \param _vValues The input/output view to modify.
+		 * \return Returns _vValues.
+		 **/
+		template <typename _tType>
+		static std::vector<_tType> &								Square( std::vector<_tType> &_vValues ) {
+			for ( auto & aThis : _vValues ) {
+				Square( aThis );
+			}
+			return _vValues;
+		}
+
+		/**
 		 * Computes element-wise square().
 		 * 
 		 * \tparam _tTypeIn The input view/container type.
 		 * \tparam _tTypeOut The output view/container type.
 		 * \param _vIn The input view.
 		 * \param _vOut The output view.
-		 * \return Returns _vValues.
+		 * \return Returns _vOut.
 		 */
 		template <typename _tTypeIn, typename _tTypeOut>
 		static _tTypeOut &											Square( const _tTypeIn &_vIn, _tTypeOut &_vOut ) {
@@ -1939,6 +2500,28 @@ namespace nn9 {
 				return _vOut;
 			}
 			return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return x * x; } );
+		}
+
+		/**
+		 * Applies Square() to an array of inputs and outputs.
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \throw If NN9_SAFETY_CHECK, throws if _vIn and _vOut are not the same lengths.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut>
+		static std::vector<_tTypeOut> &								Square( const std::vector<_tTypeIn> &_vIn, std::vector<_tTypeOut> &_vOut ) {
+#ifdef NN9_SAFETY_CHECK
+			if ( _vIn.size() != _vOut.size() ) { throw std::runtime_error( "Math::Square: Input and outputs must have the same number of elements." ); }
+#endif	// #ifdef NN9_SAFETY_CHECK
+
+			for ( size_t i = 0; i < _vIn.size(); ++i ) {
+				Square( _vIn[i], _vOut[i] );
+			}
+			return _vOut;
 		}
 
 		/**
@@ -1967,13 +2550,28 @@ namespace nn9 {
 		}
 
 		/**
+		 * Applies Sqrt() to an array of inputs.
+		 * 
+		 * \param _tType The view/container type.
+		 * \param _vValues The input/output view to modify.
+		 * \return Returns _vValues.
+		 **/
+		template <typename _tType>
+		static std::vector<_tType> &								Sqrt( std::vector<_tType> &_vValues ) {
+			for ( auto & aThis : _vValues ) {
+				Sqrt( aThis );
+			}
+			return _vValues;
+		}
+
+		/**
 		 * Computes element-wise sqrt().
 		 * 
 		 * \tparam _tTypeIn The input view/container type.
 		 * \tparam _tTypeOut The output view/container type.
 		 * \param _vIn The input view.
 		 * \param _vOut The output view.
-		 * \return Returns _vValues.
+		 * \return Returns _vOut.
 		 */
 		template <typename _tTypeIn, typename _tTypeOut>
 		static _tTypeOut &											Sqrt( const _tTypeIn &_vIn, _tTypeOut &_vOut ) {
@@ -1995,6 +2593,28 @@ namespace nn9 {
 				return _vOut;
 			}
 			return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return std::sqrt( static_cast<double>(x) ); } );
+		}
+
+		/**
+		 * Applies Sqrt() to an array of inputs and outputs.
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \throw If NN9_SAFETY_CHECK, throws if _vIn and _vOut are not the same lengths.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut>
+		static std::vector<_tTypeOut> &								Sqrt( const std::vector<_tTypeIn> &_vIn, std::vector<_tTypeOut> &_vOut ) {
+#ifdef NN9_SAFETY_CHECK
+			if ( _vIn.size() != _vOut.size() ) { throw std::runtime_error( "Math::Sqrt: Input and outputs must have the same number of elements." ); }
+#endif	// #ifdef NN9_SAFETY_CHECK
+
+			for ( size_t i = 0; i < _vIn.size(); ++i ) {
+				Sqrt( _vIn[i], _vOut[i] );
+			}
+			return _vOut;
 		}
 
 		/**
@@ -2023,13 +2643,28 @@ namespace nn9 {
 		}
 
 		/**
+		 * Applies Rsqrt() to an array of inputs.
+		 * 
+		 * \param _tType The view/container type.
+		 * \param _vValues The input/output view to modify.
+		 * \return Returns _vValues.
+		 **/
+		template <typename _tType>
+		static std::vector<_tType> &								Rsqrt( std::vector<_tType> &_vValues ) {
+			for ( auto & aThis : _vValues ) {
+				Rsqrt( aThis );
+			}
+			return _vValues;
+		}
+
+		/**
 		 * Computes element-wise 1.0/sqrt().
 		 * 
 		 * \tparam _tTypeIn The input view/container type.
 		 * \tparam _tTypeOut The output view/container type.
 		 * \param _vIn The input view.
 		 * \param _vOut The output view.
-		 * \return Returns _vValues.
+		 * \return Returns _vOut.
 		 */
 		template <typename _tTypeIn, typename _tTypeOut>
 		static _tTypeOut &											Rsqrt( const _tTypeIn &_vIn, _tTypeOut &_vOut ) {
@@ -2053,6 +2688,31 @@ namespace nn9 {
 			return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return 1.0 / std::sqrt( static_cast<double>(x) ); } );
 		}
 
+		/**
+		 * Applies Rsqrt() to an array of inputs and outputs.
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \throw If NN9_SAFETY_CHECK, throws if _vIn and _vOut are not the same lengths.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut>
+		static std::vector<_tTypeOut> &								Rsqrt( const std::vector<_tTypeIn> &_vIn, std::vector<_tTypeOut> &_vOut ) {
+#ifdef NN9_SAFETY_CHECK
+			if ( _vIn.size() != _vOut.size() ) { throw std::runtime_error( "Math::Rsqrt: Input and outputs must have the same number of elements." ); }
+#endif	// #ifdef NN9_SAFETY_CHECK
+
+			for ( size_t i = 0; i < _vIn.size(); ++i ) {
+				Rsqrt( _vIn[i], _vOut[i] );
+			}
+			return _vOut;
+		}
+
+		// ===============================
+		// Rounding
+		// ===============================
 		/**
 		 * Computes element-wise ceil().
 		 * 
@@ -2079,13 +2739,28 @@ namespace nn9 {
 		}
 
 		/**
+		 * Applies Ceil() to an array of inputs.
+		 * 
+		 * \param _tType The view/container type.
+		 * \param _vValues The input/output view to modify.
+		 * \return Returns _vValues.
+		 **/
+		template <typename _tType>
+		static std::vector<_tType> &								Ceil( std::vector<_tType> &_vValues ) {
+			for ( auto & aThis : _vValues ) {
+				Ceil( aThis );
+			}
+			return _vValues;
+		}
+
+		/**
 		 * Computes element-wise ceil().
 		 * 
 		 * \tparam _tTypeIn The input view/container type.
 		 * \tparam _tTypeOut The output view/container type.
 		 * \param _vIn The input view.
 		 * \param _vOut The output view.
-		 * \return Returns _vValues.
+		 * \return Returns _vOut.
 		 */
 		template <typename _tTypeIn, typename _tTypeOut>
 		static _tTypeOut &											Ceil( const _tTypeIn &_vIn, _tTypeOut &_vOut ) {
@@ -2107,6 +2782,28 @@ namespace nn9 {
 				return _vOut;
 			}
 			return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return std::ceil( static_cast<double>(x) ); } );
+		}
+
+		/**
+		 * Applies Ceil() to an array of inputs and outputs.
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \throw If NN9_SAFETY_CHECK, throws if _vIn and _vOut are not the same lengths.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut>
+		static std::vector<_tTypeOut> &								Ceil( const std::vector<_tTypeIn> &_vIn, std::vector<_tTypeOut> &_vOut ) {
+#ifdef NN9_SAFETY_CHECK
+			if ( _vIn.size() != _vOut.size() ) { throw std::runtime_error( "Math::Ceil: Input and outputs must have the same number of elements." ); }
+#endif	// #ifdef NN9_SAFETY_CHECK
+
+			for ( size_t i = 0; i < _vIn.size(); ++i ) {
+				Ceil( _vIn[i], _vOut[i] );
+			}
+			return _vOut;
 		}
 
 		/**
@@ -2135,13 +2832,28 @@ namespace nn9 {
 		}
 
 		/**
+		 * Applies Floor() to an array of inputs.
+		 * 
+		 * \param _tType The view/container type.
+		 * \param _vValues The input/output view to modify.
+		 * \return Returns _vValues.
+		 **/
+		template <typename _tType>
+		static std::vector<_tType> &								Floor( std::vector<_tType> &_vValues ) {
+			for ( auto & aThis : _vValues ) {
+				Floor( aThis );
+			}
+			return _vValues;
+		}
+
+		/**
 		 * Computes element-wise floor().
 		 * 
 		 * \tparam _tTypeIn The input view/container type.
 		 * \tparam _tTypeOut The output view/container type.
 		 * \param _vIn The input view.
 		 * \param _vOut The output view.
-		 * \return Returns _vValues.
+		 * \return Returns _vOut.
 		 */
 		template <typename _tTypeIn, typename _tTypeOut>
 		static _tTypeOut &											Floor( const _tTypeIn &_vIn, _tTypeOut &_vOut ) {
@@ -2163,6 +2875,28 @@ namespace nn9 {
 				return _vOut;
 			}
 			return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return std::floor( static_cast<double>(x) ); } );
+		}
+
+		/**
+		 * Applies Floor() to an array of inputs and outputs.
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \throw If NN9_SAFETY_CHECK, throws if _vIn and _vOut are not the same lengths.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut>
+		static std::vector<_tTypeOut> &								Floor( const std::vector<_tTypeIn> &_vIn, std::vector<_tTypeOut> &_vOut ) {
+#ifdef NN9_SAFETY_CHECK
+			if ( _vIn.size() != _vOut.size() ) { throw std::runtime_error( "Math::Floor: Input and outputs must have the same number of elements." ); }
+#endif	// #ifdef NN9_SAFETY_CHECK
+
+			for ( size_t i = 0; i < _vIn.size(); ++i ) {
+				Floor( _vIn[i], _vOut[i] );
+			}
+			return _vOut;
 		}
 
 		/**
@@ -2191,13 +2925,28 @@ namespace nn9 {
 		}
 
 		/**
+		 * Applies Trunc() to an array of inputs.
+		 * 
+		 * \param _tType The view/container type.
+		 * \param _vValues The input/output view to modify.
+		 * \return Returns _vValues.
+		 **/
+		template <typename _tType>
+		static std::vector<_tType> &								Trunc( std::vector<_tType> &_vValues ) {
+			for ( auto & aThis : _vValues ) {
+				Trunc( aThis );
+			}
+			return _vValues;
+		}
+
+		/**
 		 * Computes element-wise trunc().
 		 * 
 		 * \tparam _tTypeIn The input view/container type.
 		 * \tparam _tTypeOut The output view/container type.
 		 * \param _vIn The input view.
 		 * \param _vOut The output view.
-		 * \return Returns _vValues.
+		 * \return Returns _vOut.
 		 */
 		template <typename _tTypeIn, typename _tTypeOut>
 		static _tTypeOut &											Trunc( const _tTypeIn &_vIn, _tTypeOut &_vOut ) {
@@ -2222,6 +2971,95 @@ namespace nn9 {
 		}
 
 		/**
+		 * Applies Trunc() to an array of inputs and outputs.
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \throw If NN9_SAFETY_CHECK, throws if _vIn and _vOut are not the same lengths.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut>
+		static std::vector<_tTypeOut> &								Trunc( const std::vector<_tTypeIn> &_vIn, std::vector<_tTypeOut> &_vOut ) {
+#ifdef NN9_SAFETY_CHECK
+			if ( _vIn.size() != _vOut.size() ) { throw std::runtime_error( "Math::Trunc: Input and outputs must have the same number of elements." ); }
+#endif	// #ifdef NN9_SAFETY_CHECK
+
+			for ( size_t i = 0; i < _vIn.size(); ++i ) {
+				Trunc( _vIn[i], _vOut[i] );
+			}
+			return _vOut;
+		}
+
+		/**
+		 * Computes element-wise round().
+		 * 
+		 * \tparam _tType The view/container type.
+		 * \param _vValues The input/output view.
+		 * \return Returns _vValues.
+		 */
+		template <typename _tType>
+		static _tType &												Round( _tType &_vValues ) {
+			return Func<_tType>( _vValues, [](auto x) { return std::round( static_cast<double>(x) ); } );
+		}
+
+		/**
+		 * Applies Round() to an array of inputs.
+		 * 
+		 * \param _tType The view/container type.
+		 * \param _vValues The input/output view to modify.
+		 * \return Returns _vValues.
+		 **/
+		template <typename _tType>
+		static std::vector<_tType> &								Round( std::vector<_tType> &_vValues ) {
+			for ( auto & aThis : _vValues ) {
+				Round( aThis );
+			}
+			return _vValues;
+		}
+
+		/**
+		 * Computes element-wise round().
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut>
+		static _tTypeOut &											Round( const _tTypeIn &_vIn, _tTypeOut &_vOut ) {
+			return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return std::round( static_cast<double>(x) ); } );
+		}
+
+		/**
+		 * Applies Round() to an array of inputs and outputs.
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \throw If NN9_SAFETY_CHECK, throws if _vIn and _vOut are not the same lengths.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut>
+		static std::vector<_tTypeOut> &								Round( const std::vector<_tTypeIn> &_vIn, std::vector<_tTypeOut> &_vOut ) {
+#ifdef NN9_SAFETY_CHECK
+			if ( _vIn.size() != _vOut.size() ) { throw std::runtime_error( "Math::Round: Input and outputs must have the same number of elements." ); }
+#endif	// #ifdef NN9_SAFETY_CHECK
+
+			for ( size_t i = 0; i < _vIn.size(); ++i ) {
+				Round( _vIn[i], _vOut[i] );
+			}
+			return _vOut;
+		}
+
+
+		// ===============================
+		// Summation
+		// ===============================
+		/**
 		 * \brief Computes the sum of a sequence of numbers using the Kahan summation algorithm.
 		 * 
 		 * \param _vValues The vector of numbers to sum.
@@ -2240,6 +3078,26 @@ namespace nn9 {
 			}
 
 			return dSum;
+		}
+
+		/**
+		 * Applies KahanSum() to an array of inputs.
+		 * 
+		 * \param _tType The view/container type.
+		 * \param _vValues The input view/container.
+		 * \param _vOut The output view/container.
+		 * \throw If NN9_SAFETY_CHECK, throws if _vValues and _vOut are not the same lengths.
+		 * \return Returns _vOut.
+		 **/
+		template <typename _tType, typename _tOutType>
+		static _tOutType &											KahanSum( const std::vector<_tType> &_vValues, _tOutType &_vOut ) {
+#ifdef NN9_SAFETY_CHECK
+			if ( _vValues.size() != _vOut.size() ) { throw std::runtime_error( "Math::KahanSum: Input and outputs must have the same number of elements." ); }
+#endif	// #ifdef NN9_SAFETY_CHECK
+			for ( size_t i = 0; i < _vValues.size(); ++i ) {
+				_vOut[i] = _tOutType::value_type( KahanSum( _vValues[i] ) );
+			}
+			return _vOut;
 		}
 
 		/**
@@ -2351,6 +3209,26 @@ namespace nn9 {
 			}
 
 			return dSum;
+		}
+
+		/**
+		 * Applies Sum() to an array of inputs.
+		 * 
+		 * \param _tType The view/container type.
+		 * \param _vValues The input view/container.
+		 * \param _vOut The output view/container.
+		 * \throw If NN9_SAFETY_CHECK, throws if _vValues and _vOut are not the same lengths.
+		 * \return Returns _vOut.
+		 **/
+		template <typename _tType, typename _tOutType>
+		static _tOutType &											Sum( const std::vector<_tType> &_vValues, _tOutType &_vOut ) {
+#ifdef NN9_SAFETY_CHECK
+			if ( _vValues.size() != _vOut.size() ) { throw std::runtime_error( "Math::Sum: Input and outputs must have the same number of elements." ); }
+#endif	// #ifdef NN9_SAFETY_CHECK
+			for ( size_t i = 0; i < _vValues.size(); ++i ) {
+				_vOut[i] = _tOutType::value_type( Sum( _vValues[i] ) );
+			}
+			return _vOut;
 		}
 	};
 

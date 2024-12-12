@@ -51,7 +51,7 @@ int wmain( int _iArgC, wchar_t const * _wcpArgV[] ) {
 			tTimer.Start();
 			for ( int i = 0; i < 50000; ++i ) {
 				//dSum += nn9::Math::Sum( vViewBf16 );
-				nn9::Math::Sqrt( vViewBf16, vViewNewFloat );
+				nn9::Math::Acos( v3d );
 			}
 
 			tTimer.Stop();
