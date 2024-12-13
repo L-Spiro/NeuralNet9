@@ -41,9 +41,12 @@ int wmain( int _iArgC, wchar_t const * _wcpArgV[] ) {
 			//	}
 			//}
 
-			nn9::Tensor tBFloat16 = tTensorTest.CopyAs( nn9::NN9_T_FLOAT16 );
+			/*nn9::Tensor tBFloat16 = tTensorTest.CopyAs( nn9::NN9_T_FLOAT16 );
+			auto vViewBf16 = tBFloat16.FullView<nn9::float16>();*/
+			nn9::Tensor tBFloat16 = tTensorTest.CopyAs( nn9::NN9_T_BFLOAT16 );
+			auto vViewBf16 = tBFloat16.FullView<bfloat16_t>();
+
 			nn9::Tensor tBackToFloat = tBFloat16.CopyAs( nn9::NN9_T_FLOAT );
-			auto vViewBf16 = tBFloat16.FullView<nn9::float16>();
 			auto vViewNewFloat = tBackToFloat.FullView<float>();
 			nn9::Timer tTimer;
 
@@ -64,7 +67,7 @@ int wmain( int _iArgC, wchar_t const * _wcpArgV[] ) {
 			tTimer.Start();
 			for ( int i = 0; i < 50000; ++i ) {
 				//dSum += nn9::Math::KahanSum( vViewNewFloat );
-				nn9::Math::Sqrt( vViewNewFloat );
+				//nn9::Math::Sqrt( vViewBf16 );
 			}
 
 			tTimer.Stop();
@@ -73,10 +76,10 @@ int wmain( int _iArgC, wchar_t const * _wcpArgV[] ) {
 				std::wcout << vViewNewFloat[W+0] << L" " << vViewNewFloat[W+1] << L" " << vViewNewFloat[W+2] << L" " << vViewNewFloat[W+3] << L" " << vViewNewFloat[W+4] << L" " << vViewNewFloat[W+5] << L" " << vViewNewFloat[W+6] << L" " << vViewNewFloat[W+7] << L" "
 					<< vViewNewFloat[W+8] << L" " << vViewNewFloat[W+9] << L" " << vViewNewFloat[W+10] << L" " << vViewNewFloat[W+11] << L" " << vViewNewFloat[W+12] << L" " << vViewNewFloat[W+13] << L" " << vViewNewFloat[W+14] << L" " << vViewNewFloat[W+15] << std::endl;
 			}*/
-			/*for ( int W = 0; W <= vViewBf16.size() - 16; W += 16 ) {
+			for ( int W = 0; W <= vViewBf16.size() - 16; W += 16 ) {
 				std::wcout << (float)vViewBf16[W+0] << L" " << (float)vViewBf16[W+1] << L" " << (float)vViewBf16[W+2] << L" " << (float)vViewBf16[W+3] << L" " << (float)vViewBf16[W+4] << L" " << (float)vViewBf16[W+5] << L" " << (float)vViewBf16[W+6] << L" " << (float)vViewBf16[W+7] << L" "
 					<< (float)vViewBf16[W+8] << L" " << (float)vViewBf16[W+9] << L" " << (float)vViewBf16[W+10] << L" " << (float)vViewBf16[W+11] << L" " << (float)vViewBf16[W+12] << L" " << (float)vViewBf16[W+13] << L" " << (float)vViewBf16[W+14] << L" " << (float)vViewBf16[W+15] << std::endl;
-			}*/
+			}
 
 		}
 	//}
