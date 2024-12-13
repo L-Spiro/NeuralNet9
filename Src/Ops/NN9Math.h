@@ -8,6 +8,7 @@
 
 #pragma once
 
+#include "../Foundation/NN9Math.h"
 #include "../Types/NN9BFloat16.h"
 #include "../Types/NN9Float16.h"
 #include "../Utilities/NN9Utilities.h"
@@ -577,6 +578,1040 @@ namespace nn9 {
 		}
 
 		/**
+		 * Applies element-wise abs() to the input.
+		 * 
+		 * \param _pfInOut The array of int8_t's to abs() in-place.
+		 * \param _sSize The total number of int8_t's to which _pfInOut points.
+		 **/
+		static inline void											Abs_Int8( int8_t * _pfInOut, size_t _sSize ) {
+#ifdef __AVX512F__
+			if ( Utilities::IsAvx512FSupported() ) {
+				while ( _sSize >= 64 ) {
+					__m512i mVal = _mm512_loadu_si512( reinterpret_cast<const __m512i *>(_pfInOut) );
+					_mm512_storeu_si512( _pfInOut, _mm512_abs_epi8( mVal ) );
+
+					_pfInOut += 64;
+					_sSize -= 64;
+				}
+			}
+#endif	// #ifdef __AVX512F__
+
+#ifdef __AVX2__
+			if ( Utilities::IsAvx2Supported() ) {
+				while ( _sSize >= 32 ) {
+					__m256i mVal = _mm256_loadu_si256( reinterpret_cast<const __m256i *>(_pfInOut) );
+					_mm256_storeu_si256( reinterpret_cast<__m256i *>(_pfInOut), _mm256_abs_epi8( mVal ) );
+
+					_pfInOut += 32;
+					_sSize -= 32;
+				}
+			}
+#endif	// #ifdef __AVX2__
+
+			while ( _sSize ) {
+				auto aVal = (*_pfInOut);
+				(*_pfInOut) = static_cast<int8_t>(std::abs( static_cast<int>(aVal) ));
+				++_pfInOut;
+				--_sSize;
+			}
+		}
+
+		/**
+		 * Applies element-wise abs() to the input.
+		 * 
+		 * \param _pfInOut The array of int16_t's to abs() in-place.
+		 * \param _sSize The total number of int16_t's to which _pfInOut points.
+		 **/
+		static inline void											Abs_Int16( int16_t * _pfInOut, size_t _sSize ) {
+#ifdef __AVX512F__
+			if ( Utilities::IsAvx512FSupported() ) {
+				while ( _sSize >= 32 ) {
+					__m512i mVal = _mm512_loadu_si512( reinterpret_cast<const __m512i *>(_pfInOut) );
+					_mm512_storeu_si512( _pfInOut, _mm512_abs_epi16( mVal ) );
+
+					_pfInOut += 32;
+					_sSize -= 32;
+				}
+			}
+#endif	// #ifdef __AVX512F__
+
+#ifdef __AVX2__
+			if ( Utilities::IsAvx2Supported() ) {
+				while ( _sSize >= 16 ) {
+					__m256i mVal = _mm256_loadu_si256( reinterpret_cast<const __m256i *>(_pfInOut) );
+					_mm256_storeu_si256( reinterpret_cast<__m256i *>(_pfInOut), _mm256_abs_epi16( mVal ) );
+
+					_pfInOut += 16;
+					_sSize -= 16;
+				}
+			}
+#endif	// #ifdef __AVX2__
+
+			while ( _sSize ) {
+				auto aVal = (*_pfInOut);
+				(*_pfInOut) = static_cast<int16_t>(std::abs( static_cast<int>(aVal) ));
+				++_pfInOut;
+				--_sSize;
+			}
+		}
+
+		/**
+		 * Applies element-wise abs() to the input.
+		 * 
+		 * \param _pfInOut The array of int32_t's to abs() in-place.
+		 * \param _sSize The total number of int32_t's to which _pfInOut points.
+		 **/
+		static inline void											Abs_Int32( int32_t * _pfInOut, size_t _sSize ) {
+#ifdef __AVX512F__
+			if ( Utilities::IsAvx512FSupported() ) {
+				while ( _sSize >= 16 ) {
+					__m512i mVal = _mm512_loadu_si512( reinterpret_cast<const __m512i *>(_pfInOut) );
+					_mm512_storeu_si512( _pfInOut, _mm512_abs_epi32( mVal ) );
+
+					_pfInOut += 16;
+					_sSize -= 16;
+				}
+			}
+#endif	// #ifdef __AVX512F__
+
+#ifdef __AVX2__
+			if ( Utilities::IsAvx2Supported() ) {
+				while ( _sSize >= 8 ) {
+					__m256i mVal = _mm256_loadu_si256( reinterpret_cast<const __m256i *>(_pfInOut) );
+					_mm256_storeu_si256( reinterpret_cast<__m256i *>(_pfInOut), _mm256_abs_epi32( mVal ) );
+
+					_pfInOut += 8;
+					_sSize -= 8;
+				}
+			}
+#endif	// #ifdef __AVX2__
+
+			while ( _sSize ) {
+				auto aVal = (*_pfInOut);
+				(*_pfInOut) = static_cast<int32_t>(std::abs( static_cast<int>(aVal) ));
+				++_pfInOut;
+				--_sSize;
+			}
+		}
+
+		/**
+		 * Applies element-wise abs() to the input.
+		 * 
+		 * \param _pfInOut The array of int64_t's to abs() in-place.
+		 * \param _sSize The total number of int64_t's to which _pfInOut points.
+		 **/
+		static inline void											Abs_Int64( int64_t * _pfInOut, size_t _sSize ) {
+#ifdef __AVX512F__
+			if ( Utilities::IsAvx512FSupported() ) {
+				while ( _sSize >= 8 ) {
+					__m512i mVal = _mm512_loadu_si512( reinterpret_cast<const __m512i *>(_pfInOut) );
+					_mm512_storeu_si512( _pfInOut, _mm512_abs_epi64( mVal ) );
+
+					_pfInOut += 8;
+					_sSize -= 8;
+				}
+			}
+#endif	// #ifdef __AVX512F__
+
+#ifdef __AVX2__
+			if ( Utilities::IsAvx2Supported() ) {
+				while ( _sSize >= 4 ) {
+					__m256i mVal = _mm256_loadu_si256( reinterpret_cast<const __m256i *>(_pfInOut) );
+					_mm256_storeu_si256( reinterpret_cast<__m256i *>(_pfInOut), _mm256_abs_epi64( mVal ) );
+
+					_pfInOut += 4;
+					_sSize -= 4;
+				}
+			}
+#endif	// #ifdef __AVX2__
+
+			while ( _sSize ) {
+				auto aVal = (*_pfInOut);
+				(*_pfInOut) = aVal < 0 ? -aVal : aVal;
+				++_pfInOut;
+				--_sSize;
+			}
+		}
+
+		/**
+		 * Applies element-wise fabs() to the input.
+		 * 
+		 * \param _pfInOut The array of bfloat16_t's to fabs() in-place.
+		 * \param _sSize The total number of bfloat16_t's to which _pfInOut points.
+		 **/
+		static inline void											Abs_BFloat16( bfloat16_t * _pfInOut, size_t _sSize ) {
+#ifdef __AVX512F__
+			if ( Utilities::IsAvx512FSupported() ) {
+				while ( _sSize >= 16 ) {
+					__m512 mVal = bfloat16::loadu_bf16_to_fp32_16( reinterpret_cast<const uint16_t *>(_pfInOut) );
+					bfloat16::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pfInOut), _mm512_abs_ps( mVal ) );
+
+					_pfInOut += 16;
+					_sSize -= 16;
+				}
+			}
+#endif	// #ifdef __AVX512F__
+
+#ifdef __AVX2__
+			if ( Utilities::IsAvx2Supported() ) {
+				while ( _sSize >= 8 ) {
+					__m256 mVal = bfloat16::loadu_bf16_to_fp32_8( reinterpret_cast<const uint16_t *>(_pfInOut) );
+					bfloat16::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pfInOut), _mm256_abs_ps( mVal ) );
+
+					_pfInOut += 8;
+					_sSize -= 8;
+				}
+			}
+#endif	// #ifdef __AVX2__
+
+			while ( _sSize ) {
+				(*_pfInOut) = std::fabs( static_cast<float>(*_pfInOut) );
+				++_pfInOut;
+				--_sSize;
+			}
+		}
+
+		/**
+		 * Applies element-wise fabs() to the input.
+		 * 
+		 * \param _pfInOut The array of float16's to fabs() in-place.
+		 * \param _sSize The total number of float16's to which _pfInOut points.
+		 **/
+		static inline void											Abs_Float16( nn9::float16 * _pfInOut, size_t _sSize ) {
+#ifdef __AVX512F__
+			if ( Utilities::IsAvx512FSupported() ) {
+				while ( _sSize >= 16 ) {
+					__m512 mVal = nn9::float16::Convert16Float16ToFloat32( _pfInOut );
+					nn9::float16::Convert16Float32ToFloat16( _pfInOut, _mm512_abs_ps( mVal ) );
+
+					_pfInOut += 16;
+					_sSize -= 16;
+				}
+			}
+#endif	// #ifdef __AVX512F__
+
+#ifdef __AVX2__
+			if ( Utilities::IsAvx2Supported() ) {
+				while ( _sSize >= 8 ) {
+					__m256 mVal = nn9::float16::Convert8Float16ToFloat32( _pfInOut );
+					nn9::float16::Convert8Float32ToFloat16( _pfInOut, _mm256_abs_ps( mVal ) );
+
+					_pfInOut += 8;
+					_sSize -= 8;
+				}
+			}
+#endif	// #ifdef __AVX2__
+
+			while ( _sSize ) {
+				(*_pfInOut) = std::fabs( static_cast<float>(*_pfInOut) );
+				++_pfInOut;
+				--_sSize;
+			}
+		}
+
+		/**
+		 * Applies element-wise fabs() to the input.
+		 * 
+		 * \param _pfInOut The array of floats to fabs() in-place.
+		 * \param _sSize The total number of floats to which _pfInOut points.
+		 **/
+		static inline void											Abs_Float( float * _pfInOut, size_t _sSize ) {
+#ifdef __AVX512F__
+			if ( Utilities::IsAvx512FSupported() ) {
+				while ( _sSize >= 16 ) {
+					__m512 mVal = _mm512_loadu_ps( _pfInOut );
+					_mm512_storeu_ps( _pfInOut, _mm512_abs_ps( mVal ) );
+
+					_pfInOut += 16;
+					_sSize -= 16;
+				}
+			}
+#endif	// #ifdef __AVX512F__
+
+#ifdef __AVX2__
+			if ( Utilities::IsAvx2Supported() ) {
+				while ( _sSize >= 8 ) {
+					__m256 mVal = _mm256_loadu_ps( _pfInOut );
+					_mm256_storeu_ps( _pfInOut, _mm256_abs_ps( mVal ) );
+
+					_pfInOut += 8;
+					_sSize -= 8;
+				}
+			}
+#endif	// #ifdef __AVX2__
+
+			while ( _sSize ) {
+				(*_pfInOut) = std::fabs( (*_pfInOut) );
+				++_pfInOut;
+				--_sSize;
+			}
+		}
+
+		/**
+		 * Applies element-wise fabs() to the input.
+		 *
+		 * \tparam _tTypeIn The input type.  Must be float, bfloat16_t, or float16.
+		 * \tparam _tTypeOut The output type.  Must be float, bfloat16_t, or float16.
+		 * \param _pfIn The array of floats/float16/bfloat16_t's to fabs().
+		 * \param _pfOut The output array of floats/float16/bfloat16_t's.
+		 * \param _sSize The total number of floats/float16/bfloat16_t's to which _pfIn and _pfOut point.
+		 **/
+		template <typename _tTypeIn, typename _tTypeOut>
+		static inline void											Abs_Float( const _tTypeIn * _pfIn, _tTypeOut * _pfOut, size_t _sSize ) {
+#ifdef __AVX512F__
+			if ( Utilities::IsAvx512FSupported() ) {
+				while ( _sSize >= 16 ) {
+					__m512 mVal;
+					if constexpr ( IsBFloat16<_tTypeIn>() ) {
+						mVal = nn9::bfloat16::loadu_bf16_to_fp32_16( reinterpret_cast<const uint16_t *>(_pfIn) );
+					}
+					else if constexpr ( IsFloat16<_tTypeIn>() ) {
+						mVal = nn9::float16::Convert16Float16ToFloat32( _pfIn );
+					}
+					else {
+						mVal = _mm512_loadu_ps( _pfIn );
+					}
+					mVal = _mm512_abs_ps( mVal );
+					if constexpr ( IsBFloat16<_tTypeOut>() ) {
+						nn9::bfloat16::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pfOut), mVal );
+					}
+					else if constexpr ( IsFloat16<_tTypeOut>() ) {
+						nn9::float16::Convert16Float32ToFloat16( _pfOut, mVal );
+					}
+					else {
+						_mm512_storeu_ps( _pfOut, mVal );
+					}
+					
+
+					_pfIn += 16;
+					_pfOut += 16;
+					_sSize -= 16;
+				}
+			}
+#endif	// #ifdef __AVX512F__
+
+#ifdef __AVX2__
+			if ( Utilities::IsAvx2Supported() ) {
+				while ( _sSize >= 8 ) {
+					__m256 mVal;
+					if constexpr ( IsBFloat16<_tTypeIn>() ) {
+						mVal = nn9::bfloat16::loadu_bf16_to_fp32_8( reinterpret_cast<const uint16_t *>(_pfIn) );
+					}
+					else if constexpr ( IsFloat16<_tTypeIn>() ) {
+						mVal = nn9::float16::Convert8Float16ToFloat32( _pfIn );
+					}
+					else {
+						mVal = _mm256_loadu_ps( _pfIn );
+					}
+					mVal = _mm256_abs_ps( mVal );
+					if constexpr ( IsBFloat16<_tTypeOut>() ) {
+						nn9::bfloat16::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pfOut), mVal );
+					}
+					else if constexpr ( IsFloat16<_tTypeOut>() ) {
+						nn9::float16::Convert8Float32ToFloat16( _pfOut, mVal );
+					}
+					else {
+						_mm256_storeu_ps( _pfOut, mVal );
+					}
+
+					_pfIn += 8;
+					_pfOut += 8;
+					_sSize -= 8;
+				}
+			}
+#endif	// #ifdef __AVX2__
+
+			while ( _sSize ) {
+				(*_pfOut++) = std::fabs( static_cast<float>( (*_pfIn++) ) );
+				--_sSize;
+			}
+		}
+
+		/**
+		 * Applies element-wise fabs() to the input.
+		 * 
+		 * \param _pdInOut The array of doubles to fabs() in-place.
+		 * \param _sSize The total number of doubles to which _pdInOut points.
+		 **/
+		static inline void											Abs_Double( double * _pdInOut, size_t _sSize ) {
+#ifdef __AVX512F__
+			if ( Utilities::IsAvx512FSupported() ) {
+				while ( _sSize >= 8 ) {
+					__m512d mVal = _mm512_loadu_pd( _pdInOut );
+					_mm512_storeu_pd( _pdInOut, _mm512_abs_pd( mVal ) );
+
+					_pdInOut += 8;
+					_sSize -= 8;
+				}
+			}
+#endif	// #ifdef __AVX512F__
+
+#ifdef __AVX2__
+			if ( Utilities::IsAvx2Supported() ) {
+				while ( _sSize >= 4 ) {
+					__m256d mVal = _mm256_loadu_pd( _pdInOut );
+					_mm256_storeu_pd( _pdInOut, _mm256_abs_pd( mVal ) );
+
+					_pdInOut += 4;
+					_sSize -= 4;
+				}
+			}
+#endif	// #ifdef __AVX2__
+
+			while ( _sSize ) {
+				(*_pdInOut) = std::fabs( (*_pdInOut) );
+				++_pdInOut;
+				--_sSize;
+			}
+		}
+
+		/**
+		 * Applies element-wise fabs() to the input.
+		 *
+		 * \param _pfIn The array of doubles to fabs().
+		 * \param _pfOut The output array of doubles.
+		 * \param _sSize The total number of doubles to which _pfIn and _pfOut point.
+		 **/
+		static inline void											Abs_Double( const double * _pfIn, double * _pfOut, size_t _sSize ) {
+#ifdef __AVX512F__
+			if ( Utilities::IsAvx512FSupported() ) {
+				while ( _sSize >= 8 ) {
+					__m512d mVal = _mm512_loadu_pd( _pfIn );
+					_mm512_storeu_pd( _pfOut, _mm512_abs_pd( mVal ) );
+
+					_pfIn += 8;
+					_pfOut += 8;
+					_sSize -= 8;
+				}
+			}
+#endif	// #ifdef __AVX512F__
+
+#ifdef __AVX2__
+			if ( Utilities::IsAvx2Supported() ) {
+				while ( _sSize >= 4 ) {
+					__m256d mVal = _mm256_loadu_pd( _pfIn );
+					_mm256_storeu_pd( _pfOut, _mm256_abs_pd( mVal ) );
+
+					_pfIn += 4;
+					_pfOut += 4;
+					_sSize -= 4;
+				}
+			}
+#endif	// #ifdef __AVX2__
+
+			while ( _sSize ) {
+				(*_pfOut++) = std::fabs( (*_pfIn++) );
+				--_sSize;
+			}
+		}
+
+		/**
+		 * Applies element-wise abs() to the input.
+		 *
+		 * \tparam _tTypeOut The output type.  Must be float, bfloat16_t, or float16.
+		 * \param _pfIn The array of int8_t's to fabs().
+		 * \param _pfOut The output array of _tTypeOut's.
+		 * \param _sSize The total number of elements to which _pfIn and _pfOut point.
+		 **/
+		template <typename _tTypeOut>
+		static inline void											Abs_Int8( const int8_t * _pfIn, _tTypeOut * _pfOut, size_t _sSize ) {
+#ifdef __AVX512F__
+			if ( Utilities::IsAvx512FSupported() ) {
+				while ( _sSize >= 64 ) {
+					__m512i mVal = _mm512_loadu_si512( reinterpret_cast<const __m512i *>(_pfIn) );
+					mVal = _mm512_abs_epi8( mVal );
+					if constexpr ( std::is_same<_tTypeOut, int8_t>::value || std::is_same<_tTypeOut, uint8_t>::value ) {
+						_mm512_storeu_si512( _pfOut, mVal );
+					}
+					else if constexpr ( std::is_same<_tTypeOut, int16_t>::value || std::is_same<_tTypeOut, uint16_t>::value ) {
+						__m256i mLower = _mm512_extracti64x4_epi64( mVal, 0 );
+						__m256i mUpper = _mm512_extracti64x4_epi64( mVal, 1 );
+
+						_mm512_storeu_si512( _pfOut, _mm512_cvtepi8_epi16( mLower ) );
+						_mm512_storeu_si512( _pfOut + 32, _mm512_cvtepi8_epi16( mUpper ) );
+					}
+					else if constexpr ( std::is_same<_tTypeOut, int32_t>::value || std::is_same<_tTypeOut, uint32_t>::value ) {
+						__m256i mLower = _mm512_extracti32x8_epi32( mVal, 0 );
+						__m256i mUpper = _mm512_extracti32x8_epi32( mVal, 1 );
+
+						__m512i mLower16 = _mm512_cvtepi8_epi16( mLower );
+						__m512i mUpper16 = _mm512_cvtepi8_epi16( mUpper );
+
+						__m512i mLower32_1 = _mm512_cvtepi16_epi32( _mm512_extracti32x8_epi32( mLower16, 0 ) );
+						__m512i mLower32_2 = _mm512_cvtepi16_epi32( _mm512_extracti32x8_epi32( mLower16, 1 ) );
+
+						__m512i mUpper32_1 = _mm512_cvtepi16_epi32( _mm512_extracti32x8_epi32( mUpper16, 0 ) );
+						__m512i mUpper32_2 = _mm512_cvtepi16_epi32( _mm512_extracti32x8_epi32( mUpper16, 1 ) );
+
+						_mm512_storeu_si512( reinterpret_cast<__m512i *>(_pfOut), mLower32_1 );
+						_mm512_storeu_si512( reinterpret_cast<__m512i *>(_pfOut + 16), mLower32_2 );
+						_mm512_storeu_si512( reinterpret_cast<__m512i *>(_pfOut + 32), mUpper32_1 );
+						_mm512_storeu_si512( reinterpret_cast<__m512i *>(_pfOut + 48), mUpper32_2 );
+					}
+					else if constexpr ( std::is_same<_tTypeOut, int64_t>::value || std::is_same<_tTypeOut, uint64_t>::value ) {
+						__m256i mLower = _mm512_extracti32x8_epi32( mVal, 0 );
+						__m256i mUpper = _mm512_extracti32x8_epi32( mVal, 1 );
+
+						__m512i mLower16 = _mm512_cvtepi8_epi16( mLower );
+						__m512i mUpper16 = _mm512_cvtepi8_epi16( mUpper );
+
+						__m512i mLower32_1 = _mm512_cvtepi16_epi32( _mm512_extracti32x8_epi32( mLower16, 0 ) );
+						__m512i mLower32_2 = _mm512_cvtepi16_epi32( _mm512_extracti32x8_epi32( mLower16, 1 ) );
+						__m512i mUpper32_1 = _mm512_cvtepi16_epi32( _mm512_extracti32x8_epi32( mUpper16, 0 ) );
+						__m512i mUpper32_2 = _mm512_cvtepi16_epi32( _mm512_extracti32x8_epi32( mUpper16, 1 ) );
+
+						__m512i mLower64_1 = _mm512_cvtepi32_epi64( _mm512_extracti32x8_epi32( mLower32_1, 0 ) );
+						__m512i mLower64_2 = _mm512_cvtepi32_epi64( _mm512_extracti32x8_epi32( mLower32_1, 1 ) );
+
+						__m512i mLower64_3 = _mm512_cvtepi32_epi64( _mm512_extracti32x8_epi32( mLower32_2, 0 ) );
+						__m512i mLower64_4 = _mm512_cvtepi32_epi64( _mm512_extracti32x8_epi32( mLower32_2, 1 ) );
+
+						__m512i mUpper64_1 = _mm512_cvtepi32_epi64( _mm512_extracti32x8_epi32( mUpper32_1, 0 ) );
+						__m512i mUpper64_2 = _mm512_cvtepi32_epi64( _mm512_extracti32x8_epi32( mUpper32_1, 1 ) );
+
+						__m512i mUpper64_3 = _mm512_cvtepi32_epi64( _mm512_extracti32x8_epi32( mUpper32_2, 0 ) );
+						__m512i mUpper64_4 = _mm512_cvtepi32_epi64( _mm512_extracti32x8_epi32( mUpper32_2, 1 ) );
+
+						_mm512_storeu_si512( reinterpret_cast<__m512i *>(_pfOut), mLower64_1 );
+						_mm512_storeu_si512( reinterpret_cast<__m512i *>(_pfOut + 8), mLower64_2 );
+						_mm512_storeu_si512( reinterpret_cast<__m512i *>(_pfOut + 16), mLower64_3 );
+						_mm512_storeu_si512( reinterpret_cast<__m512i *>(_pfOut + 24), mLower64_4 );
+						_mm512_storeu_si512( reinterpret_cast<__m512i *>(_pfOut + 32), mUpper64_1 );
+						_mm512_storeu_si512( reinterpret_cast<__m512i *>(_pfOut + 40), mUpper64_2 );
+						_mm512_storeu_si512( reinterpret_cast<__m512i *>(_pfOut + 48), mUpper64_3 );
+						_mm512_storeu_si512( reinterpret_cast<__m512i *>(_pfOut + 56), mUpper64_4 );
+					}
+					else if constexpr ( Is32BitFloat<_tTypeOut>() || Is64BitFloat<_tTypeOut>() || IsBFloat16<_tTypeOut>() ) {
+						__m256i mLower = _mm512_extracti32x8_epi32( mVal, 0 );
+						__m256i mUpper = _mm512_extracti32x8_epi32( mVal, 1 );
+
+						__m512i mLower16 = _mm512_cvtepi8_epi16( mLower );
+						__m512i mUpper16 = _mm512_cvtepi8_epi16( mUpper );
+
+						__m512i mLower32_1 = _mm512_cvtepi16_epi32( _mm512_extracti32x8_epi32( mLower16, 0 ) );
+						__m512i mLower32_2 = _mm512_cvtepi16_epi32( _mm512_extracti32x8_epi32( mLower16, 1 ) );
+						__m512i mUpper32_1 = _mm512_cvtepi16_epi32( _mm512_extracti32x8_epi32( mUpper16, 0 ) );
+						__m512i mUpper32_2 = _mm512_cvtepi16_epi32( _mm512_extracti32x8_epi32( mUpper16, 1 ) );
+
+						__m512 mLowerFloat_1 = _mm512_cvtepi32_ps( mLower32_1 );
+						__m512 mLowerFloat_2 = _mm512_cvtepi32_ps( mLower32_2 );
+						__m512 mUpperFloat_1 = _mm512_cvtepi32_ps( mUpper32_1 );
+						__m512 mUpperFloat_2 = _mm512_cvtepi32_ps( mUpper32_2 );
+
+						if constexpr ( Is32BitFloat<_tTypeOut>() ) {
+							_mm512_storeu_ps( _pfOut, mLowerFloat_1 );
+							_mm512_storeu_ps( _pfOut + 16, mLowerFloat_2 );
+							_mm512_storeu_ps( _pfOut + 32, mUpperFloat_1 );
+							_mm512_storeu_ps( _pfOut + 48, mUpperFloat_2 );
+						}
+						else {
+							if constexpr ( IsFloat16<_tTypeOut>() ) {
+								nn9::float16::Convert8Float32ToFloat16( _pfOut, mLowerFloat_1 );
+								nn9::float16::Convert8Float32ToFloat16( _pfOut + 16, mLowerFloat_2 );
+								nn9::float16::Convert8Float32ToFloat16( _pfOut + 32, mUpperFloat_1 );
+								nn9::float16::Convert8Float32ToFloat16( _pfOut + 48, mUpperFloat_2 );
+							}
+							else if constexpr ( IsBFloat16<_tTypeOut>() ) {
+								bfloat16_t::storeu_fp32_to_bf16( _pfOut, mLowerFloat_1 );
+								bfloat16_t::storeu_fp32_to_bf16( _pfOut + 16, mLowerFloat_2 );
+								bfloat16_t::storeu_fp32_to_bf16( _pfOut + 32, mUpperFloat_1 );
+								bfloat16_t::storeu_fp32_to_bf16( _pfOut + 48, mUpperFloat_2 );
+							}
+							else if constexpr ( Is64BitFloat<_tTypeOut>() ) {
+								NN9_ALIGN( 64 )
+								float fTmp[64];
+								_mm512_storeu_ps( fTmp, mLowerFloat_1 );
+								_mm512_storeu_ps( fTmp + 16, mLowerFloat_2 );
+								_mm512_storeu_ps( fTmp + 32, mUpperFloat_1 );
+								_mm512_storeu_ps( fTmp + 48, mUpperFloat_2 );
+								for ( int i = 0; i < 64; ++i ) {
+									_pfOut[i] = static_cast<_tTypeOut>(fTmp[i]);
+								}
+							}
+							else { break; }
+						}
+					}
+					else { break; }
+					
+
+					_pfIn += 64;
+					_pfOut += 64;
+					_sSize -= 64;
+				}
+			}
+#endif	// #ifdef __AVX512F__
+
+#ifdef __AVX2__
+			if ( Utilities::IsAvx2Supported() ) {
+				while ( _sSize >= 32 ) {
+					__m256i mVal = _mm256_loadu_si256( reinterpret_cast<const __m256i *>(_pfIn) );
+					mVal = _mm256_abs_epi8( mVal );
+					if constexpr ( std::is_same<_tTypeOut, int8_t>::value || std::is_same<_tTypeOut, uint8_t>::value ) {
+						_mm256_storeu_si256( reinterpret_cast<__m256i *>(_pfOut), mVal );
+					}
+					else if constexpr ( std::is_same<_tTypeOut, int16_t>::value || std::is_same<_tTypeOut, uint16_t>::value ) {
+						__m128i mLower = _mm256_castsi256_si128( mVal );
+						__m128i mUpper = _mm256_extracti128_si256( mVal, 1 );
+
+						_mm256_storeu_si256( reinterpret_cast<__m256i *>(_pfOut), _mm256_cvtepi8_epi16( mLower ) );
+						_mm256_storeu_si256( reinterpret_cast<__m256i *>(_pfOut + 16), _mm256_cvtepi8_epi16( mUpper ) );
+					}
+					else if constexpr ( std::is_same<_tTypeOut, int32_t>::value || std::is_same<_tTypeOut, uint32_t>::value ) {
+						__m128i mLower = _mm256_castsi256_si128( mVal );
+						__m128i mUpper = _mm256_extracti128_si256( mVal, 1 );
+
+						__m256i mLower16 = _mm256_cvtepi8_epi16( mLower );
+						__m256i mUpper16 = _mm256_cvtepi8_epi16( mUpper );
+
+						__m256i mLower32_1 = _mm256_cvtepi16_epi32( _mm256_castsi256_si128( mLower16 ) );
+						__m256i mLower32_2 = _mm256_cvtepi16_epi32( _mm256_extracti128_si256( mLower16, 1 ) );
+						__m256i mUpper32_1 = _mm256_cvtepi16_epi32( _mm256_castsi256_si128( mUpper16 ) );
+						__m256i mUpper32_2 = _mm256_cvtepi16_epi32( _mm256_extracti128_si256( mUpper16, 1 ) );
+        
+						_mm256_storeu_si256( reinterpret_cast<__m256i *>(_pfOut), mLower32_1 );
+						_mm256_storeu_si256( reinterpret_cast<__m256i *>(_pfOut + 8), mLower32_2 );
+						_mm256_storeu_si256( reinterpret_cast<__m256i *>(_pfOut + 16), mUpper32_1 );
+						_mm256_storeu_si256( reinterpret_cast<__m256i *>(_pfOut + 24), mUpper32_2 );
+					}
+					else if constexpr ( std::is_same<_tTypeOut, int64_t>::value || std::is_same<_tTypeOut, uint64_t>::value ) {
+						__m128i mLower = _mm256_castsi256_si128( mVal );
+						__m128i mUpper = _mm256_extracti128_si256( mVal, 1 );
+
+						__m256i mLower16 = _mm256_cvtepi8_epi16( mLower );
+						__m256i mUpper16 = _mm256_cvtepi8_epi16( mUpper );
+
+						__m256i mLower32_1 = _mm256_cvtepi16_epi32( _mm256_castsi256_si128( mLower16 ) );
+						__m256i mLower32_2 = _mm256_cvtepi16_epi32( _mm256_extracti128_si256( mLower16, 1 ) );
+						__m256i mUpper32_1 = _mm256_cvtepi16_epi32( _mm256_castsi256_si128( mUpper16 ) );
+						__m256i mUpper32_2 = _mm256_cvtepi16_epi32( _mm256_extracti128_si256( mUpper16, 1 ) );
+
+						__m256i mLower64_1 = _mm256_cvtepi32_epi64( _mm256_castsi256_si128( mLower32_1 ) );
+						__m256i mLower64_2 = _mm256_cvtepi32_epi64( _mm256_extracti128_si256( mLower32_1, 1 ) );
+						__m256i mLower64_3 = _mm256_cvtepi32_epi64( _mm256_castsi256_si128( mLower32_2 ) );
+						__m256i mLower64_4 = _mm256_cvtepi32_epi64( _mm256_extracti128_si256( mLower32_2, 1 ) );
+						__m256i mUpper64_1 = _mm256_cvtepi32_epi64( _mm256_castsi256_si128( mUpper32_1 ) );
+						__m256i mUpper64_2 = _mm256_cvtepi32_epi64( _mm256_extracti128_si256( mUpper32_1, 1 ) );
+						__m256i mUpper64_3 = _mm256_cvtepi32_epi64( _mm256_castsi256_si128( mUpper32_2 ) );
+						__m256i mUpper64_4 = _mm256_cvtepi32_epi64( _mm256_extracti128_si256( mUpper32_2, 1 ) );
+
+						_mm256_storeu_si256( reinterpret_cast<__m256i *>(_pfOut), mLower64_1 );
+						_mm256_storeu_si256( reinterpret_cast<__m256i *>(_pfOut + 4), mLower64_2 );
+						_mm256_storeu_si256( reinterpret_cast<__m256i *>(_pfOut + 8), mLower64_3 );
+						_mm256_storeu_si256( reinterpret_cast<__m256i *>(_pfOut + 12), mLower64_4 );
+						_mm256_storeu_si256( reinterpret_cast<__m256i *>(_pfOut + 16), mUpper64_1 );
+						_mm256_storeu_si256( reinterpret_cast<__m256i *>(_pfOut + 20), mUpper64_2 );
+						_mm256_storeu_si256( reinterpret_cast<__m256i *>(_pfOut + 24), mUpper64_3 );
+						_mm256_storeu_si256( reinterpret_cast<__m256i *>(_pfOut + 28), mUpper64_4 );
+					}
+					else if constexpr ( Is32BitFloat<_tTypeOut>() || Is64BitFloat<_tTypeOut>() || IsBFloat16<_tTypeOut>() ) {
+						__m128i mLower = _mm256_castsi256_si128( mVal );
+						__m128i mUpper = _mm256_extracti128_si256( mVal, 1 );
+
+						__m256i mLower16 = _mm256_cvtepi8_epi16( mLower );
+						__m256i mUpper16 = _mm256_cvtepi8_epi16( mUpper );
+
+						__m256i mLower32_1 = _mm256_cvtepi16_epi32( _mm256_castsi256_si128( mLower16 ) );
+						__m256i mLower32_2 = _mm256_cvtepi16_epi32( _mm256_extracti128_si256( mLower16, 1 ) );
+						__m256i mUpper32_1 = _mm256_cvtepi16_epi32( _mm256_castsi256_si128( mUpper16 ) );
+						__m256i mUpper32_2 = _mm256_cvtepi16_epi32( _mm256_extracti128_si256( mUpper16, 1 ) );
+
+						__m256 mLowerFloat_1 = _mm256_cvtepi32_ps( mLower32_1 );
+						__m256 mLowerFloat_2 = _mm256_cvtepi32_ps( mLower32_2 );
+						__m256 mUpperFloat_1 = _mm256_cvtepi32_ps( mUpper32_1 );
+						__m256 mUpperFloat_2 = _mm256_cvtepi32_ps( mUpper32_2 );
+
+						if constexpr ( Is32BitFloat<_tTypeOut>() ) {
+							_mm256_storeu_ps( _pfOut, mLowerFloat_1 );
+							_mm256_storeu_ps( _pfOut + 8, mLowerFloat_2 );
+							_mm256_storeu_ps( _pfOut + 16, mUpperFloat_1 );
+							_mm256_storeu_ps( _pfOut + 24, mUpperFloat_2 );
+						}
+						else {
+							if constexpr ( IsFloat16<_tTypeOut>() ) {
+								nn9::float16::Convert8Float32ToFloat16( _pfOut, mLowerFloat_1 );
+								nn9::float16::Convert8Float32ToFloat16( _pfOut + 8, mLowerFloat_2 );
+								nn9::float16::Convert8Float32ToFloat16( _pfOut + 16, mUpperFloat_1 );
+								nn9::float16::Convert8Float32ToFloat16( _pfOut + 24, mUpperFloat_2 );
+							}
+							else if constexpr ( IsBFloat16<_tTypeOut>() ) {
+								bfloat16_t::storeu_fp32_to_bf16( _pfOut, mLowerFloat_1 );
+								bfloat16_t::storeu_fp32_to_bf16( _pfOut + 8, mLowerFloat_2 );
+								bfloat16_t::storeu_fp32_to_bf16( _pfOut + 16, mUpperFloat_1 );
+								bfloat16_t::storeu_fp32_to_bf16( _pfOut + 24, mUpperFloat_2 );
+							}
+							else if constexpr ( Is64BitFloat<_tTypeOut>() ) {
+								NN9_ALIGN( 32 )
+								float fTmp[32];
+								_mm256_store_ps( fTmp, mLowerFloat_1 );
+								_mm256_store_ps( fTmp + 8, mLowerFloat_2 );
+								_mm256_store_ps( fTmp + 16, mUpperFloat_1 );
+								_mm256_store_ps( fTmp + 24, mUpperFloat_2 );
+								for ( int i = 0; i < 32; ++i ) {
+									_pfOut[i] = static_cast<_tTypeOut>(fTmp[i]);
+								}
+							}
+							else { break; }
+						}
+					}
+					else { break; }
+
+
+					_pfIn += 32;
+					_pfOut += 32;
+					_sSize -= 32;
+				}
+			}
+#endif	// #ifdef __AVX2__
+
+			while ( _sSize ) {
+				auto aVal = (*_pfIn++);
+				(*_pfOut++) = static_cast<int16_t>(std::abs( static_cast<int>(aVal) ));
+				--_sSize;
+			}
+		}
+
+		/**
+		 * Applies element-wise abs() to the input.
+		 *
+		 * \tparam _tTypeOut The output type.  Must be float, bfloat16_t, or float16.
+		 * \param _pfIn The array of int16_t's to fabs().
+		 * \param _pfOut The output array of _tTypeOut's.
+		 * \param _sSize The total number of elements to which _pfIn and _pfOut point.
+		 **/
+		template <typename _tTypeOut>
+		static inline void											Abs_Int16( const int16_t * _pfIn, _tTypeOut * _pfOut, size_t _sSize ) {
+#ifdef __AVX512F__
+			if ( Utilities::IsAvx512FSupported() ) {
+				while ( _sSize >= 32 ) {
+					__m512i mVal = _mm512_loadu_si512( reinterpret_cast<const __m512i *>(_pfIn) );
+					mVal = _mm512_abs_epi16( mVal );
+					if constexpr ( std::is_same<_tTypeOut, int8_t>::value || std::is_same<_tTypeOut, uint8_t>::value ) {
+						__m512i mZero = _mm512_setzero_si512();
+						__m512i mPacked = _mm512_packs_epi16( mVal, mZero );
+						__m256i mLowPacked = _mm512_castsi512_si256( mPacked );
+						_mm256_storeu_si256( reinterpret_cast<__m256i *>(_pfOut), mLowPacked );
+					}
+					else if constexpr ( std::is_same<_tTypeOut, int16_t>::value || std::is_same<_tTypeOut, uint16_t>::value ) {
+						_mm512_storeu_si512( _pfOut, mVal );
+					}
+					else if constexpr ( std::is_same<_tTypeOut, int32_t>::value || std::is_same<_tTypeOut, uint32_t>::value ) {
+						__m256i mLower = _mm512_extracti32x8_epi32( mVal, 0 );
+						__m256i mUpper = _mm512_extracti32x8_epi32( mVal, 1 );
+
+						__m512i mLower32 = _mm512_cvtepi16_epi32( mLower );
+						__m512i mUpper32 = _mm512_cvtepi16_epi32( mUpper );
+
+						_mm512_storeu_si512( reinterpret_cast<__m512i *>(_pfOut), mLower32 );
+						_mm512_storeu_si512( reinterpret_cast<__m512i *>(_pfOut + 16), mUpper32 );
+					}
+					else if constexpr ( std::is_same<_tTypeOut, int64_t>::value || std::is_same<_tTypeOut, uint64_t>::value ) {
+						__m256i mLower = _mm512_extracti32x8_epi32( mVal, 0 );
+						__m256i mUpper = _mm512_extracti32x8_epi32( mVal, 1 );
+
+						__m512i mLower32 = _mm512_cvtepi16_epi32( mLower );
+						__m512i mUpper32 = _mm512_cvtepi16_epi32( mUpper );
+
+						__m512i mLower64 = _mm512_cvtepi32_epi64( _mm512_extracti32x8_epi32( mLower32, 0 ) );
+						__m512i mUpper64 = _mm512_cvtepi32_epi64( _mm512_extracti32x8_epi32( mLower32, 1 ) );
+						__m512i mLower64_upper = _mm512_cvtepi32_epi64( _mm512_extracti32x8_epi32( mUpper32, 0 ) );
+						__m512i mUpper64_upper = _mm512_cvtepi32_epi64( _mm512_extracti32x8_epi32( mUpper32, 1 ) );
+
+						_mm512_storeu_si512( reinterpret_cast<__m512i *>(_pfOut), mLower64 );
+						_mm512_storeu_si512( reinterpret_cast<__m512i *>(_pfOut + 8), mUpper64 );
+						_mm512_storeu_si512( reinterpret_cast<__m512i *>(_pfOut + 16), mLower64_upper );
+						_mm512_storeu_si512( reinterpret_cast<__m512i *>(_pfOut + 24), mUpper64_upper );
+					}
+					else if constexpr ( Is32BitFloat<_tTypeOut>() || Is64BitFloat<_tTypeOut>() || IsBFloat16<_tTypeOut>() ) {
+						__m256i mLower = _mm512_extracti32x8_epi32( mVal, 0 );
+						__m256i mUpper = _mm512_extracti32x8_epi32( mVal, 1 );
+
+						__m512i mLower32 = _mm512_cvtepi16_epi32( mLower );
+						__m512i mUpper32 = _mm512_cvtepi16_epi32( mUpper );
+
+						__m512 mLowerFloat = _mm512_cvtepi32_ps( mLower32 );
+						__m512 mUpperFloat = _mm512_cvtepi32_ps( mUpper32 );
+
+						
+
+						if constexpr ( Is32BitFloat<_tTypeOut>() ) {
+							_mm512_storeu_ps( _pfOut, mLowerFloat );
+							_mm512_storeu_ps( _pfOut + 16, mUpperFloat );
+						}
+						else {
+							if constexpr ( IsFloat16<_tTypeOut>() ) {
+								nn9::float16::Convert8Float32ToFloat16( _pfOut, mLowerFloat );
+								nn9::float16::Convert8Float32ToFloat16( _pfOut + 16, mUpperFloat );
+							}
+							else if constexpr ( IsBFloat16<_tTypeOut>() ) {
+								bfloat16_t::storeu_fp32_to_bf16( _pfOut, mLowerFloat );
+								bfloat16_t::storeu_fp32_to_bf16( _pfOut + 16, mUpperFloat );
+							}
+							else if constexpr ( Is64BitFloat<_tTypeOut>() ) {
+								NN9_ALIGN( 64 )
+								float fTmp[32];
+								_mm512_storeu_ps( fTmp, mLowerFloat );
+								_mm512_storeu_ps( fTmp + 16, mUpperFloat );
+								for ( int i = 0; i < 32; ++i ) {
+									_pfOut[i] = static_cast<_tTypeOut>(fTmp[i]);
+								}
+							}
+							else { break; }
+						}
+					}
+					else { break; }
+					
+
+					_pfIn += 32;
+					_pfOut += 32;
+					_sSize -= 32;
+				}
+			}
+#endif	// #ifdef __AVX512F__
+
+#ifdef __AVX2__
+			if ( Utilities::IsAvx2Supported() ) {
+				while ( _sSize >= 16 ) {
+					__m256i mVal = _mm256_loadu_si256( reinterpret_cast<const __m256i *>(_pfIn) );
+					mVal = _mm256_abs_epi16( mVal );
+					if constexpr ( std::is_same<_tTypeOut, int8_t>::value || std::is_same<_tTypeOut, uint8_t>::value ) {
+						__m256i mZero = _mm256_setzero_si256();
+						__m256i mPacked = _mm256_packs_epi16( mVal, mZero );
+						__m128i mLowPacked = _mm256_castsi256_si128( mPacked );
+						_mm_storeu_si128( reinterpret_cast<__m128i *>(_pfOut), mLowPacked );
+					}
+					else if constexpr ( std::is_same<_tTypeOut, int16_t>::value || std::is_same<_tTypeOut, uint16_t>::value ) {
+						_mm256_storeu_si256( reinterpret_cast<__m256i *>(_pfOut), mVal );
+					}
+					else if constexpr ( std::is_same<_tTypeOut, int32_t>::value || std::is_same<_tTypeOut, uint32_t>::value ) {
+						__m128i mLower = _mm256_castsi256_si128( mVal );
+						__m128i mUpper = _mm256_extracti128_si256( mVal, 1 );
+
+						__m256i mLower32 = _mm256_cvtepi16_epi32( mLower );
+						__m256i mUpper32 = _mm256_cvtepi16_epi32( mUpper );
+
+						_mm256_storeu_si256( reinterpret_cast<__m256i *>(_pfOut), mLower32 );
+						_mm256_storeu_si256( reinterpret_cast<__m256i *>(_pfOut + 8), mUpper32 );
+					}
+					else if constexpr ( std::is_same<_tTypeOut, int64_t>::value || std::is_same<_tTypeOut, uint64_t>::value ) {
+						__m128i mLower = _mm256_castsi256_si128( mVal );
+						__m128i mUpper = _mm256_extracti128_si256( mVal, 1 );
+        
+						__m256i mLower32 = _mm256_cvtepi16_epi32( mLower );
+						__m256i mUpper32 = _mm256_cvtepi16_epi32( mUpper );
+
+						__m256i mLower64_1 = _mm256_cvtepi32_epi64( _mm256_castsi256_si128( mLower32 ) );
+						__m256i mLower64_2 = _mm256_cvtepi32_epi64( _mm256_extracti128_si256( mLower32, 1 ) );
+						__m256i mUpper64_1 = _mm256_cvtepi32_epi64( _mm256_castsi256_si128( mUpper32 ) );
+						__m256i mUpper64_2 = _mm256_cvtepi32_epi64( _mm256_extracti128_si256( mUpper32, 1 ) ); 
+
+						_mm256_storeu_si256( reinterpret_cast<__m256i *>(_pfOut), mLower64_1 );
+						_mm256_storeu_si256( reinterpret_cast<__m256i *>(_pfOut + 4), mLower64_2 );
+						_mm256_storeu_si256( reinterpret_cast<__m256i *>(_pfOut + 8), mUpper64_1 );
+						_mm256_storeu_si256( reinterpret_cast<__m256i *>(_pfOut + 12), mUpper64_2 );
+					}
+					else if constexpr ( Is32BitFloat<_tTypeOut>() || Is64BitFloat<_tTypeOut>() || IsBFloat16<_tTypeOut>() ) {
+						__m128i mLower = _mm256_castsi256_si128( mVal );
+						__m128i mUpper = _mm256_extracti128_si256( mVal, 1 );
+        
+						__m256i mLower32 = _mm256_cvtepi16_epi32( mLower );
+						__m256i mUpper32 = _mm256_cvtepi16_epi32( mUpper );
+
+						__m256 mLowerFloat = _mm256_cvtepi32_ps( mLower32 );
+						__m256 mUpperFloat = _mm256_cvtepi32_ps( mUpper32 );
+
+						if constexpr ( Is32BitFloat<_tTypeOut>() ) {
+							_mm256_storeu_ps( reinterpret_cast<float *>(_pfOut), mLowerFloat );
+							_mm256_storeu_ps( reinterpret_cast<float *>(_pfOut + 8), mUpperFloat );
+						}
+						else {
+							if constexpr ( IsFloat16<_tTypeOut>() ) {
+								nn9::float16::Convert8Float32ToFloat16( _pfOut, mLowerFloat );
+								nn9::float16::Convert8Float32ToFloat16( _pfOut + 8, mUpperFloat );
+							}
+							else if constexpr ( IsBFloat16<_tTypeOut>() ) {
+								bfloat16_t::storeu_fp32_to_bf16( _pfOut, mLowerFloat );
+								bfloat16_t::storeu_fp32_to_bf16( _pfOut + 8, mUpperFloat );
+							}
+							else if constexpr ( Is64BitFloat<_tTypeOut>() ) {
+								NN9_ALIGN( 32 )
+								float fTmp[16];
+								_mm256_storeu_ps( reinterpret_cast<float *>(fTmp), mLowerFloat );
+								_mm256_storeu_ps( reinterpret_cast<float *>(fTmp + 8), mUpperFloat );
+								for ( int i = 0; i < 16; ++i ) {
+									_pfOut[i] = static_cast<_tTypeOut>(fTmp[i]);
+								}
+							}
+							else { break; }
+						}
+					}
+					else { break; }
+
+
+					_pfIn += 16;
+					_pfOut += 16;
+					_sSize -= 16;
+				}
+			}
+#endif	// #ifdef __AVX2__
+
+			while ( _sSize ) {
+				auto aVal = (*_pfIn++);
+				(*_pfOut++) = static_cast<int16_t>(std::abs( static_cast<int>(aVal) ));
+				--_sSize;
+			}
+		}
+
+		/**
+		 * Applies element-wise abs() to the input.
+		 *
+		 * \tparam _tTypeOut The output type.  Must be float, bfloat16_t, or float16.
+		 * \param _pfIn The array of int32_t's to fabs().
+		 * \param _pfOut The output array of _tTypeOut's.
+		 * \param _sSize The total number of elements to which _pfIn and _pfOut point.
+		 **/
+		template <typename _tTypeOut>
+		static inline void											Abs_Int32( const int32_t * _pfIn, _tTypeOut * _pfOut, size_t _sSize ) {
+#ifdef __AVX512F__
+			if ( Utilities::IsAvx512FSupported() ) {
+				while ( _sSize >= 16 ) {
+					__m512i mVal = _mm512_loadu_si512( reinterpret_cast<const __m512i *>(_pfIn) );
+					mVal = _mm512_abs_epi32( mVal );
+					if constexpr ( std::is_same<_tTypeOut, int8_t>::value || std::is_same<_tTypeOut, uint8_t>::value ) {
+						__m512i mZero = _mm512_setzero_si512();
+						__m512i mPacked16 = _mm512_packs_epi32( mVal, mZero );
+						__m512i mPacked8 = _mm512_packs_epi16( mPacked16, mZero );
+						__m256i mLowPacked8 = _mm512_castsi512_si256( mPacked8 );
+						__m128i mFirst16Packed8 = _mm256_castsi256_si128( mLowPacked8 );
+						_mm_storeu_si128( reinterpret_cast<__m128i *>(_pfOut), mFirst16Packed8 );
+					}
+					else if constexpr ( std::is_same<_tTypeOut, int32_t>::value || std::is_same<_tTypeOut, uint16_t>::value ) {
+						__m512i mZero = _mm512_setzero_si512();
+						__m512i mPacked16 = _mm512_packs_epi32( mVal, mZero );
+
+						__m256i mLowPacked16 = _mm512_castsi512_si256( mPacked16 );
+
+						_mm256_storeu_si256( reinterpret_cast<__m256i *>(_pfOut), mLowPacked16 );
+					}
+					else if constexpr ( std::is_same<_tTypeOut, int32_t>::value || std::is_same<_tTypeOut, uint32_t>::value ) {
+						_mm512_storeu_si512( _pfOut, mVal );
+					}
+					else if constexpr ( std::is_same<_tTypeOut, int64_t>::value || std::is_same<_tTypeOut, uint64_t>::value ) {
+						__m256i mLower = _mm512_extracti32x8_epi32( mVal, 0 );
+						__m256i mUpper = _mm512_extracti32x8_epi32( mVal, 1 );
+
+						__m512i mLower64 = _mm512_cvtepi32_epi64( mLower );
+						__m512i mUpper64 = _mm512_cvtepi32_epi64( mUpper );
+
+						_mm512_storeu_si512( reinterpret_cast<__m512i *>(_pfOut), mLower64) ;
+						_mm512_storeu_si512( reinterpret_cast<__m512i *>(_pfOut + 8), mUpper64 );
+					}
+					else if constexpr ( Is32BitFloat<_tTypeOut>() || Is64BitFloat<_tTypeOut>() || IsBFloat16<_tTypeOut>() ) {
+						__m512 mFloat = _mm512_cvtepi32_ps( mVal );
+
+						if constexpr ( Is32BitFloat<_tTypeOut>() ) {
+							_mm512_storeu_ps( reinterpret_cast<float *>(_pfOut), mFloat );
+						}
+						else {
+							if constexpr ( IsFloat16<_tTypeOut>() ) {
+								nn9::float16::Convert8Float32ToFloat16( _pfOut, mFloat );
+							}
+							else if constexpr ( IsBFloat16<_tTypeOut>() ) {
+								bfloat16_t::storeu_fp32_to_bf16( _pfOut, mFloat );
+							}
+							else if constexpr ( Is64BitFloat<_tTypeOut>() ) {
+								NN9_ALIGN( 64 )
+								float fTmp[16];
+								_mm512_storeu_ps( reinterpret_cast<float *>(fTmp), mFloat );
+								for ( int i = 0; i < 16; ++i ) {
+									_pfOut[i] = static_cast<_tTypeOut>(fTmp[i]);
+								}
+							}
+							else { break; }
+						}
+					}
+					else { break; }
+					
+
+					_pfIn += 16;
+					_pfOut += 16;
+					_sSize -= 16;
+				}
+			}
+#endif	// #ifdef __AVX512F__
+
+#ifdef __AVX2__
+			if ( Utilities::IsAvx2Supported() ) {
+				while ( _sSize >= 8 ) {
+					__m256i mVal = _mm256_loadu_si256( reinterpret_cast<const __m256i *>(_pfIn) );
+					mVal = _mm256_abs_epi32( mVal );
+					if constexpr ( std::is_same<_tTypeOut, int8_t>::value || std::is_same<_tTypeOut, uint8_t>::value ) {
+						__m256i mZero = _mm256_setzero_si256();
+						__m256i mPacked16 = _mm256_packs_epi32( mVal, mZero );
+						__m256i mPacked8 = _mm256_packs_epi16( mPacked16, mZero );
+						__m128i mLowPacked8_128 = _mm256_castsi256_si128( mPacked8 );
+						_mm_storel_epi64( reinterpret_cast<__m128i *>(_pfOut), mLowPacked8_128 );
+					}
+					else if constexpr ( std::is_same<_tTypeOut, int32_t>::value || std::is_same<_tTypeOut, uint16_t>::value ) {
+						__m256i mZero = _mm256_setzero_si256();
+						__m256i mPacked16 = _mm256_packs_epi32( mVal, mZero );
+						__m128i mLowPacked16_128 = _mm256_castsi256_si128( mPacked16 );
+						_mm_storeu_si128( reinterpret_cast<__m128i *>(_pfOut), mLowPacked16_128 );
+					}
+					else if constexpr ( std::is_same<_tTypeOut, int32_t>::value || std::is_same<_tTypeOut, uint32_t>::value ) {
+						_mm256_storeu_si256( reinterpret_cast<__m256i *>(_pfOut), mVal );
+					}
+					else if constexpr ( std::is_same<_tTypeOut, int64_t>::value || std::is_same<_tTypeOut, uint64_t>::value ) {
+						__m128i mLower = _mm256_castsi256_si128( mVal );
+						__m128i mUpper = _mm256_extracti128_si256( mVal, 1 );
+
+						__m256i mLower64 = _mm256_cvtepi32_epi64( mLower );
+						__m256i mUpper64 = _mm256_cvtepi32_epi64( mUpper );
+
+						_mm256_storeu_si256( reinterpret_cast<__m256i *>(_pfOut), mLower64 );
+						_mm256_storeu_si256( reinterpret_cast<__m256i *>(_pfOut + 4), mUpper64 );
+					}
+					else if constexpr ( Is32BitFloat<_tTypeOut>() || Is64BitFloat<_tTypeOut>() || IsBFloat16<_tTypeOut>() ) {
+						__m256 mFloat = _mm256_cvtepi32_ps( mVal );
+
+						if constexpr ( Is32BitFloat<_tTypeOut>() ) {
+							_mm256_storeu_ps( reinterpret_cast<float *>(_pfOut), mFloat );
+						}
+						else {
+							if constexpr ( IsFloat16<_tTypeOut>() ) {
+								nn9::float16::Convert8Float32ToFloat16( _pfOut, mFloat );
+							}
+							else if constexpr ( IsBFloat16<_tTypeOut>() ) {
+								bfloat16_t::storeu_fp32_to_bf16( _pfOut, mFloat );
+							}
+							else if constexpr ( Is64BitFloat<_tTypeOut>() ) {
+								NN9_ALIGN( 32 )
+								float fTmp[8];
+								_mm256_storeu_ps( reinterpret_cast<float *>(fTmp), mFloat );
+								for ( int i = 0; i < 8; ++i ) {
+									_pfOut[i] = static_cast<_tTypeOut>(fTmp[i]);
+								}
+							}
+							else { break; }
+						}
+					}
+					else { break; }
+
+
+					_pfIn += 8;
+					_pfOut += 8;
+					_sSize -= 8;
+				}
+			}
+#endif	// #ifdef __AVX2__
+
+			while ( _sSize ) {
+				auto aVal = (*_pfIn++);
+				(*_pfOut++) = static_cast<int32_t>(std::abs( static_cast<int>(aVal) ));
+				--_sSize;
+			}
+		}
+
+		/**
 		 * Applies element-wise sqrt() to the input.
 		 * 
 		 * \param _pfInOut The array of bfloat16_t's to sqrt() in-place.
@@ -695,9 +1730,9 @@ namespace nn9 {
 		 *
 		 * \tparam _tTypeIn The input type.  Must be float, bfloat16_t, or float16.
 		 * \tparam _tTypeOut The output type.  Must be float, bfloat16_t, or float16.
-		 * \param _pfIn The array of floats/bfloat16_t's to sqrt().
-		 * \param _pfOut The output array of floats/bfloat16_t's.
-		 * \param _sSize The total number of floats/bfloat16_t's to which _pfIn and _pfOut point.
+		 * \param _pfIn The array of floats/float16/bfloat16_t's to sqrt().
+		 * \param _pfOut The output array of floats/float16/bfloat16_t's.
+		 * \param _sSize The total number of floats/float16/bfloat16_t's to which _pfIn and _pfOut point.
 		 **/
 		template <typename _tTypeIn, typename _tTypeOut>
 		static inline void											Sqrt_Float( const _tTypeIn * _pfIn, _tTypeOut * _pfOut, size_t _sSize ) {
@@ -967,9 +2002,9 @@ namespace nn9 {
 		 *
 		 * \tparam _tTypeIn The input type.  Must be float, bfloat16_t, or float16.
 		 * \tparam _tTypeOut The output type.  Must be float, bfloat16_t, or float16.
-		 * \param _pfIn The array of floats/bfloat16_t's to 1/sqrt().
-		 * \param _pfOut The output array of floats/bfloat16_t's.
-		 * \param _sSize The total number of floats/bfloat16_t's to which _pfIn and _pfOut point.
+		 * \param _pfIn The array of floats/float16/bfloat16_t's to 1/sqrt().
+		 * \param _pfOut The output array of floats/float16/bfloat16_t's.
+		 * \param _sSize The total number of floats/float16/bfloat16_t's to which _pfIn and _pfOut point.
 		 **/
 		template <typename _tTypeIn, typename _tTypeOut>
 		static inline void											Rsqrt_Float( const _tTypeIn * _pfIn, _tTypeOut * _pfOut, size_t _sSize ) {
@@ -1242,9 +2277,9 @@ namespace nn9 {
 		 *
 		 * \tparam _tTypeIn The input type.  Must be float, bfloat16_t, or float16.
 		 * \tparam _tTypeOut The output type.  Must be float, bfloat16_t, or float16.
-		 * \param _pfIn The array of floats/bfloat16_t's to x*x.
-		 * \param _pfOut The output array of floats/bfloat16_t's.
-		 * \param _sSize The total number of floats/bfloat16_t's to which _pfIn and _pfOut point.
+		 * \param _pfIn The array of floats/float16/bfloat16_t's to x*x.
+		 * \param _pfOut The output array of floats/float16/bfloat16_t's.
+		 * \param _sSize The total number of floats/float16/bfloat16_t's to which _pfIn and _pfOut point.
 		 **/
 		template <typename _tTypeIn, typename _tTypeOut>
 		static inline void											Square_Float( const _tTypeIn * _pfIn, _tTypeOut * _pfOut, size_t _sSize ) {
@@ -1517,9 +2552,9 @@ namespace nn9 {
 		 *
 		 * \tparam _tTypeIn The input type.  Must be float, bfloat16_t, or float16.
 		 * \tparam _tTypeOut The output type.  Must be float, bfloat16_t, or float16.
-		 * \param _pfIn The array of floats/bfloat16_t's to ceil().
-		 * \param _pfOut The output array of floats/bfloat16_t's.
-		 * \param _sSize The total number of floats/bfloat16_t's to which _pfIn and _pfOut point.
+		 * \param _pfIn The array of floats/float16/bfloat16_t's to ceil().
+		 * \param _pfOut The output array of floats/float16/bfloat16_t's.
+		 * \param _sSize The total number of floats/float16/bfloat16_t's to which _pfIn and _pfOut point.
 		 **/
 		template <typename _tTypeIn, typename _tTypeOut>
 		static inline void											Ceil_Float( const _tTypeIn * _pfIn, _tTypeOut * _pfOut, size_t _sSize ) {
@@ -1789,9 +2824,9 @@ namespace nn9 {
 		 *
 		 * \tparam _tTypeIn The input type.  Must be float, bfloat16_t, or float16.
 		 * \tparam _tTypeOut The output type.  Must be float, bfloat16_t, or float16.
-		 * \param _pfIn The array of floats/bfloat16_t's to floor().
-		 * \param _pfOut The output array of floats/bfloat16_t's.
-		 * \param _sSize The total number of floats/bfloat16_t's to which _pfIn and _pfOut point.
+		 * \param _pfIn The array of floats/float16/bfloat16_t's to floor().
+		 * \param _pfOut The output array of floats/float16/bfloat16_t's.
+		 * \param _sSize The total number of floats/float16/bfloat16_t's to which _pfIn and _pfOut point.
 		 **/
 		template <typename _tTypeIn, typename _tTypeOut>
 		static inline void											Floor_Float( const _tTypeIn * _pfIn, _tTypeOut * _pfOut, size_t _sSize ) {
@@ -2061,9 +3096,9 @@ namespace nn9 {
 		 *
 		 * \tparam _tTypeIn The input type.  Must be float, bfloat16_t, or float16.
 		 * \tparam _tTypeOut The output type.  Must be float, bfloat16_t, or float16.
-		 * \param _pfIn The array of floats/bfloat16_t's to trunc().
-		 * \param _pfOut The output array of floats/bfloat16_t's.
-		 * \param _sSize The total number of floats/bfloat16_t's to which _pfIn and _pfOut point.
+		 * \param _pfIn The array of floats/float16/bfloat16_t's to trunc().
+		 * \param _pfOut The output array of floats/float16/bfloat16_t's.
+		 * \param _sSize The total number of floats/float16/bfloat16_t's to which _pfIn and _pfOut point.
 		 **/
 		template <typename _tTypeIn, typename _tTypeOut>
 		static inline void											Trunc_Float( const _tTypeIn * _pfIn, _tTypeOut * _pfOut, size_t _sSize ) {
@@ -2336,8 +3371,8 @@ namespace nn9 {
 		 *
 		 * \param _tTypeIn The input type.  Must be float, bfloat16_t, or float16.
 		 * \param _tTypeOut The output type.  Must be float, bfloat16_t, or float16.
-		 * \param _pfIn The array of floats/bfloat16_t's to x+s.
-		 * \param _pfOut The output array of floats/bfloat16_t's.
+		 * \param _pfIn The array of floats/float16/bfloat16_t's to x+s.
+		 * \param _pfOut The output array of floats/float16/bfloat16_t's.
 		 * \param _sSize The total number of floats to which _pfInOut points.
 		 * \param _fScalar The scalar to add to the elements in _pfIn.
 		 **/
@@ -2614,8 +3649,8 @@ namespace nn9 {
 		 *
 		 * \param _tTypeIn The input type.  Must be float, bfloat16_t, or float16.
 		 * \param _tTypeOut The output type.  Must be float, bfloat16_t, or float16.
-		 * \param _pfIn The array of floats/bfloat16_t's to x-s.
-		 * \param _pfOut The output array of floats/bfloat16_t's.
+		 * \param _pfIn The array of floats/float16/bfloat16_t's to x-s.
+		 * \param _pfOut The output array of floats/float16/bfloat16_t's.
 		 * \param _sSize The total number of floats to which _pfInOut points.
 		 * \param _fScalar The scalar to sub to the elements in _pfIn.
 		 **/
@@ -2892,8 +3927,8 @@ namespace nn9 {
 		 *
 		 * \param _tTypeIn The input type.  Must be float, bfloat16_t, or float16.
 		 * \param _tTypeOut The output type.  Must be float, bfloat16_t, or float16.
-		 * \param _pfIn The array of floats/bfloat16_t's to x*s.
-		 * \param _pfOut The output array of floats/bfloat16_t's.
+		 * \param _pfIn The array of floats/float16/bfloat16_t's to x*s.
+		 * \param _pfOut The output array of floats/float16/bfloat16_t's.
 		 * \param _sSize The total number of floats to which _pfInOut points.
 		 * \param _fScalar The scalar to mul to the elements in _pfIn.
 		 **/
@@ -3170,8 +4205,8 @@ namespace nn9 {
 		 *
 		 * \param _tTypeIn The input type.  Must be float, bfloat16_t, or float16.
 		 * \param _tTypeOut The output type.  Must be float, bfloat16_t, or float16.
-		 * \param _pfIn The array of floats/bfloat16_t's to x/s.
-		 * \param _pfOut The output array of floats/bfloat16_t's.
+		 * \param _pfIn The array of floats/float16/bfloat16_t's to x/s.
+		 * \param _pfOut The output array of floats/float16/bfloat16_t's.
 		 * \param _sSize The total number of floats to which _pfInOut points.
 		 * \param _fScalar The scalar to div to the elements in _pfIn.
 		 **/
@@ -3342,98 +4377,36 @@ namespace nn9 {
 			using ValueType = typename _tType::value_type;
 			if constexpr ( IsUnsigned<ValueType>() ) { return _vValues; }
 
-
-			if constexpr ( sizeof( _tType::value_type ) == 1 ) {
-				size_t I = 0;
-				uint8_t * pui8Data = reinterpret_cast<uint8_t *>(&_vValues[0]);
-				if ( _vValues.size() >= sizeof( uint64_t ) ) {
-					const size_t sTotal = _vValues.size() - sizeof( uint64_t );
-					
-					while ( I <= sTotal ) {
-						(*reinterpret_cast<uint64_t *>(&pui8Data[I])) &= 0x7F7F7F7F7F7F7F7FULL;
-						I += sizeof( uint64_t );
-					}
-				}
-				if ( _vValues.size() >= sizeof( uint32_t ) ) {
-					const size_t sTotal = _vValues.size() - sizeof( uint32_t );
-
-					while ( I <= sTotal ) {
-						(*reinterpret_cast<uint32_t *>(&pui8Data[I])) &= 0x7F7F7F7F;
-						I += sizeof( uint32_t );
-					}
-				}
-				if ( _vValues.size() >= sizeof( uint16_t ) ) {
-					const size_t sTotal = _vValues.size() - sizeof( uint16_t );
-					
-					while ( I <= sTotal ) {
-						(*reinterpret_cast<uint16_t *>(&pui8Data[I])) &= 0x7F7F;
-						I += sizeof( uint16_t );
-					}
-				}
-				const size_t sTotal = _vValues.size();
-				while ( I < sTotal ) {
-					pui8Data[I] &= 0x7F;
-				}
+			if constexpr ( IsFloat16<ValueType>() ) {
+				Abs_Float16( &_vValues[0], _vValues.size() );
 				return _vValues;
 			}
-
-
-			if constexpr ( sizeof( _tType::value_type ) == 2 ) {
-				size_t I = 0;
-				uint16_t * pui16Data = reinterpret_cast<uint16_t *>(&_vValues[0]);
-				if ( _vValues.size() >= sizeof( uint64_t ) / 2 ) {
-					const size_t sTotal = _vValues.size() - sizeof( uint64_t ) / 2;
-					
-					while ( I <= sTotal ) {
-						(*reinterpret_cast<uint64_t *>(&pui16Data[I])) &= 0x7FFF7FFF7FFF7FFFULL;
-						I += sizeof( uint64_t ) / 2;
-					}
-				}
-				if ( _vValues.size() >= sizeof( uint32_t ) / 2 ) {
-					const size_t sTotal = _vValues.size() - sizeof( uint32_t ) / 2;
-
-					while ( I <= sTotal ) {
-						(*reinterpret_cast<uint32_t *>(&pui16Data[I])) &= 0x7FFF7FFF;
-						I += sizeof( uint32_t ) / 2;
-					}
-				}
-				const size_t sTotal = _vValues.size();
-				while ( I < sTotal ) {
-					pui16Data[I] &= 0x7FFF;
-					++I;
-				}
+			if constexpr ( IsBFloat16<ValueType>() ) {
+				Abs_BFloat16( &_vValues[0], _vValues.size() );
 				return _vValues;
 			}
-
-
-			if constexpr ( sizeof( _tType::value_type ) == 4 ) {
-				size_t I = 0;
-				uint32_t * pui32Data = reinterpret_cast<uint32_t *>(&_vValues[0]);
-				if ( _vValues.size() >= sizeof( uint64_t ) / 4 ) {
-					const size_t sTotal = _vValues.size() - sizeof( uint64_t ) / 4;
-					
-					while ( I <= sTotal ) {
-						(*reinterpret_cast<uint64_t *>(&pui32Data[I])) &= 0x7FFFFFFF7FFFFFFFULL;
-						I += sizeof( uint64_t ) / 4;
-					}
-				}
-				const size_t sTotal = _vValues.size();
-				while ( I < sTotal ) {
-					pui32Data[I] &= 0x7FFFFFFF;
-					++I;
-				}
+			if constexpr ( Is32BitFloat<ValueType>() ) {
+				Abs_Float( &_vValues[0], _vValues.size() );
 				return _vValues;
 			}
-
-
-			if constexpr ( sizeof( _tType::value_type ) == 8 ) {
-				size_t I = 0;
-				uint64_t * pui64Data = reinterpret_cast<uint64_t *>(&_vValues[0]);
-				const size_t sTotal = _vValues.size();
-				while ( I < sTotal ) {
-					pui64Data[I] &= 0x7FFFFFFF7FFFFFFFULL;
-					++I;
-				}
+			if constexpr ( Is64BitFloat<ValueType>() ) {
+				Abs_Double( &_vValues[0], _vValues.size() );
+				return _vValues;
+			}
+			if constexpr ( std::is_same<ValueType, int8_t>::value ) {
+				Abs_Int8( &_vValues[0], _vValues.size() );
+				return _vValues;
+			}
+			if constexpr ( std::is_same<ValueType, int16_t>::value ) {
+				Abs_Int16( &_vValues[0], _vValues.size() );
+				return _vValues;
+			}
+			if constexpr ( std::is_same<ValueType, int32_t>::value ) {
+				Abs_Int32( &_vValues[0], _vValues.size() );
+				return _vValues;
+			}
+			if constexpr ( std::is_same<ValueType, int32_t>::value ) {
+				Abs_Int32( &_vValues[0], _vValues.size() );
 				return _vValues;
 			}
 

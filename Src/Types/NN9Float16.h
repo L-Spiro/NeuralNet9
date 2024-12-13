@@ -219,15 +219,15 @@ namespace nn9 {
 			return _mm256_xor_si256( a, _mm256_set1_epi32( -1 ) );
 		}
 
-		// Create a mask for (a <= b) using (a <= b) <=> !(a > b)
+		// Create a mask for (a <= b) using (a <= b) <=> !(a > b).
 		static inline __m256i					mm256_cmple_epi32( __m256i a, __m256i b ) {
-			__m256i gt = _mm256_cmpgt_epi32(a, b); // 0xFFFFFFFF where a > b, else 0x0
+			__m256i gt = _mm256_cmpgt_epi32( a, b ); // 0xFFFFFFFF where a > b, else 0x0
 			return mm256_not_si256( gt );            // Invert it to get <=
 		}
 
-		// Create a mask for (a != 0) using (a != 0) <=> !(a == 0)
+		// Create a mask for (a != 0) using (a != 0) <=> !(a == 0).
 		static inline __m256i					mm256_cmpneq_epi32_zero( __m256i a ) {
-			__m256i eq = _mm256_cmpeq_epi32(a, _mm256_setzero_si256());
+			__m256i eq = _mm256_cmpeq_epi32( a, _mm256_setzero_si256() );
 			return mm256_not_si256( eq );
 		}
 
@@ -237,9 +237,9 @@ namespace nn9 {
 			return _mm256_blendv_epi8( a, b, mask );
 		}
 
-		// Helper: a != b
+		// Helper: a != b.
 		static inline __m256i					mm256_cmpneq_epi32( __m256i a, __m256i b ) {
-			__m256i eq = _mm256_cmpeq_epi32(a, b);
+			__m256i eq = _mm256_cmpeq_epi32( a, b );
 			return mm256_not_si256( eq );
 		}
 

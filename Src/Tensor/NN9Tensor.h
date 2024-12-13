@@ -125,9 +125,9 @@ namespace nn9 {
 #endif	// #ifdef NN9_SAFETY_CHECK
 
 			size_t sRet = 0;
-			size_t strideIdx = 0;
+			size_t sStrideIdx = 0;
 			// Fold expression to accumulate the stride-based calculation.
-			((sRet += m_vStride[strideIdx++] * _aArgs), ...);
+			((sRet += m_vStride[sStrideIdx++] * _aArgs), ...);
 #ifdef NN9_SAFETY_CHECK
 			if ( sRet >= m_sSize ) {
 				throw std::out_of_range( "Tensor::Flat: Index out of range." );
@@ -153,7 +153,6 @@ namespace nn9 {
 #endif	// #ifdef NN9_SAFETY_CHECK
 
 			size_t sRet = 0;
-			size_t strideIdx = 0;
 			// Fold expression to accumulate the stride-based calculation.
 			for ( size_t I = 0; I < sNumArgs; ++I ) {
 				sRet += m_vStride[I] * _aArgs[I];

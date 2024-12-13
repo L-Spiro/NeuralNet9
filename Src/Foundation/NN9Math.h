@@ -16,6 +16,10 @@
 #endif	// #ifdef __GNUC__
 #include <stdexcept>
 
+#ifdef __AVX2__
+#include <immintrin.h>
+#endif	// #ifdef __AVX2__
+
 
 namespace nn9 {
 
@@ -193,3 +197,28 @@ inline void										sincosf( float _fAngle, float * _pfSin, float * _pfCos ) {
 		return static_cast<uint64_t>(ui128Tmp);
 	}
 #endif  // #if defined( _MSC_VER )
+
+#ifdef __AVX2__
+	inline __m256								_mm256_abs_ps( __m256 _mX ) {
+		// Create a mask that clears the sign bit: 0x7FFFFFFF.
+		__m256i mMask = _mm256_set1_epi32( 0x7FFFFFFF );
+
+		// Reinterpret the mask as __m256 for bitwise AND with floats.
+		__m256 mMaskPs = _mm256_castsi256_ps( mMask );
+
+		// Perform bitwise AND to clear the sign bit in all elements.
+		return _mm256_and_ps( _mX, mMaskPs );
+	}
+
+	inline __m256d								_mm256_abs_pd( __m256d _mX ) {
+		// Create a mask that clears the sign bit: 0x7FFFFFFFFFFFFFFF.
+		__m256i mMask = _mm256_set1_epi64x( 0x7FFFFFFFFFFFFFFF );
+
+		// Reinterpret the mask as __m256d for bitwise AND with doubles.
+		__m256d mMaskPd = _mm256_castsi256_pd( mMask );
+
+		// Perform bitwise AND to clear the sign bit in all elements.
+		return _mm256_and_pd( _mX, mMaskPd );
+	}
+
+#endif	// #ifdef __AVX2__
