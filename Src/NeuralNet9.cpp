@@ -42,18 +42,19 @@ int wmain( int _iArgC, wchar_t const * _wcpArgV[] ) {
 			//	}
 			//}
 
-			int8_t iVales[64] = {
-				0x7F,
-				-1,
-				32,
-				-0x7F,
-				1,
-				64,
-				254,
+			uint32_t iVales[64] = {
+				-1, 2, -3, 4, 500, 256, 7, 8, 9, 10,
+				120, 221, 322, 423, 124, 125, 126, 127, 128, 129,
+				0x7F, -1, 32, -0x7F, 1, 64, 254, -500, -500, 500,
+				0x7F, -1, 32, -0x7F, 1, 64, 254, -500, -500, 500,
+				0x7F, -1, 32, -0x7F, 1, 64, 254, -500, -500, 500,
+				0x7F, -1, 32, -0x7F, 1, 64, 254, -500, -500, 500,
 			};
-			__m512i mVal = _mm512_loadu_si512( reinterpret_cast<const __m512i *>(iVales) );
-			int16_t ui16Dst[64];
-			nn9::Intrin::int8x64_to_int16x64( mVal, ui16Dst );
+			//__m512i mVal = _mm512_loadu_si512( reinterpret_cast<const __m512i *>(iVales) );
+			__m256i mVal = _mm256_loadu_si256( reinterpret_cast<const __m256i *>(iVales) );
+			int8_t ui16Dst[64];
+			nn9::Intrin::int32x8_to_xint8x8_saturated( mVal, ui16Dst );
+
 
 			/*nn9::Tensor tBFloat16 = tTensorTest.CopyAs( nn9::NN9_T_FLOAT16 );
 			auto vViewBf16 = tBFloat16.FullView<nn9::float16>();*/
