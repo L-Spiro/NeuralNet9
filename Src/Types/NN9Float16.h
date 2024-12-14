@@ -86,6 +86,22 @@ namespace nn9 {
 			return float16( static_cast<float>((*this)) / static_cast<float>(_fOther) );
 		}
 
+		inline float16							operator + ( double _dOther ) const {
+			return float16( static_cast<float>((*this)) + _dOther );
+		}
+
+		inline float16							operator - ( double _dOther ) const {
+			return float16( static_cast<float>((*this)) - _dOther );
+		}
+
+		inline float16							operator * ( double _dOther ) const {
+			return float16( static_cast<float>((*this)) * _dOther );
+		}
+
+		inline float16							operator / ( double _dOther ) const {
+			return float16( static_cast<float>((*this)) / _dOther );
+		}
+
 
 		// ===============================
 		// Compound Assignment Operators

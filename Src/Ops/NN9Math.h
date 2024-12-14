@@ -740,29 +740,11 @@ namespace nn9 {
 		 * \param _sSize The total number of bfloat16_t's to which _pfInOut points.
 		 **/
 		static inline void											Abs_BFloat16( bfloat16_t * _pfInOut, size_t _sSize ) {
-#ifdef __AVX512F__
-			if ( Utilities::IsAvx512FSupported() ) {
-				while ( _sSize >= 16 ) {
-					__m512 mVal = bfloat16::loadu_bf16_to_fp32_16( reinterpret_cast<const uint16_t *>(_pfInOut) );
-					bfloat16::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pfInOut), _mm512_abs_ps( mVal ) );
-
-					_pfInOut += 16;
-					_sSize -= 16;
-				}
+			while ( _sSize >= sizeof( uint64_t ) ) {
+				(*reinterpret_cast<uint64_t *>(_pfInOut)) &= 0x7FFF7FFF7FFF7FFFULL;
+				_sSize -= sizeof( uint64_t ) / sizeof( bfloat16_t );
+				_pfInOut += sizeof( uint64_t ) / sizeof( bfloat16_t );
 			}
-#endif	// #ifdef __AVX512F__
-
-#ifdef __AVX2__
-			if ( Utilities::IsAvx2Supported() ) {
-				while ( _sSize >= 8 ) {
-					__m256 mVal = bfloat16::loadu_bf16_to_fp32_8( reinterpret_cast<const uint16_t *>(_pfInOut) );
-					bfloat16::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pfInOut), _mm256_abs_ps( mVal ) );
-
-					_pfInOut += 8;
-					_sSize -= 8;
-				}
-			}
-#endif	// #ifdef __AVX2__
 
 			while ( _sSize ) {
 				(*_pfInOut) = std::fabs( static_cast<float>(*_pfInOut) );
@@ -778,29 +760,11 @@ namespace nn9 {
 		 * \param _sSize The total number of float16's to which _pfInOut points.
 		 **/
 		static inline void											Abs_Float16( nn9::float16 * _pfInOut, size_t _sSize ) {
-#ifdef __AVX512F__
-			if ( Utilities::IsAvx512FSupported() ) {
-				while ( _sSize >= 16 ) {
-					__m512 mVal = nn9::float16::Convert16Float16ToFloat32( _pfInOut );
-					nn9::float16::Convert16Float32ToFloat16( _pfInOut, _mm512_abs_ps( mVal ) );
-
-					_pfInOut += 16;
-					_sSize -= 16;
-				}
+			while ( _sSize >= sizeof( uint64_t ) ) {
+				(*reinterpret_cast<uint64_t *>(_pfInOut)) &= 0x7FFF7FFF7FFF7FFFULL;
+				_sSize -= sizeof( uint64_t ) / sizeof( nn9::float16 );
+				_pfInOut += sizeof( uint64_t ) / sizeof( nn9::float16 );
 			}
-#endif	// #ifdef __AVX512F__
-
-#ifdef __AVX2__
-			if ( Utilities::IsAvx2Supported() ) {
-				while ( _sSize >= 8 ) {
-					__m256 mVal = nn9::float16::Convert8Float16ToFloat32( _pfInOut );
-					nn9::float16::Convert8Float32ToFloat16( _pfInOut, _mm256_abs_ps( mVal ) );
-
-					_pfInOut += 8;
-					_sSize -= 8;
-				}
-			}
-#endif	// #ifdef __AVX2__
 
 			while ( _sSize ) {
 				(*_pfInOut) = std::fabs( static_cast<float>(*_pfInOut) );

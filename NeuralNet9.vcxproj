@@ -320,6 +320,7 @@
     <ClInclude Include="Src\Foundation\NN9AlignmentAllocator.h" />
     <ClInclude Include="Src\Foundation\NN9Bits.h" />
     <ClInclude Include="Src\Foundation\NN9FeatureSet.h" />
+    <ClInclude Include="Src\Foundation\NN9Intrin.h" />
     <ClInclude Include="Src\Foundation\NN9Macros.h" />
     <ClInclude Include="Src\Foundation\NN9Math.h" />
     <ClInclude Include="Src\Foundation\NN9RefCnt.h" />

@@ -136,6 +136,22 @@ namespace nn9 {
 		inline bfloat16							operator / ( const bfloat16 &_fOther ) const {
 			return bfloat16( static_cast<float>((*this)) / static_cast<float>(_fOther) );
 		}
+		
+		inline bfloat16							operator + ( double _dOther ) const {
+			return bfloat16( static_cast<float>((*this)) + _dOther );
+		}
+
+		inline bfloat16							operator - ( double _dOther ) const {
+			return bfloat16( static_cast<float>((*this)) - _dOther );
+		}
+
+		inline bfloat16							operator * ( double _dOther ) const {
+			return bfloat16( static_cast<float>((*this)) * _dOther );
+		}
+
+		inline bfloat16							operator / ( double _dOther ) const {
+			return bfloat16( static_cast<float>((*this)) / _dOther );
+		}
 
 
 		// ===============================
