@@ -765,7 +765,7 @@ namespace nn9 {
 		__m128i high128 = _mm256_extracti128_si256( mui16Tmp, 1 );
 
 		// Now pack these 8 int32 values (4 in low128, 4 in high128) into 8 int16 values.
-		__m128i result_16 = _mm_packs_epi32( low128, high128 );
+		__m128i result_16 = _mm_packus_epi32( low128, high128 );
 
 		// Store result (8 uint16_t).
 		_mm_storeu_si128( reinterpret_cast<__m128i *>(_pf16Dst), result_16 );

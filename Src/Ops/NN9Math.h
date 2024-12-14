@@ -1081,7 +1081,7 @@ namespace nn9 {
 						_mm512_storeu_si512( reinterpret_cast<__m512i *>(_pfOut + 48), mUpper64_3 );
 						_mm512_storeu_si512( reinterpret_cast<__m512i *>(_pfOut + 56), mUpper64_4 );
 					}
-					else if constexpr ( Is32BitFloat<_tTypeOut>() || Is64BitFloat<_tTypeOut>() || IsBFloat16<_tTypeOut>() ) {
+					else if constexpr ( Is32BitFloat<_tTypeOut>() || Is64BitFloat<_tTypeOut>() || IsBFloat16<_tTypeOut>() || IsFloat16<_tTypeOut>() ) {
 						__m256i mLower = _mm512_extracti32x8_epi32( mVal, 0 );
 						__m256i mUpper = _mm512_extracti32x8_epi32( mVal, 1 );
 
@@ -1104,31 +1104,28 @@ namespace nn9 {
 							_mm512_storeu_ps( _pfOut + 32, mUpperFloat_1 );
 							_mm512_storeu_ps( _pfOut + 48, mUpperFloat_2 );
 						}
-						else {
-							if constexpr ( IsFloat16<_tTypeOut>() ) {
-								nn9::float16::Convert8Float32ToFloat16( _pfOut, mLowerFloat_1 );
-								nn9::float16::Convert8Float32ToFloat16( _pfOut + 16, mLowerFloat_2 );
-								nn9::float16::Convert8Float32ToFloat16( _pfOut + 32, mUpperFloat_1 );
-								nn9::float16::Convert8Float32ToFloat16( _pfOut + 48, mUpperFloat_2 );
+						else if constexpr ( IsFloat16<_tTypeOut>() ) {
+							nn9::float16::Convert8Float32ToFloat16( _pfOut, mLowerFloat_1 );
+							nn9::float16::Convert8Float32ToFloat16( _pfOut + 16, mLowerFloat_2 );
+							nn9::float16::Convert8Float32ToFloat16( _pfOut + 32, mUpperFloat_1 );
+							nn9::float16::Convert8Float32ToFloat16( _pfOut + 48, mUpperFloat_2 );
+						}
+						else if constexpr ( IsBFloat16<_tTypeOut>() ) {
+							bfloat16_t::storeu_fp32_to_bf16( _pfOut, mLowerFloat_1 );
+							bfloat16_t::storeu_fp32_to_bf16( _pfOut + 16, mLowerFloat_2 );
+							bfloat16_t::storeu_fp32_to_bf16( _pfOut + 32, mUpperFloat_1 );
+							bfloat16_t::storeu_fp32_to_bf16( _pfOut + 48, mUpperFloat_2 );
+						}
+						else if constexpr ( Is64BitFloat<_tTypeOut>() ) {
+							NN9_ALIGN( 64 )
+							float fTmp[64];
+							_mm512_storeu_ps( fTmp, mLowerFloat_1 );
+							_mm512_storeu_ps( fTmp + 16, mLowerFloat_2 );
+							_mm512_storeu_ps( fTmp + 32, mUpperFloat_1 );
+							_mm512_storeu_ps( fTmp + 48, mUpperFloat_2 );
+							for ( int i = 0; i < 64; ++i ) {
+								_pfOut[i] = static_cast<_tTypeOut>(fTmp[i]);
 							}
-							else if constexpr ( IsBFloat16<_tTypeOut>() ) {
-								bfloat16_t::storeu_fp32_to_bf16( _pfOut, mLowerFloat_1 );
-								bfloat16_t::storeu_fp32_to_bf16( _pfOut + 16, mLowerFloat_2 );
-								bfloat16_t::storeu_fp32_to_bf16( _pfOut + 32, mUpperFloat_1 );
-								bfloat16_t::storeu_fp32_to_bf16( _pfOut + 48, mUpperFloat_2 );
-							}
-							else if constexpr ( Is64BitFloat<_tTypeOut>() ) {
-								NN9_ALIGN( 64 )
-								float fTmp[64];
-								_mm512_storeu_ps( fTmp, mLowerFloat_1 );
-								_mm512_storeu_ps( fTmp + 16, mLowerFloat_2 );
-								_mm512_storeu_ps( fTmp + 32, mUpperFloat_1 );
-								_mm512_storeu_ps( fTmp + 48, mUpperFloat_2 );
-								for ( int i = 0; i < 64; ++i ) {
-									_pfOut[i] = static_cast<_tTypeOut>(fTmp[i]);
-								}
-							}
-							else { break; }
 						}
 					}
 					else { break; }
@@ -1203,7 +1200,7 @@ namespace nn9 {
 						_mm256_storeu_si256( reinterpret_cast<__m256i *>(_pfOut + 24), mUpper64_3 );
 						_mm256_storeu_si256( reinterpret_cast<__m256i *>(_pfOut + 28), mUpper64_4 );
 					}
-					else if constexpr ( Is32BitFloat<_tTypeOut>() || Is64BitFloat<_tTypeOut>() || IsBFloat16<_tTypeOut>() ) {
+					else if constexpr ( Is32BitFloat<_tTypeOut>() || Is64BitFloat<_tTypeOut>() || IsBFloat16<_tTypeOut>() || IsFloat16<_tTypeOut>() ) {
 						__m128i mLower = _mm256_castsi256_si128( mVal );
 						__m128i mUpper = _mm256_extracti128_si256( mVal, 1 );
 
@@ -1226,31 +1223,28 @@ namespace nn9 {
 							_mm256_storeu_ps( _pfOut + 16, mUpperFloat_1 );
 							_mm256_storeu_ps( _pfOut + 24, mUpperFloat_2 );
 						}
-						else {
-							if constexpr ( IsFloat16<_tTypeOut>() ) {
-								nn9::float16::Convert8Float32ToFloat16( _pfOut, mLowerFloat_1 );
-								nn9::float16::Convert8Float32ToFloat16( _pfOut + 8, mLowerFloat_2 );
-								nn9::float16::Convert8Float32ToFloat16( _pfOut + 16, mUpperFloat_1 );
-								nn9::float16::Convert8Float32ToFloat16( _pfOut + 24, mUpperFloat_2 );
+						else if constexpr ( IsFloat16<_tTypeOut>() ) {
+							nn9::float16::Convert8Float32ToFloat16( _pfOut, mLowerFloat_1 );
+							nn9::float16::Convert8Float32ToFloat16( _pfOut + 8, mLowerFloat_2 );
+							nn9::float16::Convert8Float32ToFloat16( _pfOut + 16, mUpperFloat_1 );
+							nn9::float16::Convert8Float32ToFloat16( _pfOut + 24, mUpperFloat_2 );
+						}
+						else if constexpr ( IsBFloat16<_tTypeOut>() ) {
+							bfloat16_t::storeu_fp32_to_bf16( _pfOut, mLowerFloat_1 );
+							bfloat16_t::storeu_fp32_to_bf16( _pfOut + 8, mLowerFloat_2 );
+							bfloat16_t::storeu_fp32_to_bf16( _pfOut + 16, mUpperFloat_1 );
+							bfloat16_t::storeu_fp32_to_bf16( _pfOut + 24, mUpperFloat_2 );
+						}
+						else if constexpr ( Is64BitFloat<_tTypeOut>() ) {
+							NN9_ALIGN( 32 )
+							float fTmp[32];
+							_mm256_store_ps( fTmp, mLowerFloat_1 );
+							_mm256_store_ps( fTmp + 8, mLowerFloat_2 );
+							_mm256_store_ps( fTmp + 16, mUpperFloat_1 );
+							_mm256_store_ps( fTmp + 24, mUpperFloat_2 );
+							for ( int i = 0; i < 32; ++i ) {
+								_pfOut[i] = static_cast<_tTypeOut>(fTmp[i]);
 							}
-							else if constexpr ( IsBFloat16<_tTypeOut>() ) {
-								bfloat16_t::storeu_fp32_to_bf16( _pfOut, mLowerFloat_1 );
-								bfloat16_t::storeu_fp32_to_bf16( _pfOut + 8, mLowerFloat_2 );
-								bfloat16_t::storeu_fp32_to_bf16( _pfOut + 16, mUpperFloat_1 );
-								bfloat16_t::storeu_fp32_to_bf16( _pfOut + 24, mUpperFloat_2 );
-							}
-							else if constexpr ( Is64BitFloat<_tTypeOut>() ) {
-								NN9_ALIGN( 32 )
-								float fTmp[32];
-								_mm256_store_ps( fTmp, mLowerFloat_1 );
-								_mm256_store_ps( fTmp + 8, mLowerFloat_2 );
-								_mm256_store_ps( fTmp + 16, mUpperFloat_1 );
-								_mm256_store_ps( fTmp + 24, mUpperFloat_2 );
-								for ( int i = 0; i < 32; ++i ) {
-									_pfOut[i] = static_cast<_tTypeOut>(fTmp[i]);
-								}
-							}
-							else { break; }
 						}
 					}
 					else { break; }
@@ -1321,7 +1315,7 @@ namespace nn9 {
 						_mm512_storeu_si512( reinterpret_cast<__m512i *>(_pfOut + 16), mLower64_upper );
 						_mm512_storeu_si512( reinterpret_cast<__m512i *>(_pfOut + 24), mUpper64_upper );
 					}
-					else if constexpr ( Is32BitFloat<_tTypeOut>() || Is64BitFloat<_tTypeOut>() || IsBFloat16<_tTypeOut>() ) {
+					else if constexpr ( Is32BitFloat<_tTypeOut>() || Is64BitFloat<_tTypeOut>() || IsBFloat16<_tTypeOut>() || IsFloat16<_tTypeOut>() ) {
 						__m256i mLower = _mm512_extracti32x8_epi32( mVal, 0 );
 						__m256i mUpper = _mm512_extracti32x8_epi32( mVal, 1 );
 
@@ -1331,31 +1325,26 @@ namespace nn9 {
 						__m512 mLowerFloat = _mm512_cvtepi32_ps( mLower32 );
 						__m512 mUpperFloat = _mm512_cvtepi32_ps( mUpper32 );
 
-						
-
 						if constexpr ( Is32BitFloat<_tTypeOut>() ) {
 							_mm512_storeu_ps( _pfOut, mLowerFloat );
 							_mm512_storeu_ps( _pfOut + 16, mUpperFloat );
 						}
-						else {
-							if constexpr ( IsFloat16<_tTypeOut>() ) {
-								nn9::float16::Convert8Float32ToFloat16( _pfOut, mLowerFloat );
-								nn9::float16::Convert8Float32ToFloat16( _pfOut + 16, mUpperFloat );
+						else if constexpr ( IsFloat16<_tTypeOut>() ) {
+							nn9::float16::Convert8Float32ToFloat16( _pfOut, mLowerFloat );
+							nn9::float16::Convert8Float32ToFloat16( _pfOut + 16, mUpperFloat );
+						}
+						else if constexpr ( IsBFloat16<_tTypeOut>() ) {
+							bfloat16_t::storeu_fp32_to_bf16( _pfOut, mLowerFloat );
+							bfloat16_t::storeu_fp32_to_bf16( _pfOut + 16, mUpperFloat );
+						}
+						else if constexpr ( Is64BitFloat<_tTypeOut>() ) {
+							NN9_ALIGN( 64 )
+							float fTmp[32];
+							_mm512_storeu_ps( fTmp, mLowerFloat );
+							_mm512_storeu_ps( fTmp + 16, mUpperFloat );
+							for ( int i = 0; i < 32; ++i ) {
+								_pfOut[i] = static_cast<_tTypeOut>(fTmp[i]);
 							}
-							else if constexpr ( IsBFloat16<_tTypeOut>() ) {
-								bfloat16_t::storeu_fp32_to_bf16( _pfOut, mLowerFloat );
-								bfloat16_t::storeu_fp32_to_bf16( _pfOut + 16, mUpperFloat );
-							}
-							else if constexpr ( Is64BitFloat<_tTypeOut>() ) {
-								NN9_ALIGN( 64 )
-								float fTmp[32];
-								_mm512_storeu_ps( fTmp, mLowerFloat );
-								_mm512_storeu_ps( fTmp + 16, mUpperFloat );
-								for ( int i = 0; i < 32; ++i ) {
-									_pfOut[i] = static_cast<_tTypeOut>(fTmp[i]);
-								}
-							}
-							else { break; }
 						}
 					}
 					else { break; }
@@ -1409,7 +1398,7 @@ namespace nn9 {
 						_mm256_storeu_si256( reinterpret_cast<__m256i *>(_pfOut + 8), mUpper64_1 );
 						_mm256_storeu_si256( reinterpret_cast<__m256i *>(_pfOut + 12), mUpper64_2 );
 					}
-					else if constexpr ( Is32BitFloat<_tTypeOut>() || Is64BitFloat<_tTypeOut>() || IsBFloat16<_tTypeOut>() ) {
+					else if constexpr ( Is32BitFloat<_tTypeOut>() || Is64BitFloat<_tTypeOut>() || IsBFloat16<_tTypeOut>() || IsFloat16<_tTypeOut>() ) {
 						__m128i mLower = _mm256_castsi256_si128( mVal );
 						__m128i mUpper = _mm256_extracti128_si256( mVal, 1 );
         
@@ -1423,25 +1412,22 @@ namespace nn9 {
 							_mm256_storeu_ps( reinterpret_cast<float *>(_pfOut), mLowerFloat );
 							_mm256_storeu_ps( reinterpret_cast<float *>(_pfOut + 8), mUpperFloat );
 						}
-						else {
-							if constexpr ( IsFloat16<_tTypeOut>() ) {
-								nn9::float16::Convert8Float32ToFloat16( _pfOut, mLowerFloat );
-								nn9::float16::Convert8Float32ToFloat16( _pfOut + 8, mUpperFloat );
+						else if constexpr ( IsFloat16<_tTypeOut>() ) {
+							nn9::float16::Convert8Float32ToFloat16( _pfOut, mLowerFloat );
+							nn9::float16::Convert8Float32ToFloat16( _pfOut + 8, mUpperFloat );
+						}
+						else if constexpr ( IsBFloat16<_tTypeOut>() ) {
+							bfloat16_t::storeu_fp32_to_bf16( _pfOut, mLowerFloat );
+							bfloat16_t::storeu_fp32_to_bf16( _pfOut + 8, mUpperFloat );
+						}
+						else if constexpr ( Is64BitFloat<_tTypeOut>() ) {
+							NN9_ALIGN( 32 )
+							float fTmp[16];
+							_mm256_storeu_ps( reinterpret_cast<float *>(fTmp), mLowerFloat );
+							_mm256_storeu_ps( reinterpret_cast<float *>(fTmp + 8), mUpperFloat );
+							for ( int i = 0; i < 16; ++i ) {
+								_pfOut[i] = static_cast<_tTypeOut>(fTmp[i]);
 							}
-							else if constexpr ( IsBFloat16<_tTypeOut>() ) {
-								bfloat16_t::storeu_fp32_to_bf16( _pfOut, mLowerFloat );
-								bfloat16_t::storeu_fp32_to_bf16( _pfOut + 8, mUpperFloat );
-							}
-							else if constexpr ( Is64BitFloat<_tTypeOut>() ) {
-								NN9_ALIGN( 32 )
-								float fTmp[16];
-								_mm256_storeu_ps( reinterpret_cast<float *>(fTmp), mLowerFloat );
-								_mm256_storeu_ps( reinterpret_cast<float *>(fTmp + 8), mUpperFloat );
-								for ( int i = 0; i < 16; ++i ) {
-									_pfOut[i] = static_cast<_tTypeOut>(fTmp[i]);
-								}
-							}
-							else { break; }
 						}
 					}
 					else { break; }
@@ -1505,28 +1491,25 @@ namespace nn9 {
 						_mm512_storeu_si512( reinterpret_cast<__m512i *>(_pfOut), mLower64) ;
 						_mm512_storeu_si512( reinterpret_cast<__m512i *>(_pfOut + 8), mUpper64 );
 					}
-					else if constexpr ( Is32BitFloat<_tTypeOut>() || Is64BitFloat<_tTypeOut>() || IsBFloat16<_tTypeOut>() ) {
+					else if constexpr ( Is32BitFloat<_tTypeOut>() || Is64BitFloat<_tTypeOut>() || IsBFloat16<_tTypeOut>() || IsFloat16<_tTypeOut>() ) {
 						__m512 mFloat = _mm512_cvtepi32_ps( mVal );
 
 						if constexpr ( Is32BitFloat<_tTypeOut>() ) {
 							_mm512_storeu_ps( reinterpret_cast<float *>(_pfOut), mFloat );
 						}
-						else {
-							if constexpr ( IsFloat16<_tTypeOut>() ) {
-								nn9::float16::Convert8Float32ToFloat16( _pfOut, mFloat );
+						else if constexpr ( IsFloat16<_tTypeOut>() ) {
+							nn9::float16::Convert8Float32ToFloat16( _pfOut, mFloat );
+						}
+						else if constexpr ( IsBFloat16<_tTypeOut>() ) {
+							bfloat16_t::storeu_fp32_to_bf16( _pfOut, mFloat );
+						}
+						else if constexpr ( Is64BitFloat<_tTypeOut>() ) {
+							NN9_ALIGN( 64 )
+							float fTmp[16];
+							_mm512_storeu_ps( reinterpret_cast<float *>(fTmp), mFloat );
+							for ( int i = 0; i < 16; ++i ) {
+								_pfOut[i] = static_cast<_tTypeOut>(fTmp[i]);
 							}
-							else if constexpr ( IsBFloat16<_tTypeOut>() ) {
-								bfloat16_t::storeu_fp32_to_bf16( _pfOut, mFloat );
-							}
-							else if constexpr ( Is64BitFloat<_tTypeOut>() ) {
-								NN9_ALIGN( 64 )
-								float fTmp[16];
-								_mm512_storeu_ps( reinterpret_cast<float *>(fTmp), mFloat );
-								for ( int i = 0; i < 16; ++i ) {
-									_pfOut[i] = static_cast<_tTypeOut>(fTmp[i]);
-								}
-							}
-							else { break; }
 						}
 					}
 					else { break; }
@@ -1570,28 +1553,25 @@ namespace nn9 {
 						_mm256_storeu_si256( reinterpret_cast<__m256i *>(_pfOut), mLower64 );
 						_mm256_storeu_si256( reinterpret_cast<__m256i *>(_pfOut + 4), mUpper64 );
 					}
-					else if constexpr ( Is32BitFloat<_tTypeOut>() || Is64BitFloat<_tTypeOut>() || IsBFloat16<_tTypeOut>() ) {
+					else if constexpr ( Is32BitFloat<_tTypeOut>() || Is64BitFloat<_tTypeOut>() || IsBFloat16<_tTypeOut>() || IsFloat16<_tTypeOut>() ) {
 						__m256 mFloat = _mm256_cvtepi32_ps( mVal );
 
 						if constexpr ( Is32BitFloat<_tTypeOut>() ) {
 							_mm256_storeu_ps( reinterpret_cast<float *>(_pfOut), mFloat );
 						}
-						else {
-							if constexpr ( IsFloat16<_tTypeOut>() ) {
-								nn9::float16::Convert8Float32ToFloat16( _pfOut, mFloat );
+						else if constexpr ( IsFloat16<_tTypeOut>() ) {
+							nn9::float16::Convert8Float32ToFloat16( _pfOut, mFloat );
+						}
+						else if constexpr ( IsBFloat16<_tTypeOut>() ) {
+							bfloat16_t::storeu_fp32_to_bf16( _pfOut, mFloat );
+						}
+						else if constexpr ( Is64BitFloat<_tTypeOut>() ) {
+							NN9_ALIGN( 32 )
+							float fTmp[8];
+							_mm256_storeu_ps( reinterpret_cast<float *>(fTmp), mFloat );
+							for ( int i = 0; i < 8; ++i ) {
+								_pfOut[i] = static_cast<_tTypeOut>(fTmp[i]);
 							}
-							else if constexpr ( IsBFloat16<_tTypeOut>() ) {
-								bfloat16_t::storeu_fp32_to_bf16( _pfOut, mFloat );
-							}
-							else if constexpr ( Is64BitFloat<_tTypeOut>() ) {
-								NN9_ALIGN( 32 )
-								float fTmp[8];
-								_mm256_storeu_ps( reinterpret_cast<float *>(fTmp), mFloat );
-								for ( int i = 0; i < 8; ++i ) {
-									_pfOut[i] = static_cast<_tTypeOut>(fTmp[i]);
-								}
-							}
-							else { break; }
 						}
 					}
 					else { break; }
@@ -4405,14 +4385,10 @@ namespace nn9 {
 				Abs_Int32( &_vValues[0], _vValues.size() );
 				return _vValues;
 			}
-			if constexpr ( std::is_same<ValueType, int32_t>::value ) {
-				Abs_Int32( &_vValues[0], _vValues.size() );
-				return _vValues;
-			}
 
 
 			for ( std::size_t i = 0; i < _vValues.size(); ++i ) {
-				_vValues[i] = _tType::value_type( std::fabs( _vValues[i] ) );
+				_vValues[i] = ValueType( std::fabs( static_cast<double>(_vValues[i]) ) );
 			}
 			return _vValues;
 		}
@@ -4430,6 +4406,84 @@ namespace nn9 {
 				Abs( aThis );
 			}
 			return _vValues;
+		}
+
+		/**
+		 * Computes element-wise abs().
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut>
+		static _tTypeOut &											Abs( const _tTypeIn &_vIn, _tTypeOut &_vOut ) {
+			using ValueTypeIn = typename _tTypeIn::value_type;
+			using ValueTypeOut = typename _tTypeOut::value_type;
+			if constexpr ( (IsBFloat16<ValueTypeIn>() || Is32BitFloat<ValueTypeIn>()) &&
+				(IsFloat16<ValueTypeIn>() || Is32itFloat<ValueTypeIn>()) &&
+				(IsBFloat16<ValueTypeOut>() || Is32BitFloat<ValueTypeOut>()) ) {
+#ifdef NN9_SAFETY_CHECK
+				if ( _vIn.size() != _vOut.size() ) { throw std::runtime_error( "Math::Abs: Input and outputs must have the same number of elements." ); }
+#endif	// #ifdef NN9_SAFETY_CHECK
+				Abs_Float( &_vIn[0], &_vOut[0], _vIn.size() );
+				return _vOut;
+			}
+			if constexpr ( Is64BitFloat<ValueTypeIn>() && Is64BitFloat<ValueTypeOut>() ) {
+#ifdef NN9_SAFETY_CHECK
+				if ( _vIn.size() != _vOut.size() ) { throw std::runtime_error( "Math::Abs: Input and outputs must have the same number of elements." ); }
+#endif	// #ifdef NN9_SAFETY_CHECK
+				Abs_Double( &_vIn[0], &_vOut[0], _vIn.size() );
+				return _vOut;
+			}
+
+
+			if constexpr ( std::is_same<ValueTypeIn, int8_t>::value ) {
+#ifdef NN9_SAFETY_CHECK
+				if ( _vIn.size() != _vOut.size() ) { throw std::runtime_error( "Math::Abs: Input and outputs must have the same number of elements." ); }
+#endif	// #ifdef NN9_SAFETY_CHECK
+				Abs_Int8( &_vIn[0], &_vOut[0], _vIn.size() );
+				return _vOut;
+			}
+			if constexpr ( std::is_same<ValueTypeIn, int16_t>::value ) {
+#ifdef NN9_SAFETY_CHECK
+				if ( _vIn.size() != _vOut.size() ) { throw std::runtime_error( "Math::Abs: Input and outputs must have the same number of elements." ); }
+#endif	// #ifdef NN9_SAFETY_CHECK
+				Abs_Int16( &_vIn[0], &_vOut[0], _vIn.size() );
+				return _vOut;
+			}
+			if constexpr ( std::is_same<ValueTypeIn, int32_t>::value ) {
+#ifdef NN9_SAFETY_CHECK
+				if ( _vIn.size() != _vOut.size() ) { throw std::runtime_error( "Math::Abs: Input and outputs must have the same number of elements." ); }
+#endif	// #ifdef NN9_SAFETY_CHECK
+				Abs_Int32( &_vIn[0], &_vOut[0], _vIn.size() );
+				return _vOut;
+			}
+
+			return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return std::abs( x ); } );
+		}
+
+		/**
+		 * Applies Abs() to an array of inputs and outputs.
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \throw If NN9_SAFETY_CHECK, throws if _vIn and _vOut are not the same lengths.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut>
+		static std::vector<_tTypeOut> &								Abs( const std::vector<_tTypeIn> &_vIn, std::vector<_tTypeOut> &_vOut ) {
+#ifdef NN9_SAFETY_CHECK
+			if ( _vIn.size() != _vOut.size() ) { throw std::runtime_error( "Math::Abs: Input and outputs must have the same number of elements." ); }
+#endif	// #ifdef NN9_SAFETY_CHECK
+
+			for ( size_t i = 0; i < _vIn.size(); ++i ) {
+				Abs( _vIn[i], _vOut[i] );
+			}
+			return _vOut;
 		}
 
 

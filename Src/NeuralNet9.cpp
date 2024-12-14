@@ -41,10 +41,12 @@ int wmain( int _iArgC, wchar_t const * _wcpArgV[] ) {
 			//	}
 			//}
 
-			/*nn9::Tensor tBFloat16 = tTensorTest.CopyAs( nn9::NN9_T_FLOAT16 );
-			auto vViewBf16 = tBFloat16.FullView<nn9::float16>();*/
-			nn9::Tensor tBFloat16 = tTensorTest.CopyAs( nn9::NN9_T_BFLOAT16 );
-			auto vViewBf16 = tBFloat16.FullView<bfloat16_t>();
+			nn9::float16 f16Neg = -0.124;
+
+			nn9::Tensor tBFloat16 = tTensorTest.CopyAs( nn9::NN9_T_FLOAT16 );
+			auto vViewBf16 = tBFloat16.FullView<nn9::float16>();
+			/*nn9::Tensor tBFloat16 = tTensorTest.CopyAs( nn9::NN9_T_BFLOAT16 );
+			auto vViewBf16 = tBFloat16.FullView<bfloat16_t>();*/
 
 			nn9::Tensor tBackToFloat = tBFloat16.CopyAs( nn9::NN9_T_FLOAT );
 			auto vViewNewFloat = tBackToFloat.FullView<float>();
@@ -55,7 +57,7 @@ int wmain( int _iArgC, wchar_t const * _wcpArgV[] ) {
 			tTimer.Start();
 			for ( int i = 0; i < 50000; ++i ) {
 				//dSum += nn9::Math::Sum( vViewBf16 );
-				nn9::Math::Sqrt( v3d );
+				nn9::Math::Abs( v3d );
 			}
 
 			tTimer.Stop();
@@ -67,7 +69,7 @@ int wmain( int _iArgC, wchar_t const * _wcpArgV[] ) {
 			tTimer.Start();
 			for ( int i = 0; i < 50000; ++i ) {
 				//dSum += nn9::Math::KahanSum( vViewNewFloat );
-				//nn9::Math::Sqrt( vViewBf16 );
+				nn9::Math::Abs( vViewBf16 );
 			}
 
 			tTimer.Stop();
