@@ -1244,7 +1244,7 @@ namespace nn9 {
 
 			NN9_ALIGN( 32 )
 			int8_t i8Tmp[16];
-			_mm_storeu_si128( reinterpret_cast<__m128i *>(i8Tmp), mPacked8 );
+			_mm_store_si128( reinterpret_cast<__m128i *>(i8Tmp), mPacked8 );
 
 			(*reinterpret_cast<uint64_t *>(_pi8Dst)) = (*reinterpret_cast<uint64_t *>(i8Tmp));
 		}
@@ -1827,7 +1827,7 @@ namespace nn9 {
 		static inline void										int64x4_to_int8x4_saturated( __m256i _mInt64, int8_t * _pi8Dst ) {
 			NN9_ALIGN( 32 )
 			int64_t i64Tmp[4];
-			_mm256_storeu_si256( reinterpret_cast<__m256i *>(i64Tmp), _mInt64 );
+			_mm256_store_si256( reinterpret_cast<__m256i *>(i64Tmp), _mInt64 );
 
 			for ( int i = 0; i < 4; i++ ) {
 				auto aVal = i64Tmp[i];
@@ -1845,7 +1845,7 @@ namespace nn9 {
 		static inline void										int64x4_to_uint8x4_saturated( __m256i _mInt64, uint8_t * _pu8Dst ) {
 			NN9_ALIGN( 32 )
 			int64_t i64Tmp[4];
-			_mm256_storeu_si256( reinterpret_cast<__m256i *>(i64Tmp), _mInt64 );
+			_mm256_store_si256( reinterpret_cast<__m256i *>(i64Tmp), _mInt64 );
 
 			for ( int i = 0; i < 4; i++ ) {
 				auto aVal = i64Tmp[i];
@@ -1863,7 +1863,7 @@ namespace nn9 {
 		static inline void										uint64x4_to_int8x4_saturated( __m256i _mUint64, int8_t * _pi8Dst ) {
 			NN9_ALIGN( 32 )
 			uint64_t ui64Tmp[4];
-			_mm256_storeu_si256( reinterpret_cast<__m256i *>(ui64Tmp), _mUint64 );
+			_mm256_store_si256( reinterpret_cast<__m256i *>(ui64Tmp), _mUint64 );
 
 			for ( int i = 0; i < 4; i++ ) {
 				auto aVal = ui64Tmp[i];
@@ -1881,7 +1881,7 @@ namespace nn9 {
 		static inline void										uint64x4_to_uint8x4_saturated( __m256i _mUint64, uint8_t * _pu8Dst ) {
 			NN9_ALIGN( 32 )
 			uint64_t ui64Tmp[4];
-			_mm256_storeu_si256( reinterpret_cast<__m256i *>(ui64Tmp), _mUint64 );
+			_mm256_store_si256( reinterpret_cast<__m256i *>(ui64Tmp), _mUint64 );
 
 			for ( int i = 0; i < 4; i++ ) {
 				auto aVal = ui64Tmp[i];
@@ -1899,7 +1899,7 @@ namespace nn9 {
 		static inline void										int64x4_to_int16x4_saturated( __m256i _mInt64, int16_t * _pi16Dst ) {
 			NN9_ALIGN( 32 )
 			int64_t i64Tmp[4];
-			_mm256_storeu_si256( reinterpret_cast<__m256i *>(i64Tmp), _mInt64 );
+			_mm256_store_si256( reinterpret_cast<__m256i *>(i64Tmp), _mInt64 );
 
 			for ( int i = 0; i < 4; i++ ) {
 				auto aVal = i64Tmp[i];
@@ -1917,7 +1917,7 @@ namespace nn9 {
 		static inline void										int64x4_to_uint16x4_saturated( __m256i _mInt64, uint16_t * _pu16Dst ) {
 			NN9_ALIGN( 32 )
 			int64_t i64Tmp[4];
-			_mm256_storeu_si256( reinterpret_cast<__m256i *>(i64Tmp), _mInt64 );
+			_mm256_store_si256( reinterpret_cast<__m256i *>(i64Tmp), _mInt64 );
 
 			for ( int i = 0; i < 4; i++ ) {
 				auto aVal = i64Tmp[i];
@@ -1935,7 +1935,7 @@ namespace nn9 {
 		static inline void										uint64x4_to_int16x4_saturated( __m256i _mUint64, int16_t * _pi16Dst ) {
 			NN9_ALIGN( 32 )
 			uint64_t ui64Tmp[4];
-			_mm256_storeu_si256( reinterpret_cast<__m256i *>(ui64Tmp), _mUint64 );
+			_mm256_store_si256( reinterpret_cast<__m256i *>(ui64Tmp), _mUint64 );
 
 			for ( int i = 0; i < 4; i++ ) {
 				auto aVal = ui64Tmp[i];
@@ -1953,7 +1953,7 @@ namespace nn9 {
 		static inline void										uint64x4_to_uint16x4_saturated( __m256i _mUint64, uint16_t * _pu16Dst ) {
 			NN9_ALIGN( 32 )
 			uint64_t ui64Tmp[4];
-			_mm256_storeu_si256( reinterpret_cast<__m256i *>(ui64Tmp), _mUint64 );
+			_mm256_store_si256( reinterpret_cast<__m256i *>(ui64Tmp), _mUint64 );
 
 			for ( int i = 0; i < 4; i++ ) {
 				auto aVal = ui64Tmp[i];
@@ -1971,7 +1971,7 @@ namespace nn9 {
 		static inline void										int64x4_to_int32x4_saturated( __m256i _mInt64, int32_t * _pi32Dst ) {
 			NN9_ALIGN( 32 )
 			int64_t i64Tmp[4];
-			_mm256_storeu_si256( reinterpret_cast<__m256i *>(i64Tmp), _mInt64 );
+			_mm256_store_si256( reinterpret_cast<__m256i *>(i64Tmp), _mInt64 );
 
 			for ( int i = 0; i < 4; i++ ) {
 				auto aVal = i64Tmp[i];
@@ -1989,7 +1989,7 @@ namespace nn9 {
 		static inline void										int64x4_to_uint32x4_saturated( __m256i _mInt64, uint32_t * _pu32Dst ) {
 			NN9_ALIGN( 32 )
 			int64_t i64Tmp[4];
-			_mm256_storeu_si256( reinterpret_cast<__m256i *>(i64Tmp), _mInt64 );
+			_mm256_store_si256( reinterpret_cast<__m256i *>(i64Tmp), _mInt64 );
 
 			for ( int i = 0; i < 4; i++ ) {
 				auto aVal = i64Tmp[i];
@@ -2007,7 +2007,7 @@ namespace nn9 {
 		static inline void										uint64x4_to_int32x4_saturated( __m256i _mUint64, int32_t * _pi32Dst ) {
 			NN9_ALIGN( 32 )
 			uint64_t ui64Tmp[4];
-			_mm256_storeu_si256( reinterpret_cast<__m256i *>(ui64Tmp), _mUint64 );
+			_mm256_store_si256( reinterpret_cast<__m256i *>(ui64Tmp), _mUint64 );
 
 			for ( int i = 0; i < 4; i++ ) {
 				auto aVal = ui64Tmp[i];
@@ -2025,7 +2025,7 @@ namespace nn9 {
 		static inline void										uint64x4_to_uint32x4_saturated( __m256i _mUint64, uint32_t * _pu32Dst ) {
 			NN9_ALIGN( 32 )
 			uint64_t ui64Tmp[4];
-			_mm256_storeu_si256( reinterpret_cast<__m256i *>(ui64Tmp), _mUint64 );
+			_mm256_store_si256( reinterpret_cast<__m256i *>(ui64Tmp), _mUint64 );
 
 			for ( int i = 0; i < 4; i++ ) {
 				auto aVal = ui64Tmp[i];
@@ -2043,7 +2043,7 @@ namespace nn9 {
 		static inline void										int64x4_to_uint64x4_saturated( __m256i _mInt64, uint64_t * _pu64Dst ) {
 			NN9_ALIGN( 32 )
 			int64_t i64Tmp[4];
-			_mm256_storeu_si256( reinterpret_cast<__m256i *>(i64Tmp), _mInt64 );
+			_mm256_store_si256( reinterpret_cast<__m256i *>(i64Tmp), _mInt64 );
 
 			for ( int i = 0; i < 4; i++ ) {
 				auto aVal = i64Tmp[i];
@@ -2061,7 +2061,7 @@ namespace nn9 {
 		static inline void										uint64x4_to_int64x4_saturated( __m256i _mUint64, int64_t * _pi64Dst ) {
 			NN9_ALIGN( 32 )
 			uint64_t ui64Tmp[4];
-			_mm256_storeu_si256( reinterpret_cast<__m256i *>(ui64Tmp), _mUint64 );
+			_mm256_store_si256( reinterpret_cast<__m256i *>(ui64Tmp), _mUint64 );
 
 			for ( int i = 0; i < 4; i++ ) {
 				auto aVal = ui64Tmp[i];
