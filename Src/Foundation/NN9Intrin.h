@@ -2849,7 +2849,7 @@ namespace nn9 {
 			throw std::runtime_error( "uint8_scast: No conversion available for uint8_t -> std::complex<float>." );
 		}
 		static inline void										uint8_scast( uint8_t _u8Src, std::complex<double> & ) {
-			throw std::runtime_error( "uint8_scast: No conversion available for int8_t -> std::complex<double>." );
+			throw std::runtime_error( "uint8_scast: No conversion available for uint8_t -> std::complex<double>." );
 		}
 
 #ifdef __AVX512F__
