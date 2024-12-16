@@ -2983,10 +2983,10 @@ namespace nn9 {
 		// int16_t
 		// ===============================
 		static inline void										int16_scast( int16_t _i16Src, int8_t &_i8Dst ) {
-			_i8Dst = static_cast<uint8_t>(std::clamp<int16_t>( _i16Src, INT16_MIN, INT16_MAX ));
+			_i8Dst = static_cast<uint8_t>(std::clamp<int16_t>( _i16Src, INT8_MIN, INT8_MAX ));
 		}
 		static inline void										int16_scast( int16_t _i16Src, uint8_t &_i8Dst ) {
-			_i8Dst = static_cast<uint8_t>(std::clamp<int16_t>( _i16Src, 0, INT16_MAX ));
+			_i8Dst = static_cast<uint8_t>(std::clamp<int16_t>( _i16Src, 0, INT8_MAX ));
 		}
 		static inline void										int16_scast( int16_t _i16Src, int16_t &_i16Dst ) {
 			_i16Dst = _i16Src;
