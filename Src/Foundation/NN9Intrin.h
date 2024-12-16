@@ -2768,25 +2768,25 @@ namespace nn9 {
 			__m256 m0, m1, m2, m3;
 			int8x32_to_float32x32( _mInt8, m0, m1, m2, m3 );
 			nn9::float16::Convert8Float32ToFloat16( _pf16Dst, m0 );
-			nn9::float16::Convert8Float32ToFloat16( _pf16Dst + 16, m1 );
-			nn9::float16::Convert8Float32ToFloat16( _pf16Dst + 32, m2 );
-			nn9::float16::Convert8Float32ToFloat16( _pf16Dst + 48, m3 );
+			nn9::float16::Convert8Float32ToFloat16( _pf16Dst + 8, m1 );
+			nn9::float16::Convert8Float32ToFloat16( _pf16Dst + 16, m2 );
+			nn9::float16::Convert8Float32ToFloat16( _pf16Dst + 24, m3 );
 		}
 		static inline void										int8_scast( __m256i _mInt8, bfloat16_t * _pf16Dst ) {
 			__m256 m0, m1, m2, m3;
 			int8x32_to_float32x32( _mInt8, m0, m1, m2, m3 );
 			bfloat16_t::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pf16Dst), m0 );
-			bfloat16_t::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pf16Dst + 16), m1 );
-			bfloat16_t::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pf16Dst + 32), m2 );
-			bfloat16_t::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pf16Dst + 48), m3 );
+			bfloat16_t::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pf16Dst + 8), m1 );
+			bfloat16_t::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pf16Dst + 16), m2 );
+			bfloat16_t::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pf16Dst + 24), m3 );
 		}
 		static inline void										int8_scast( __m256i _mInt8, float * _pfDst ) {
 			__m256 m0, m1, m2, m3;
 			int8x32_to_float32x32( _mInt8, m0, m1, m2, m3 );
 			_mm256_storeu_ps( _pfDst, m0 );
-			_mm256_storeu_ps( _pfDst + 16, m1 );
-			_mm256_storeu_ps( _pfDst + 32, m2 );
-			_mm256_storeu_ps( _pfDst + 48, m3 );
+			_mm256_storeu_ps( _pfDst + 8, m1 );
+			_mm256_storeu_ps( _pfDst + 16, m2 );
+			_mm256_storeu_ps( _pfDst + 24, m3 );
 		}
 		static inline void										int8_scast( __m256i _mInt8, double * _pdDst ) {
 			int8x32_to_float64x32( _mInt8, _pdDst );
