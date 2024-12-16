@@ -2944,8 +2944,8 @@ namespace nn9 {
 			__m256 m0, m1, m2, m3;
 			uint8x32_to_float32x32( _mUint8, m0, m1, m2, m3 );
 			nn9::float16::Convert8Float32ToFloat16( _pf16Dst, m0 );
-			nn9::float16::Convert8Float32ToFloat16( _pf16Dst + 16, m1 );
-			nn9::float16::Convert8Float32ToFloat16( _pf16Dst + 32, m2 );
+			nn9::float16::Convert8Float32ToFloat16( _pf16Dst + 8, m1 );
+			nn9::float16::Convert8Float32ToFloat16( _pf16Dst + 16, m2 );
 			nn9::float16::Convert8Float32ToFloat16( _pf16Dst + 48, m3 );
 		}
 		static inline void										uint8_scast( __m256i _mUint8, bfloat16_t * _pf16Dst ) {
