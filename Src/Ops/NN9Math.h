@@ -972,8 +972,8 @@ namespace nn9 {
 		/**
 		 * Applies element-wise abs() to the input.
 		 *
-		 * \tparam _tTypeOut The output type.  Must be float, bfloat16_t, or float16.
-		 * \param _pfIn The array of int8_t's to fabs().
+		 * \tparam _tTypeOut The output type.
+		 * \param _pfIn The array of int8_t's to abs().
 		 * \param _pfOut The output array of _tTypeOut's.
 		 * \param _sSize The total number of elements to which _pfIn and _pfOut point.
 		 **/
@@ -1018,8 +1018,8 @@ namespace nn9 {
 		/**
 		 * Applies element-wise abs() to the input.
 		 *
-		 * \tparam _tTypeOut The output type.  Must be float, bfloat16_t, or float16.
-		 * \param _pfIn The array of int16_t's to fabs().
+		 * \tparam _tTypeOut The output type.
+		 * \param _pfIn The array of int16_t's to abs().
 		 * \param _pfOut The output array of _tTypeOut's.
 		 * \param _sSize The total number of elements to which _pfIn and _pfOut point.
 		 **/
@@ -1064,8 +1064,8 @@ namespace nn9 {
 		/**
 		 * Applies element-wise abs() to the input.
 		 *
-		 * \tparam _tTypeOut The output type.  Must be float, bfloat16_t, or float16.
-		 * \param _pfIn The array of int32_t's to fabs().
+		 * \tparam _tTypeOut The output type.
+		 * \param _pfIn The array of int32_t's to abs().
 		 * \param _pfOut The output array of _tTypeOut's.
 		 * \param _sSize The total number of elements to which _pfIn and _pfOut point.
 		 **/
