@@ -1738,7 +1738,6 @@ namespace nn9 {
 	 * This method:
 	 * - Reinterprets floats as 32-bit ints.
 	 * - Shifts right by 16 to get the top 16 bits of each float.
-	 * - Safely converts these to uint16_t by storing intermediate results to a temporary array.
 	 *
 	 * \param _pDst Pointer to the memory location where the bfloat16 values will be stored.
 	 * \param _mSrc The __m256 vector containing 8 single-precision floats.
@@ -1746,33 +1745,14 @@ namespace nn9 {
 	inline void bfloat16::storeu_fp32_to_bf16( uint16_t * _pDst, __m256 _mSrc ) {
 		__m256i mIntRepr = _mm256_castps_si256( _mSrc );
 
-		__m256i mask = _mm256_setr_epi8(
-			// For 8 elements (each 4 bytes), picking bytes 2 and 3 of each element:
-			// Element 0: bytes (2,3)
-			// Element 1: bytes (6,7)
-			// Element 2: bytes (10,11)
-			// Element 3: bytes (14,15)
-			// Element 4: bytes (18,19)
-			// Element 5: bytes (22,23)
-			// Element 6: bytes (26,27)
-			// Element 7: bytes (30,31)
-			 2,  3,  6,  7,  10, 11, 14, 15,
-			18, 19, 22, 23,  26, 27, 30, 31,
-			// The remaining 16 bytes we don't need; set them to 0x80 to zero them out.
-			static_cast<char>(0x80), static_cast<char>(0x80), static_cast<char>(0x80), static_cast<char>(0x80),
-			static_cast<char>(0x80), static_cast<char>(0x80), static_cast<char>(0x80), static_cast<char>(0x80),
-			static_cast<char>(0x80), static_cast<char>(0x80), static_cast<char>(0x80), static_cast<char>(0x80),
-			static_cast<char>(0x80), static_cast<char>(0x80), static_cast<char>(0x80), static_cast<char>(0x80)
-		);
+		__m256i mBF16Int = _mm256_srli_epi32( mIntRepr, 16 );
 
-		// Shuffle the bytes so that only the top 2 bytes of each element remain in order.
-		__m256i mBF16 = _mm256_shuffle_epi8( mIntRepr, mask );
+		__m128i mBF16Int_lo = _mm256_extracti128_si256( mBF16Int, 0 );
+		__m128i mBF16Int_hi = _mm256_extracti128_si256( mBF16Int, 1 );
 
-		// Now mBF16 contains 8 consecutive 16-bit values that can be directly stored.
-		//_mm256_storeu_si256( reinterpret_cast<__m256i *>(_pDst), mBF16 );
+		__m128i mPacked = _mm_packus_epi32( mBF16Int_lo, mBF16Int_hi );
 
-		__m128i mBF16_low = _mm256_extractf128_si256( mBF16, 0 );
-		_mm_storeu_si128( reinterpret_cast<__m128i *>(_pDst), mBF16_low );
+		_mm_storeu_si128( reinterpret_cast<__m128i *>(_pDst), mPacked );
 	}
 
 	/**
@@ -1781,7 +1761,6 @@ namespace nn9 {
 	 * This method:
 	 * - Reinterprets floats as 32-bit ints.
 	 * - Shifts right by 16 to get the top 16 bits of each float.
-	 * - Safely converts these to uint16_t by storing intermediate results to a temporary array.
 	 *
 	 * \param _pDst Pointer to the memory location where the bfloat16 values will be stored.
 	 * \param _mSrc The __m256 vector containing 8 single-precision floats.
@@ -1789,33 +1768,14 @@ namespace nn9 {
 	inline void bfloat16::store_fp32_to_bf16( uint16_t * _pDst, __m256 _mSrc ) {
 		__m256i mIntRepr = _mm256_castps_si256( _mSrc );
 
-		__m256i mask = _mm256_setr_epi8(
-			// For 8 elements (each 4 bytes), picking bytes 2 and 3 of each element:
-			// Element 0: bytes (2,3)
-			// Element 1: bytes (6,7)
-			// Element 2: bytes (10,11)
-			// Element 3: bytes (14,15)
-			// Element 4: bytes (18,19)
-			// Element 5: bytes (22,23)
-			// Element 6: bytes (26,27)
-			// Element 7: bytes (30,31)
-			 2,  3,  6,  7,  10, 11, 14, 15,
-			18, 19, 22, 23,  26, 27, 30, 31,
-			// The remaining 16 bytes we don't need; set them to 0x80 to zero them out.
-			static_cast<char>(0x80), static_cast<char>(0x80), static_cast<char>(0x80), static_cast<char>(0x80),
-			static_cast<char>(0x80), static_cast<char>(0x80), static_cast<char>(0x80), static_cast<char>(0x80),
-			static_cast<char>(0x80), static_cast<char>(0x80), static_cast<char>(0x80), static_cast<char>(0x80),
-			static_cast<char>(0x80), static_cast<char>(0x80), static_cast<char>(0x80), static_cast<char>(0x80)
-		);
+		__m256i mBF16Int = _mm256_srli_epi32( mIntRepr, 16 );
 
-		// Shuffle the bytes so that only the top 2 bytes of each element remain in order.
-		__m256i mBF16 = _mm256_shuffle_epi8( mIntRepr, mask );
+		__m128i mBF16Int_lo = _mm256_extracti128_si256( mBF16Int, 0 );
+		__m128i mBF16Int_hi = _mm256_extracti128_si256( mBF16Int, 1 );
 
-		// Now mBF16 contains 8 consecutive 16-bit values that can be directly stored.
-		//_mm256_store_si256( reinterpret_cast<__m256i *>(_pDst), mBF16 );
+		__m128i mPacked = _mm_packus_epi32( mBF16Int_lo, mBF16Int_hi );
 
-		__m128i mBF16_low = _mm256_extractf128_si256( mBF16, 0 );
-		_mm_store_si128( reinterpret_cast<__m128i *>(_pDst), mBF16_low );
+		_mm_store_si128( reinterpret_cast<__m128i *>(_pDst), mPacked );
 	}
 
 	/**

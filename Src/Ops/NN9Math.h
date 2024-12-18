@@ -1076,57 +1076,7 @@ namespace nn9 {
 				while ( _sSize >= 16 ) {
 					__m512i mVal = _mm512_loadu_si512( reinterpret_cast<const __m512i *>(_pfIn) );
 					mVal = _mm512_abs_epi32( mVal );
-					if constexpr ( std::is_same<_tTypeOut, int8_t>::value || std::is_same<_tTypeOut, uint8_t>::value ) {
-						__m512i mZero = _mm512_setzero_si512();
-						__m512i mPacked16 = _mm512_packs_epi32( mVal, mZero );
-						__m512i mPacked8 = _mm512_packs_epi16( mPacked16, mZero );
-						__m256i mLowPacked8 = _mm512_castsi512_si256( mPacked8 );
-						__m128i mFirst16Packed8 = _mm256_castsi256_si128( mLowPacked8 );
-						_mm_storeu_si128( reinterpret_cast<__m128i *>(_pfOut), mFirst16Packed8 );
-					}
-					else if constexpr ( std::is_same<_tTypeOut, int32_t>::value || std::is_same<_tTypeOut, uint16_t>::value ) {
-						__m512i mZero = _mm512_setzero_si512();
-						__m512i mPacked16 = _mm512_packs_epi32( mVal, mZero );
-
-						__m256i mLowPacked16 = _mm512_castsi512_si256( mPacked16 );
-
-						_mm256_storeu_si256( reinterpret_cast<__m256i *>(_pfOut), mLowPacked16 );
-					}
-					else if constexpr ( std::is_same<_tTypeOut, int32_t>::value || std::is_same<_tTypeOut, uint32_t>::value ) {
-						_mm512_storeu_si512( _pfOut, mVal );
-					}
-					else if constexpr ( std::is_same<_tTypeOut, int64_t>::value || std::is_same<_tTypeOut, uint64_t>::value ) {
-						__m256i mLower = _mm512_extracti32x8_epi32( mVal, 0 );
-						__m256i mUpper = _mm512_extracti32x8_epi32( mVal, 1 );
-
-						__m512i mLower64 = _mm512_cvtepi32_epi64( mLower );
-						__m512i mUpper64 = _mm512_cvtepi32_epi64( mUpper );
-
-						_mm512_storeu_si512( reinterpret_cast<__m512i *>(_pfOut), mLower64) ;
-						_mm512_storeu_si512( reinterpret_cast<__m512i *>(_pfOut + 8), mUpper64 );
-					}
-					else if constexpr ( Is32BitFloat<_tTypeOut>() || Is64BitFloat<_tTypeOut>() || IsBFloat16<_tTypeOut>() || IsFloat16<_tTypeOut>() ) {
-						__m512 mFloat = _mm512_cvtepi32_ps( mVal );
-
-						if constexpr ( Is32BitFloat<_tTypeOut>() ) {
-							_mm512_storeu_ps( reinterpret_cast<float *>(_pfOut), mFloat );
-						}
-						else if constexpr ( IsFloat16<_tTypeOut>() ) {
-							nn9::float16::Convert8Float32ToFloat16( _pfOut, mFloat );
-						}
-						else if constexpr ( IsBFloat16<_tTypeOut>() ) {
-							bfloat16_t::storeu_fp32_to_bf16( _pfOut, mFloat );
-						}
-						else if constexpr ( Is64BitFloat<_tTypeOut>() ) {
-							NN9_ALIGN( 64 )
-							float fTmp[16];
-							_mm512_storeu_ps( reinterpret_cast<float *>(fTmp), mFloat );
-							for ( int i = 0; i < 16; ++i ) {
-								_pfOut[i] = static_cast<_tTypeOut>(fTmp[i]);
-							}
-						}
-					}
-					else { break; }
+					int32_scast( mVal, _pfOut );
 					
 
 					_pfIn += 16;
@@ -1141,54 +1091,7 @@ namespace nn9 {
 				while ( _sSize >= 8 ) {
 					__m256i mVal = _mm256_loadu_si256( reinterpret_cast<const __m256i *>(_pfIn) );
 					mVal = _mm256_abs_epi32( mVal );
-					if constexpr ( std::is_same<_tTypeOut, int8_t>::value || std::is_same<_tTypeOut, uint8_t>::value ) {
-						__m256i mZero = _mm256_setzero_si256();
-						__m256i mPacked16 = _mm256_packs_epi32( mVal, mZero );
-						__m256i mPacked8 = _mm256_packs_epi16( mPacked16, mZero );
-						__m128i mLowPacked8_128 = _mm256_castsi256_si128( mPacked8 );
-						_mm_storel_epi64( reinterpret_cast<__m128i *>(_pfOut), mLowPacked8_128 );
-					}
-					else if constexpr ( std::is_same<_tTypeOut, int32_t>::value || std::is_same<_tTypeOut, uint16_t>::value ) {
-						__m256i mZero = _mm256_setzero_si256();
-						__m256i mPacked16 = _mm256_packs_epi32( mVal, mZero );
-						__m128i mLowPacked16_128 = _mm256_castsi256_si128( mPacked16 );
-						_mm_storeu_si128( reinterpret_cast<__m128i *>(_pfOut), mLowPacked16_128 );
-					}
-					else if constexpr ( std::is_same<_tTypeOut, int32_t>::value || std::is_same<_tTypeOut, uint32_t>::value ) {
-						_mm256_storeu_si256( reinterpret_cast<__m256i *>(_pfOut), mVal );
-					}
-					else if constexpr ( std::is_same<_tTypeOut, int64_t>::value || std::is_same<_tTypeOut, uint64_t>::value ) {
-						__m128i mLower = _mm256_castsi256_si128( mVal );
-						__m128i mUpper = _mm256_extracti128_si256( mVal, 1 );
-
-						__m256i mLower64 = _mm256_cvtepi32_epi64( mLower );
-						__m256i mUpper64 = _mm256_cvtepi32_epi64( mUpper );
-
-						_mm256_storeu_si256( reinterpret_cast<__m256i *>(_pfOut), mLower64 );
-						_mm256_storeu_si256( reinterpret_cast<__m256i *>(_pfOut + 4), mUpper64 );
-					}
-					else if constexpr ( Is32BitFloat<_tTypeOut>() || Is64BitFloat<_tTypeOut>() || IsBFloat16<_tTypeOut>() || IsFloat16<_tTypeOut>() ) {
-						__m256 mFloat = _mm256_cvtepi32_ps( mVal );
-
-						if constexpr ( Is32BitFloat<_tTypeOut>() ) {
-							_mm256_storeu_ps( reinterpret_cast<float *>(_pfOut), mFloat );
-						}
-						else if constexpr ( IsFloat16<_tTypeOut>() ) {
-							nn9::float16::Convert8Float32ToFloat16( _pfOut, mFloat );
-						}
-						else if constexpr ( IsBFloat16<_tTypeOut>() ) {
-							bfloat16_t::storeu_fp32_to_bf16( _pfOut, mFloat );
-						}
-						else if constexpr ( Is64BitFloat<_tTypeOut>() ) {
-							NN9_ALIGN( 32 )
-							float fTmp[8];
-							_mm256_storeu_ps( reinterpret_cast<float *>(fTmp), mFloat );
-							for ( int i = 0; i < 8; ++i ) {
-								_pfOut[i] = static_cast<_tTypeOut>(fTmp[i]);
-							}
-						}
-					}
-					else { break; }
+					int32_scast( mVal, _pfOut );
 
 
 					_pfIn += 8;
