@@ -56,6 +56,15 @@ namespace nn9 {
 		}
 
 		/**
+		 * Cast to double.
+		 * 
+		 * \return Returns the double value of the float16.
+		 **/
+		inline operator							double() const {
+			return Uint16ToFloat( m_u16Value );
+		}
+
+		/**
 		 * Casts to an integer type.
 		 * 
 		 * \tparam T The integer type to which to cast this object.

@@ -51,10 +51,10 @@ int wmain( int _iArgC, wchar_t const * _wcpArgV[] ) {
 				0x7F, -1, 32, -0x7F, 1, 64, 254, -500, -500, 500,
 				45, 66
 			};
-			__m512i mVal = _mm512_loadu_si512( reinterpret_cast<const __m512i *>(iVales) );
-			//__m256i mVal = _mm256_loadu_si256( reinterpret_cast<const __m256i *>(iVales) );
+			//__m512i mVal = _mm512_loadu_si512( reinterpret_cast<const __m512i *>(iVales) );
+			__m256i mVal = _mm256_loadu_si256( reinterpret_cast<const __m256i *>(iVales) );
 			uint8_t ui16Dst[64];
-			nn9::Intrin::int16_scast( mVal, ui16Dst );
+			nn9::Intrin::uint16_scast( mVal, ui16Dst );
 
 
 			/*nn9::Tensor tBFloat16 = tTensorTest.CopyAs( nn9::NN9_T_FLOAT16 );

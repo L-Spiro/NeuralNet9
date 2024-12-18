@@ -1010,7 +1010,7 @@ namespace nn9 {
 #endif	// #ifdef __AVX2__
 
 			while ( _sSize ) {
-				int8_scast( static_cast<int8_t>(std::abs( static_cast<int>((*_pfIn++)) )), (*_pfOut++) );
+				int8_scast( std::abs<int8_t>( (*_pfIn++) ), (*_pfOut++) );
 				--_sSize;
 			}
 		}
@@ -1056,7 +1056,7 @@ namespace nn9 {
 #endif	// #ifdef __AVX2__
 
 			while ( _sSize ) {
-				int16_scast( static_cast<int16_t>(std::abs( static_cast<int>((*_pfIn++)) )), (*_pfOut++) );
+				int16_scast( std::abs<int16_t>( (*_pfIn++) ), (*_pfOut++) );
 				--_sSize;
 			}
 		}
@@ -1199,8 +1199,7 @@ namespace nn9 {
 #endif	// #ifdef __AVX2__
 
 			while ( _sSize ) {
-				auto aVal = (*_pfIn++);
-				(*_pfOut++) = static_cast<int32_t>(std::abs( static_cast<int>(aVal) ));
+				int32_scast( std::abs<int32_t>( (*_pfIn++) ), (*_pfOut++) );
 				--_sSize;
 			}
 		}
