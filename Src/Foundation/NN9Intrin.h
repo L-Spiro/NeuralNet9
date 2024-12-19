@@ -1855,7 +1855,7 @@ namespace nn9 {
 		}
 #endif	// #ifdef __AVX512F__
 
-#ifdef __AVX2__
+#if defined( __AVX2__ ) || defined( __AVX512F__ )
 		/**
 		 * Casts 8 int32_t's to 8 int8_t's with saturation.
 		 * 
@@ -2189,7 +2189,7 @@ namespace nn9 {
 			__m256i mRes = _mm256_and_si256( mNotCmp, _mm256_set1_epi32( 1 ) );
 			int32x8_to_xint8x8( mRes, reinterpret_cast<int8_t *>(_pbDst) );
 		}
-#endif	// #ifdef __AVX2__
+#endif	// #if defined( __AVX2__ ) || defined( __AVX512F__ )
 
 
 		// ===============================
@@ -2552,7 +2552,7 @@ namespace nn9 {
 		static inline void										int64x8_to_float32x8( __m512i _mInt64, __m256 &_mFloatX8 ) {
 			__m512d mDouble = _mm512_cvtepi64_pd( _mInt64 );
 			_mFloatX8 = _mm512_cvtpd_ps( mDouble );
-			//_mm256_storeu_ps( _pfDst, mFloat );
+			//_mm256_storeu_ps( _pfDst, _mFloat );
 		}
 
 		/**
@@ -2568,7 +2568,7 @@ namespace nn9 {
 		static inline void										uint64x8_to_float32x8( __m512i _mInt64, __m256 &_mFloatX8 ) {
 			__m512d mDouble = _mm512_cvtepu64_pd( _mInt64 );
 			_mFloatX8 = _mm512_cvtpd_ps( mDouble );
-			//_mm256_storeu_ps( _pfDst, mFloat );
+			//_mm256_storeu_ps( _pfDst, _mFloat );
 		}
 
 		/**
@@ -3000,15 +3000,15 @@ namespace nn9 {
 		// ===============================
 #ifdef __AVX512F__
 		/**
-		 * @brief Converts 16 floats in a __m512 to 16 int8_t's with saturation using AVX-512.
+		 * \brief Converts 16 floats in a __m512 to 16 int8_t's with saturation using AVX-512.
 		 * 
-		 * @param mFloat Input vector with 16 floats.
-		 * @param _pi8Dst Output array of 16 int8_t's.
+		 * \param _mFloat Input vector with 16 floats.
+		 * \param _pi8Dst Output array of 16 int8_t's.
 		 */
-		static inline void										float16_to_int8x16( __m512 mFloat, int8_t * _pi8Dst ) {
+		static inline void										float32x16_to_int8x16( __m512 _mFloat, int8_t * _pi8Dst ) {
 			__m512 fMin = _mm512_set1_ps( -128.0f );
 			__m512 fMax = _mm512_set1_ps( 127.0f );
-			__m512 fClamped = _mm512_min_ps( _mm512_max_ps( mFloat, fMin ), fMax );
+			__m512 fClamped = _mm512_min_ps( _mm512_max_ps( _mFloat, fMin ), fMax );
 
 			__m512i mInt32 = _mm512_cvtps_epi32( fClamped );
 
@@ -3024,15 +3024,15 @@ namespace nn9 {
 		}
 
 		/**
-		 * @brief Converts 16 floats in a __m512 to 16 uint8_t's with saturation using AVX-512.
+		 * \brief Converts 16 floats in a __m512 to 16 uint8_t's with saturation using AVX-512.
 		 * 
-		 * @param mFloat Input vector with 16 floats.
-		 * @param _pu8Dst Output array of 16 uint8_t's.
+		 * \param _mFloat Input vector with 16 floats.
+		 * \param _pu8Dst Output array of 16 uint8_t's.
 		 */
-		static inline void										float16_to_uint8x16( __m512 mFloat, uint8_t * _pu8Dst ) {
+		static inline void										float32x16_to_uint8x16( __m512 _mFloat, uint8_t * _pu8Dst ) {
 			__m512 fZero = _mm512_setzero_ps();
 			__m512 fMax = _mm512_set1_ps( 255.0f );
-			__m512 fClamped = _mm512_min_ps( _mm512_max_ps( mFloat, fZero ), fMax );
+			__m512 fClamped = _mm512_min_ps( _mm512_max_ps( _mFloat, fZero ), fMax );
 
 			__m512i mInt32 = _mm512_cvtps_epi32( fClamped );
 
@@ -3048,30 +3048,30 @@ namespace nn9 {
 		}
 
 		/**
-		 * @brief Converts 16 floats in a __m512 to 16 int16_t's with saturation using AVX-512.
+		 * \brief Converts 16 floats in a __m512 to 16 int16_t's with saturation using AVX-512.
 		 * 
-		 * @param mFloat Input vector with 16 floats.
-		 * @param _pi16Dst Output array of 16 int16_t's.
+		 * \param _mFloat Input vector with 16 floats.
+		 * \param _pi16Dst Output array of 16 int16_t's.
 		 */
-		static inline void										float16_to_int16x16( __m512 mFloat, int16_t * _pi16Dst ) {
+		static inline void										float32x16_to_int16x16( __m512 _mFloat, int16_t * _pi16Dst ) {
 			__m512 fMin = _mm512_set1_ps( -32768.0f );
 			__m512 fMax = _mm512_set1_ps( 32767.0f );
-			__m512 fClamped = _mm512_min_ps( _mm512_max_ps( mFloat, fMin ), fMax );
+			__m512 fClamped = _mm512_min_ps( _mm512_max_ps( _mFloat, fMin ), fMax );
 
 			__m512i mInt32 = _mm512_cvtps_epi32( fClamped );
 			int32x16_to_int16x16_saturated( mInt32, _pi16Dst );
 		}
 
 		/**
-		 * @brief Converts 16 floats in a __m512 to 16 uint16_t's with saturation using AVX-512.
+		 * \brief Converts 16 floats in a __m512 to 16 uint16_t's with saturation using AVX-512.
 		 * 
-		 * @param mFloat Input vector with 16 floats.
-		 * @param _pu16Dst Output array of 16 uint16_t's.
+		 * \param _mFloat Input vector with 16 floats.
+		 * \param _pu16Dst Output array of 16 uint16_t's.
 		 */
-		static inline void										float16_to_uint16x16( __m512 mFloat, uint16_t * _pu16Dst ) {
+		static inline void										float32x16_to_uint16x16( __m512 _mFloat, uint16_t * _pu16Dst ) {
 			__m512 zero = _mm512_setzero_ps();
 			__m512 maxVal = _mm512_set1_ps( 65535.0f );
-			__m512 clamped = _mm512_min_ps( _mm512_max_ps( mFloat, zero ), maxVal );
+			__m512 clamped = _mm512_min_ps( _mm512_max_ps( _mFloat, zero ), maxVal );
 
 			__m512i mInt32 = _mm512_cvtps_epi32( clamped );
 
@@ -3079,60 +3079,601 @@ namespace nn9 {
 		}
 
 		/**
-		 * @brief Converts 16 floats in a __m512 to 16 int32_t's with saturation using AVX-512.
+		 * \brief Converts 16 floats in a __m512 to 16 int32_t's with saturation using AVX-512.
 		 * 
-		 * @param mFloat Input vector with 16 floats.
-		 * @param _pi32Dst Output array of 16 int32_t's.
+		 * \param _mFloat Input vector with 16 floats.
+		 * \param _pi32Dst Output array of 16 int32_t's.
 		 */
-		static inline void										float16_to_int32x16( __m512 mFloat, int32_t * _pi32Dst ) {
-			__m512 fMin = _mm512_set1_ps( static_cast<float>(INT32_MIN) );
-			__m512 fMax = _mm512_set1_ps( static_cast<float>(INT32_MAX - 64.5) );
-			__m512 fClamped = _mm512_min_ps( _mm512_max_ps( mFloat, fMin ), fMax );
+		static inline void										float32x16_to_int32x16( __m512 _mFloat, int32_t * _pi32Dst ) {
+			__m512 fMin = _mm512_set1_ps( -2147483648.0f );
+			__m512 fMax = _mm512_set1_ps( 2147483520.0f );
+			__m512 fClamped = _mm512_min_ps( _mm512_max_ps( _mFloat, fMin ), fMax );
 
 			__m512i mInt32 = _mm512_cvtps_epi32( fClamped );
 			_mm512_storeu_si512( reinterpret_cast<__m512i *>(_pi32Dst), mInt32 );
 		}
 
 		/**
-		 * @brief Converts 16 floats in a __m512 to 16 uint32_t's with saturation using AVX-512.
+		 * \brief Converts 16 floats in a __m512 to 16 uint32_t's with saturation using AVX-512.
 		 * 
-		 * @param mFloat Input vector with 16 floats.
-		 * @param _pu32Dst Output array of 16 uint32_t's.
+		 * \param _mFloat Input vector with 16 floats.
+		 * \param _pu32Dst Output array of 16 uint32_t's.
 		 */
-		static inline void										float16_to_uint32x16( __m512 mFloat, uint32_t * _pu32Dst ) {
+		static inline void										float32x16_to_uint32x16( __m512 _mFloat, uint32_t * _pu32Dst ) {
 			__m512 zero = _mm512_setzero_ps();
 			__m512 maxVal = _mm512_set1_ps( static_cast<float>(UINT32_MAX) );
-			__m512 clamped = _mm512_min_ps( _mm512_max_ps( mFloat, zero ), maxVal );
+			__m512 clamped = _mm512_min_ps( _mm512_max_ps( _mFloat, zero ), maxVal );
 
 			__m512i mInt32 = _mm512_cvtps_epu32( clamped );
 			_mm512_storeu_si512( reinterpret_cast<__m512i *>(_pu32Dst), mInt32 );
 		}
 
 		/**
-		 * @brief Converts 16 floats in a __m512 to 16 int64_t's with saturation using AVX-512.
+		 * \brief Converts 16 floats in a __m512 to 16 int64_t's with saturation using AVX-512.
 		 * 
-		 * @param mFloat Input vector with 16 floats.
-		 * @param _pu32Dst Output array of 16 int64_t's.
+		 * \param _mFloat Input vector with 16 floats.
+		 * \param _pu32Dst Output array of 16 int64_t's.
 		 */
-		static inline void										float16_to_int64x16( __m512 mFloat, int64_t * pi64Dst ) {
-			constexpr float fMax = static_cast<float>(INT64_MAX - (549755813888ULL - 274877906432ULL));
-			__m512 mMin = _mm512_set1_ps( -9.223372e18f );
-			__m512 mMax = _mm512_set1_ps( fMax );
-			__m512 mClamped = _mm512_min_ps( _mm512_max_ps( mFloat, mMin ), mMax );
+		static inline void										float32x16_to_int64x16( __m512 _mFloat, int64_t * _pi64Dst ) {
+			__m512 mMin = _mm512_set1_ps( -9223372036854775808.0f );
+			__m512 mMax = _mm512_set1_ps( 9223371487098961920.0f );
+			__m512 mClamped = _mm512_min_ps( _mm512_max_ps( _mFloat, mMin ), mMax );
 
 			NN9_ALIGN( 64 )
 			float fTemp[16];
 			_mm512_store_ps( fTemp, mClamped );
 
-			for (int i = 0; i < 16; i++) {
-				pi64Dst[i] = static_cast<int64_t>(fTemp[i]);
+			for ( int i = 0; i < 16; i++ ) {
+				_pi64Dst[i] = static_cast<int64_t>(fTemp[i]);
+			}
+		}
+
+		/**
+		 * \brief Converts 16 floats in a __m512 to 16 uint64_t's with saturation using AVX-512.
+		 * 
+		 * \param _mFloat Input vector with 16 floats.
+		 * \param _pu32Dst Output array of 16 uint64_t's.
+		 */
+		static inline void										float32x16_to_uint64x16( __m512 _mFloat, uint64_t * _pu64Dst ) {
+			__m512 mMaxVal = _mm512_set1_ps( 18446742974197923840.0f );
+			__m512 mClamped = _mm512_min_ps( _mm512_max_ps( _mFloat, _mm512_setzero_ps() ), mMaxVal );
+
+			NN9_ALIGN( 64 )
+			float fTemp[16];
+			_mm512_store_ps( fTemp, mClamped );
+
+			for ( int i = 0; i < 16; i++ ) {
+				_pu64Dst[i] = static_cast<uint64_t>(fTemp[i]);
+			}
+		}
+
+		/**
+		 * \brief Converts 16 floats in a __m512 to 16 double's with saturation using AVX-512.
+		 * 
+		 * \param _mFloat Input vector with 16 floats.
+		 * \param _pdDst Output array of 16 double's.
+		 */
+		static inline void										float32x16_to_float64x16( __m512 _mFloat, double * _pdDst ) {
+			__m256 mLow = _mm512_castps512_ps256( _mFloat );
+			__m256 mHi = _mm512_extractf32x8_ps( _mFloat, 1 );
+
+			__m512d mD0 = _mm512_cvtps_pd( mLow );
+			__m512d mD1 = _mm512_cvtps_pd( mHi );
+
+			_mm512_storeu_pd( _pdDst, mD0 );
+			_mm512_storeu_pd( _pdDst + 8, mD1 );
+		}
+
+		/**
+		 * \brief Converts 16 floats in a __m512 to 16 bool's with saturation using AVX-512.
+		 * 
+		 * \param _mFloat Input vector with 16 floats.
+		 * \param _pbDst Output array of 16 bool's.
+		 */
+		static inline void										float32x16_to_boolx16( __m512 _mFloat, bool * _pbDst ) {
+			__m512 fMin = _mm512_set1_ps( -1.0f );
+			__m512 fMax = _mm512_set1_ps( 1.0f );
+			__m512 fClamped = _mm512_min_ps( _mm512_max_ps( _mFloat, fMin ), fMax );
+
+			__m512i mInt32 = _mm512_cvtps_epi32( fClamped );
+			xint32x16_to_boolx16( mInt32, _pbDst );
+		}
+
+#endif	// #ifdef __AVX512F__
+
+#ifdef __AVX2__
+		/**
+		 * \brief Converts 8 floats in a __m512 to 8 int8_t's with saturation using AVX-512.
+		 * 
+		 * \param _mFloat Input vector with 8 floats.
+		 * \param _pi8Dst Output array of 8 int8_t's.
+		 */
+		static inline void										float32x8_to_int8x8( __m256 _mFloat, int8_t * _pi8Dst ) {
+			__m256 fMin = _mm256_set1_ps( static_cast<float>(INT8_MIN) );
+			__m256 fMax = _mm256_set1_ps( static_cast<float>(INT8_MAX) );
+			__m256 mClamped = _mm256_min_ps( _mm256_max_ps( _mFloat, fMin ), fMax );
+
+			int32x8_to_int8x8_saturated( _mm256_cvtps_epi32( mClamped ), _pi8Dst );
+		}
+
+		/**
+		 * \brief Converts 8 floats in a __m512 to 8 uint8_t's with saturation using AVX-512.
+		 * 
+		 * \param _mFloat Input vector with 8 floats.
+		 * \param _pu8Dst Output array of 8 uint8_t's.
+		 */
+		static inline void										float32x8_to_uint8x8( __m256 _mFloat, uint8_t * _pu8Dst ) {
+			__m256 fMax = _mm256_set1_ps( static_cast<float>(UINT8_MAX) );
+			__m256 mClamped = _mm256_min_ps(_mm256_max_ps( _mFloat, _mm256_setzero_ps() ), fMax );
+
+			int32x8_to_uint8x8_saturated( _mm256_cvtps_epu32( mClamped ), _pu8Dst );
+		}
+
+		/**
+		 * \brief Converts 8 floats in a __m512 to 8 int16_t's with saturation using AVX-512.
+		 * 
+		 * \param _mFloat Input vector with 8 floats.
+		 * \param _pi16Dst Output array of 8 int16_t's.
+		 */
+		static inline void										float32x8_to_int16x8( __m256 _mFloat, int16_t * _pi16Dst ) {
+			__m256 fMin = _mm256_set1_ps( static_cast<float>(INT16_MIN) );
+			__m256 fMax = _mm256_set1_ps( static_cast<float>(INT16_MAX) );
+			__m256 mClamped = _mm256_min_ps( _mm256_max_ps( _mFloat, fMin ), fMax );
+
+			int32x8_to_int16x8_saturated( _mm256_cvtps_epi32( mClamped ), _pi16Dst );
+		}
+
+		/**
+		 * \brief Converts 8 floats in a __m512 to 8 uint16_t's with saturation using AVX-512.
+		 * 
+		 * \param _mFloat Input vector with 8 floats.
+		 * \param _pu16Dst Output array of 8 uint16_t's.
+		 */
+		static inline void										float32x8_to_uint16x8( __m256 _mFloat, uint16_t * _pu16Dst ) {
+			__m256 fMax = _mm256_set1_ps( static_cast<float>(UINT16_MAX) );
+			__m256 mClamped = _mm256_min_ps(_mm256_max_ps( _mFloat, _mm256_setzero_ps() ), fMax );
+
+			int32x8_to_uint16x8_saturated( _mm256_cvtps_epu32( mClamped ), _pu16Dst );
+		}
+
+		/**
+		 * \brief Converts 8 floats in a __m512 to 8 int32_t's with saturation using AVX-512.
+		 * 
+		 * \param _mFloat Input vector with 8 floats.
+		 * \param _pi32Dst Output array of 8 int32_t's.
+		 */
+		static inline void										float32x8_to_int32x8( __m256 _mFloat, int32_t * _pi32Dst ) {
+			__m256 fMin = _mm256_set1_ps( -2147483648.0f );
+			__m256 fMax = _mm256_set1_ps( 2147483520.0f );
+			__m256 mClamped = _mm256_min_ps( _mm256_max_ps( _mFloat, fMin ), fMax );
+
+			_mm256_storeu_si256( reinterpret_cast<__m256i *>(_pi32Dst), _mm256_cvtps_epi32( mClamped ) );
+		}
+
+		/**
+		 * \brief Converts 8 floats in a __m512 to 8 uint32_t's with saturation using AVX-512.
+		 * 
+		 * \param _mFloat Input vector with 8 floats.
+		 * \param _pu32Dst Output array of 8 uint32_t's.
+		 */
+		static inline void										float32x8_to_uint32x8( __m256 _mFloat, uint32_t * _pu32Dst ) {
+			__m256 fMax = _mm256_set1_ps( static_cast<float>(UINT32_MAX) );
+			__m256 mClamped = _mm256_min_ps(_mm256_max_ps( _mFloat, _mm256_setzero_ps() ), fMax );
+
+			_mm256_storeu_si256( reinterpret_cast<__m256i *>(_pu32Dst), _mm256_cvtps_epu32( mClamped ) );
+		}
+
+		/**
+		 * \brief Converts 8 floats in a __m512 to 8 int64_t's with saturation using AVX-512.
+		 * 
+		 * \param _mFloat Input vector with 8 floats.
+		 * \param _pi64Dst Output array of 8 int64_t's.
+		 */
+		static inline void										float32x8_to_int64x8( __m256 _mFloat, int64_t * _pi64Dst ) {
+			__m256 fMin = _mm256_set1_ps( -9223372036854775808.0f );
+			__m256 fMax = _mm256_set1_ps( 9223371487098961920.0f );
+			__m256 mClamped = _mm256_min_ps( _mm256_max_ps( _mFloat, fMin ), fMax );
+
+			NN9_ALIGN( 32 )
+			float fTemp[8];
+			_mm256_store_ps( fTemp, mClamped );
+
+			for ( int i = 0; i < 8; i++ ) {
+				_pi64Dst[i] = static_cast<int64_t>(fTemp[i]);
+			}
+		}
+
+		/**
+		 * \brief Converts 8 floats in a __m512 to 8 uint64_t's with saturation using AVX-512.
+		 * 
+		 * \param _mFloat Input vector with 8 floats.
+		 * \param _pu64Dst Output array of 8 uint64_t's.
+		 */
+		static inline void										float32x8_to_uint64x8( __m256 _mFloat, uint64_t * _pu64Dst ) {
+			__m256 fMax = _mm256_set1_ps( 18446742974197923840.0f );
+			__m256 mClamped = _mm256_min_ps(_mm256_max_ps( _mFloat, _mm256_setzero_ps() ), fMax );
+
+			NN9_ALIGN( 32 )
+			float fTemp[8];
+			_mm256_store_ps( fTemp, mClamped );
+
+			for ( int i = 0; i < 8; i++ ) {
+				_pu64Dst[i] = static_cast<uint64_t>(fTemp[i]);
+			}
+		}
+
+		/**
+		 * \brief Converts 8 floats in a __m512 to 8 double's with saturation using AVX-512.
+		 * 
+		 * \param _mFloat Input vector with 8 floats.
+		 * \param _pdDst Output array of 8 double's.
+		 */
+		static inline void										float32x8_to_float64x8( __m256 _mFloat, double * _pdDst ) {
+			__m128 low4 = _mm256_castps256_ps128( _mFloat );
+			__m128 high4 = _mm256_extractf128_ps( _mFloat, 1 );
+
+			__m256d d0 = _mm256_cvtps_pd( low4 );
+			__m256d d1 = _mm256_cvtps_pd( high4 );
+
+			_mm256_storeu_pd( _pdDst, d0 );
+			_mm256_storeu_pd( _pdDst + 4, d1 );
+		}
+
+		/**
+		 * \brief Converts 8 floats in a __m256 to 8 bool's with saturation using AVX-256.
+		 * 
+		 * \param _mFloat Input vector with 16 floats.
+		 * \param _pbDst Output array of 8 bool's.
+		 */
+		static inline void										float32x8_to_boolx8( __m256 _mFloat, bool * _pbDst ) {
+			__m256 fMin = _mm256_set1_ps( -1.0f );
+			__m256 fMax = _mm256_set1_ps( 1.0f );
+			__m256 fClamped = _mm256_min_ps( _mm256_max_ps( _mFloat, fMin ), fMax );
+
+			__m256i mInt32 = _mm256_cvtps_epi32( fClamped );
+			xint32x8_to_boolx8( mInt32, _pbDst );
+		}
+#endif	// #ifdef __AVX2__
+
+
+
+		// ===============================
+		// double
+		// ===============================
+#ifdef __AVX512F__
+		/**
+		 * \brief Converts 8 doubles in a __m512d to 8 int8_t's with saturation using AVX-512.
+		 * 
+		 * \param _mDouble Input vector with 8 doubles.
+		 * \param _pi8Dst Output array of 8 int8_t's.
+		 */
+		static inline void										float64x8_to_int8x8( __m512d _mDouble, int8_t * _pi8Dst ) {
+			__m512d mClamped = _mm512_min_pd( _mm512_max_pd( _mDouble, _mm512_set1_pd( static_cast<double>(INT8_MIN) ) ), _mm512_set1_pd( static_cast<double>(INT8_MAX) ) );
+
+			__m256i mI32 = _mm512_cvtpd_epi32( mClamped );
+
+			int32x8_to_int8x8_saturated( mI32, _pi8Dst );
+		}
+
+		/**
+		 * \brief Converts 8 doubles in a __m512d to 8 uint8_t's with saturation using AVX-512.
+		 * 
+		 * \param _mDouble Input vector with 8 doubles.
+		 * \param _pu8Dst Output array of 8 uint8_t's.
+		 */
+		static inline void										float64x8_to_uint8x8( __m512d _mDouble, uint8_t * _pu8Dst ) {
+			__m512d mClamped = _mm512_min_pd( _mm512_max_pd( _mDouble, _mm512_setzero_pd() ), _mm512_set1_pd( static_cast<double>(UINT8_MAX) ) );
+
+			__m256i mI32 = _mm512_cvtpd_epi32( mClamped );
+
+			int32x8_to_uint8x8_saturated( mI32, _pu8Dst );
+		}
+
+		/**
+		 * \brief Converts 8 doubles in a __m512d to 8 int16_t's with saturation using AVX-512.
+		 * 
+		 * \param _mDouble Input vector with 8 doubles.
+		 * \param _pi16Dst Output array of 8 int16_t's.
+		 */
+		static inline void										float64x8_to_int16x8( __m512d _mDouble, int16_t * _pi16Dst ) {
+			__m512d mClamped = _mm512_min_pd( _mm512_max_pd( _mDouble, _mm512_set1_pd( static_cast<double>(INT16_MIN) ) ), _mm512_set1_pd( static_cast<double>(INT16_MAX) ) );
+
+			__m256i mI32 = _mm512_cvtpd_epi32( mClamped );
+
+			int32x8_to_int16x8_saturated( mI32, _pi16Dst );
+		}
+
+		/**
+		 * \brief Converts 8 doubles in a __m512d to 8 uint16_t's with saturation using AVX-512.
+		 * 
+		 * \param _mDouble Input vector with 8 doubles.
+		 * \param _pu16Dst Output array of 8 uint16_t's.
+		 */
+		static inline void										float64x8_to_uint16x8( __m512d _mDouble, uint16_t * _pu16Dst ) {
+			__m512d mClamped = _mm512_min_pd( _mm512_max_pd( _mDouble, _mm512_setzero_pd() ), _mm512_set1_pd( static_cast<double>(UINT16_MAX) ) );
+
+			__m256i mI32 = _mm512_cvtpd_epu32( mClamped );
+
+			uint32x8_to_uint16x8_saturated( mI32, _pu16Dst );
+		}
+
+		/**
+		 * \brief Converts 8 doubles in a __m512d to 8 int32_t's with saturation using AVX-512.
+		 * 
+		 * \param _mDouble Input vector with 8 doubles.
+		 * \param _pi32Dst Output array of 8 int32_t's.
+		 */
+		static inline void										float64x8_to_int32x8( __m512d _mDouble, int32_t * _pi32Dst ) {
+			__m512d mClamped = _mm512_min_pd( _mm512_max_pd( _mDouble, _mm512_set1_pd( static_cast<double>(INT32_MIN) ) ), _mm512_set1_pd( static_cast<double>(INT32_MAX) ) );
+
+			__m256i mI32 = _mm512_cvtpd_epi32( mClamped );
+
+			_mm256_storeu_epi32( _pi32Dst, mI32 );
+		}
+
+		/**
+		 * \brief Converts 8 doubles in a __m512d to 8 uint32_t's with saturation using AVX-512.
+		 * 
+		 * \param _mDouble Input vector with 8 doubles.
+		 * \param _pu32Dst Output array of 8 uint32_t's.
+		 */
+		static inline void										float64x8_to_uint32x8( __m512d _mDouble, uint32_t * _pu32Dst ) {
+			__m512d mClamped = _mm512_min_pd( _mm512_max_pd( _mDouble, _mm512_setzero_pd() ), _mm512_set1_pd( static_cast<double>(UINT32_MAX) ) );
+
+			__m256i mI32 = _mm512_cvtpd_epu32( mClamped );
+
+			_mm256_storeu_epi32( _pu32Dst, mI32 );
+		}
+
+		/**
+		 * \brief Converts 8 doubles in a __m512d to 8 int64_t's with saturation using AVX-512.
+		 * 
+		 * \param _mDouble Input vector with 8 doubles.
+		 * \param _pi64Dst Output array of 8 int64_t's.
+		 */
+		static inline void										float64x8_to_int64x8( __m512d _mDouble, int64_t * _pi64Dst ) {
+			__m512d mClamped = _mm512_min_pd( _mm512_max_pd( _mDouble, _mm512_set1_pd( static_cast<double>(INT64_MIN) ) ), _mm512_set1_pd( 9223372036854774784.0 ) );
+
+			__m512i i64 = _mm512_cvttpd_epi64( mClamped );
+		    _mm512_storeu_si512( reinterpret_cast<__m512i *>(_pi64Dst), i64 );
+		}
+
+		/**
+		 * \brief Converts 8 doubles in a __m512d to 8 uint64_t's with saturation using AVX-512.
+		 * 
+		 * \param _mDouble Input vector with 8 doubles.
+		 * \param _pu64Dst Output array of 8 uint64_t's.
+		 */
+		static inline void										float64x8_to_uint64x8( __m512d _mDouble, uint64_t * _pu64Dst ) {
+			__m512d mClamped = _mm512_min_pd( _mm512_max_pd( _mDouble, _mm512_setzero_pd() ), _mm512_set1_pd( 18446744073709549568.0 ) );
+
+			__m512i i64 = _mm512_cvttpd_epu64( mClamped );
+		    _mm512_storeu_si512( reinterpret_cast<__m512i *>(_pu64Dst), i64 );
+		}
+
+		/**
+		 * \brief Converts 8 doubles in a __m512d to 8 float's with saturation using AVX-512.
+		 * 
+		 * \param _mDouble Input vector with 8 doubles.
+		 * \param _pfDst Output array of 8 float's.
+		 */
+		static inline void										float64x8_to_float32x8( __m512d _mDouble, float * _pfDst ) {
+			_mm256_storeu_ps( _pfDst, _mm512_cvtpd_ps( _mDouble ) );
+		}
+
+		/**
+		 * \brief Converts 8 doubles in a __m512d to 8 float's with saturation using AVX-512.
+		 * 
+		 * \param _mDouble Input vector with 8 doubles.
+		 * \param _fDst Output array of 8 float's stored in a __m256 register.
+		 */
+		static inline void										float64x8_to_float32x8( __m512d _mDouble, __m256 &_fDst ) {
+			_fDst = _mm512_cvtpd_ps( _mDouble );
+		}
+
+
+		/**
+		 * \brief Converts 8 doubles in a __m512d to 8 bool's using AVX-512.
+		 * 
+		 * \param _mDouble Input vector with 8 doubles.
+		 * \param _pbDst Output array of 8 bool's.
+		 */
+		static inline void										float64x8_to_boolx8( __m512d _mDouble, bool * _pbDst ) {
+			__mmask8 mMask = _mm512_cmp_pd_mask( _mDouble, _mm512_setzero_pd(), _CMP_NEQ_OQ );
+
+			for ( int i = 0; i < 8; i++ ) {
+				_pbDst[i] = (mMask & (1 << i)) != 0;
 			}
 		}
 
 
-
-
 #endif	// #ifdef __AVX512F__
+
+#ifdef __AVX2__
+		/**
+		 * \brief Converts 4 doubles in a __m256d to 4 int8_t's with saturation using AVX2.
+		 * 
+		 * \param _mDouble Input vector with 4 doubles.
+		 * \param _pi8Dst Output array of 4 int8_t's.
+		 */
+		static inline void										float64x4_to_int8x4( __m256d _mDouble, int8_t * _pi8Dst ) {
+			__m256d dMin = _mm256_set1_pd( static_cast<double>(INT8_MIN) );
+			__m256d dMax = _mm256_set1_pd( static_cast<double>(INT8_MAX) );
+			__m256d mClamped = _mm256_min_pd( _mm256_max_pd( _mDouble, dMin ), dMax );
+
+			NN9_ALIGN( 32 )
+			double dTemp[4];
+			_mm256_storeu_pd( dTemp, mClamped );
+
+			for ( int i = 0; i < 4; i++ ) {
+				_pi8Dst[i] = static_cast<int8_t>(dTemp[i]);
+			}
+		}
+
+		/**
+		 * \brief Converts 4 doubles in a __m256d to 4 uint8_t's with saturation using AVX2.
+		 * 
+		 * \param _mDouble Input vector with 4 doubles.
+		 * \param _pu8Dst Output array of 4 uint8_t's.
+		 */
+		static inline void										float64x4_to_uint8x4( __m256d _mDouble, uint8_t * _pu8Dst ) {
+			__m256d mClamped = _mm256_min_pd( _mm256_max_pd( _mDouble, _mm256_setzero_pd() ), _mm256_set1_pd( static_cast<double>(UINT8_MAX) ) );
+
+			NN9_ALIGN( 32 )
+			double dTemp[4];
+			_mm256_storeu_pd( dTemp, mClamped );
+
+			for ( int i = 0; i < 4; i++ ) {
+				_pu8Dst[i] = static_cast<uint8_t>(dTemp[i]);
+			}
+		}
+
+		/**
+		 * \brief Converts 4 doubles in a __m256d to 4 int16_t's with saturation using AVX2.
+		 * 
+		 * \param _mDouble Input vector with 4 doubles.
+		 * \param _pi16Dst Output array of 4 int16_t's.
+		 */
+		static inline void										float64x4_to_int16x4( __m256d _mDouble, int16_t * _pi16Dst ) {
+			__m256d dMin = _mm256_set1_pd( static_cast<double>(INT16_MIN) );
+			__m256d dMax = _mm256_set1_pd( static_cast<double>(INT16_MAX) );
+			__m256d mClamped = _mm256_min_pd( _mm256_max_pd( _mDouble, dMin ), dMax );
+
+			NN9_ALIGN( 32 )
+			double dTemp[4];
+			_mm256_storeu_pd( dTemp, mClamped );
+
+			for ( int i = 0; i < 4; i++ ) {
+				_pi16Dst[i] = static_cast<int16_t>(dTemp[i]);
+			}
+		}
+
+		/**
+		 * \brief Converts 4 doubles in a __m256d to 4 uint16_t's with saturation using AVX2.
+		 * 
+		 * \param _mDouble Input vector with 4 doubles.
+		 * \param _pu16Dst Output array of 4 uint16_t's.
+		 */
+		static inline void										float64x4_to_uint16x4( __m256d _mDouble, uint16_t * _pu16Dst ) {
+			__m256d mClamped = _mm256_min_pd( _mm256_max_pd( _mDouble, _mm256_setzero_pd() ), _mm256_set1_pd( static_cast<double>(UINT16_MAX) ) );
+
+			NN9_ALIGN( 32 )
+			double dTemp[4];
+			_mm256_storeu_pd( dTemp, mClamped );
+
+			for ( int i = 0; i < 4; i++ ) {
+				_pu16Dst[i] = static_cast<uint16_t>(dTemp[i]);
+			}
+		}
+
+		/**
+		 * \brief Converts 4 doubles in a __m256d to 4 int32_t's with saturation using AVX2.
+		 * 
+		 * \param _mDouble Input vector with 4 doubles.
+		 * \param _pi32Dst Output array of 4 int32_t's.
+		 */
+		static inline void										float64x4_to_int32x4( __m256d _mDouble, int32_t * _pi32Dst ) {
+			__m256d dMin = _mm256_set1_pd( static_cast<double>(INT32_MIN) );
+			__m256d dMax = _mm256_set1_pd( static_cast<double>(INT32_MAX) );
+			__m256d mClamped = _mm256_min_pd( _mm256_max_pd( _mDouble, dMin ), dMax );
+
+			NN9_ALIGN( 32 )
+			double dTemp[4];
+			_mm256_storeu_pd( dTemp, mClamped );
+
+			for ( int i = 0; i < 4; i++ ) {
+				_pi32Dst[i] = static_cast<int32_t>(dTemp[i]);
+			}
+		}
+
+		/**
+		 * \brief Converts 4 doubles in a __m256d to 4 uint32_t's with saturation using AVX2.
+		 * 
+		 * \param _mDouble Input vector with 4 doubles.
+		 * \param _pu32Dst Output array of 4 uint32_t's.
+		 */
+		static inline void										float64x4_to_uint32x4( __m256d _mDouble, uint32_t * _pu32Dst ) {
+			__m256d mClamped = _mm256_min_pd( _mm256_max_pd( _mDouble, _mm256_setzero_pd() ), _mm256_set1_pd( static_cast<double>(UINT32_MAX) ) );
+
+			NN9_ALIGN( 32 )
+			double dTemp[4];
+			_mm256_storeu_pd( dTemp, mClamped );
+
+			for ( int i = 0; i < 4; i++ ) {
+				_pu32Dst[i] = static_cast<uint32_t>(dTemp[i]);
+			}
+		}
+
+		/**
+		 * \brief Converts 4 doubles in a __m256d to 4 int64_t's with saturation using AVX2.
+		 * 
+		 * \param _mDouble Input vector with 4 doubles.
+		 * \param _pi64Dst Output array of 4 int64_t's.
+		 */
+		static inline void										float64x4_to_int64x4( __m256d _mDouble, int64_t * _pi64Dst ) {
+			__m256d dMin = _mm256_set1_pd( static_cast<double>(INT64_MIN) );
+			__m256d dMax = _mm256_set1_pd( 9223372036854774784.0 );
+			__m256d mClamped = _mm256_min_pd( _mm256_max_pd( _mDouble, dMin ), dMax );
+
+			NN9_ALIGN( 32 )
+			double dTemp[4];
+			_mm256_storeu_pd( dTemp, mClamped );
+
+			for ( int i = 0; i < 4; i++ ) {
+				_pi64Dst[i] = static_cast<int64_t>(dTemp[i]);
+			}
+		}
+
+		/**
+		 * \brief Converts 4 doubles in a __m256d to 4 uint64_t's with saturation using AVX2.
+		 * 
+		 * \param _mDouble Input vector with 4 doubles.
+		 * \param _pu64Dst Output array of 4 uint64_t's.
+		 */
+		static inline void										float64x4_to_uint64x4( __m256d _mDouble, uint64_t * _pu64Dst ) {
+			__m256d mClamped = _mm256_min_pd( _mm256_max_pd( _mDouble, _mm256_setzero_pd() ), _mm256_set1_pd( 18446744073709549568.0 ) );
+
+			NN9_ALIGN( 32 )
+			double dTemp[4];
+			_mm256_storeu_pd( dTemp, mClamped );
+
+			for ( int i = 0; i < 4; i++ ) {
+				_pu64Dst[i] = static_cast<uint64_t>(dTemp[i]);
+			}
+		}
+
+		/**
+		 * \brief Converts 4 doubles in a __m256d to 4 float's with saturation using AVX-512.
+		 * 
+		 * \param _mDouble Input vector with 4 doubles.
+		 * \param _pfDst Output array of 4 float's.
+		 */
+		static inline void										float64x4_to_float32x4( __m256d _mDouble, float * _pfDst ) {
+			_mm_storeu_ps( _pfDst, _mm256_cvtpd_ps( _mDouble ) );
+		}
+
+		/**
+		 * \brief Converts 4 doubles in a __m256d to 4 float's with saturation using AVX-512.
+		 * 
+		 * \param _mDouble Input vector with 4 doubles.
+		 * \param _pfDst Output array of 4 float's.
+		 */
+		static inline void										float64x4_to_float32x4( __m256d _mDouble, __m128 &_mDst ) {
+			_mDst = _mm256_cvtpd_ps( _mDouble );
+		}
+
+		static inline void										float64x4_to_boolx4( __m256d _mDouble, bool * _pbDst ) {
+			__m256d mCmp = _mm256_cmp_pd( _mDouble, _mm256_setzero_pd(), _CMP_NEQ_OQ );
+
+			NN9_ALIGN( 32 )
+			double dTemp[4];
+			_mm256_storeu_pd( dTemp, mCmp );
+
+			for (int i = 0; i < 4; i++) {
+				_pbDst[i] = (dTemp[i] != 0.0);
+			}
+		}
+#endif	// #ifdef __AVX2__
 
 
 		// ===============================
@@ -3220,10 +3761,10 @@ namespace nn9 {
 		static inline void										int8_scast( __m512i _mInt8, bfloat16_t * _pf16Dst ) {
 			__m512 m0, m1, m2, m3;
 			int8x64_to_float32x64( _mInt8, m0, m1, m2, m3 );
-			bfloat16_t::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pf16Dst), m0 );
-			bfloat16_t::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pf16Dst + 16), m1 );
-			bfloat16_t::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pf16Dst + 32), m2 );
-			bfloat16_t::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pf16Dst + 48), m3 );
+			bfloat16_t::storeu_fp32_to_bf16( (_pf16Dst), m0 );
+			bfloat16_t::storeu_fp32_to_bf16( (_pf16Dst + 16), m1 );
+			bfloat16_t::storeu_fp32_to_bf16( (_pf16Dst + 32), m2 );
+			bfloat16_t::storeu_fp32_to_bf16( (_pf16Dst + 48), m3 );
 		}
 		static inline void										int8_scast( __m512i _mInt8, float * _pfDst ) {
 			__m512 m0, m1, m2, m3;
@@ -3283,10 +3824,10 @@ namespace nn9 {
 		static inline void										int8_scast( __m256i _mInt8, bfloat16_t * _pf16Dst ) {
 			__m256 m0, m1, m2, m3;
 			int8x32_to_float32x32( _mInt8, m0, m1, m2, m3 );
-			bfloat16_t::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pf16Dst), m0 );
-			bfloat16_t::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pf16Dst + 8), m1 );
-			bfloat16_t::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pf16Dst + 16), m2 );
-			bfloat16_t::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pf16Dst + 24), m3 );
+			bfloat16_t::storeu_fp32_to_bf16( (_pf16Dst), m0 );
+			bfloat16_t::storeu_fp32_to_bf16( (_pf16Dst + 8), m1 );
+			bfloat16_t::storeu_fp32_to_bf16( (_pf16Dst + 16), m2 );
+			bfloat16_t::storeu_fp32_to_bf16( (_pf16Dst + 24), m3 );
 		}
 		static inline void										int8_scast( __m256i _mInt8, float * _pfDst ) {
 			__m256 m0, m1, m2, m3;
@@ -3396,10 +3937,10 @@ namespace nn9 {
 		static inline void										uint8_scast( __m512i _mUint8, bfloat16_t * _pf16Dst ) {
 			__m512 m0, m1, m2, m3;
 			uint8x64_to_float32x64( _mUint8, m0, m1, m2, m3 );
-			bfloat16_t::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pf16Dst), m0 );
-			bfloat16_t::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pf16Dst + 16), m1 );
-			bfloat16_t::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pf16Dst + 32), m2 );
-			bfloat16_t::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pf16Dst + 48), m3 );
+			bfloat16_t::storeu_fp32_to_bf16( (_pf16Dst), m0 );
+			bfloat16_t::storeu_fp32_to_bf16( (_pf16Dst + 16), m1 );
+			bfloat16_t::storeu_fp32_to_bf16( (_pf16Dst + 32), m2 );
+			bfloat16_t::storeu_fp32_to_bf16( (_pf16Dst + 48), m3 );
 		}
 		static inline void										uint8_scast( __m512i _mUint8, float * _pfDst ) {
 			__m512 m0, m1, m2, m3;
@@ -3459,10 +4000,10 @@ namespace nn9 {
 		static inline void										uint8_scast( __m256i _mUint8, bfloat16_t * _pf16Dst ) {
 			__m256 m0, m1, m2, m3;
 			uint8x32_to_float32x32( _mUint8, m0, m1, m2, m3 );
-			bfloat16_t::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pf16Dst), m0 );
-			bfloat16_t::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pf16Dst + 8), m1 );
-			bfloat16_t::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pf16Dst + 16), m2 );
-			bfloat16_t::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pf16Dst + 24), m3 );
+			bfloat16_t::storeu_fp32_to_bf16( (_pf16Dst), m0 );
+			bfloat16_t::storeu_fp32_to_bf16( (_pf16Dst + 8), m1 );
+			bfloat16_t::storeu_fp32_to_bf16( (_pf16Dst + 16), m2 );
+			bfloat16_t::storeu_fp32_to_bf16( (_pf16Dst + 24), m3 );
 		}
 		static inline void										uint8_scast( __m256i _mUint8, float * _pfDst ) {
 			__m256 m0, m1, m2, m3;
@@ -3570,8 +4111,8 @@ namespace nn9 {
 		static inline void										int16_scast( __m512i _mInt16, bfloat16_t * _pf16Dst ) {
 			__m512 m0, m1;
 			int16x32_to_float32x32( _mInt16, m0, m1 );
-			bfloat16_t::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pf16Dst), m0 );
-			bfloat16_t::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pf16Dst + 16), m1 );
+			bfloat16_t::storeu_fp32_to_bf16( (_pf16Dst), m0 );
+			bfloat16_t::storeu_fp32_to_bf16( (_pf16Dst + 16), m1 );
 		}
 		static inline void										int16_scast( __m512i _mInt16, float * _pfDst ) {
 			__m512 m0, m1;
@@ -3627,8 +4168,8 @@ namespace nn9 {
 		static inline void										int16_scast( __m256i _mInt16, bfloat16_t * _pf16Dst ) {
 			__m256 m0, m1;
 			int16x16_to_float32x16( _mInt16, m0, m1 );
-			bfloat16_t::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pf16Dst), m0 );
-			bfloat16_t::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pf16Dst + 8), m1 );
+			bfloat16_t::storeu_fp32_to_bf16( (_pf16Dst), m0 );
+			bfloat16_t::storeu_fp32_to_bf16( (_pf16Dst + 8), m1 );
 		}
 		static inline void										int16_scast( __m256i _mInt16, float * _pfDst ) {
 			__m256 m0, m1;
@@ -3737,8 +4278,8 @@ namespace nn9 {
 		static inline void										uint16_scast( __m512i _mUint8, bfloat16_t * _pf16Dst ) {
 			__m512 m0, m1;
 			uint16x32_to_float32x32( _mUint8, m0, m1 );
-			bfloat16_t::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pf16Dst), m0 );
-			bfloat16_t::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pf16Dst + 16), m1 );
+			bfloat16_t::storeu_fp32_to_bf16( (_pf16Dst), m0 );
+			bfloat16_t::storeu_fp32_to_bf16( (_pf16Dst + 16), m1 );
 		}
 		static inline void										uint16_scast( __m512i _mUint8, float * _pfDst ) {
 			__m512 m0, m1;
@@ -3797,8 +4338,8 @@ namespace nn9 {
 		static inline void										uint16_scast( __m256i _mUint8, bfloat16_t * _pf16Dst ) {
 			__m256 m0, m1;
 			uint16x16_to_float32x16( _mUint8, m0, m1 );
-			bfloat16_t::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pf16Dst), m0 );
-			bfloat16_t::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pf16Dst + 8), m1 );
+			bfloat16_t::storeu_fp32_to_bf16( (_pf16Dst), m0 );
+			bfloat16_t::storeu_fp32_to_bf16( (_pf16Dst + 8), m1 );
 		}
 		static inline void										uint16_scast( __m256i _mUint8, float * _pfDst ) {
 			__m256 m0, m1;
@@ -3905,7 +4446,7 @@ namespace nn9 {
 		static inline void										int32_scast( __m512i _mInt32, bfloat16_t * _pf16Dst ) {
 			__m512 m0;
 			int32x16_to_float32x16( _mInt32, m0 );
-			bfloat16_t::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pf16Dst), m0 );
+			bfloat16_t::storeu_fp32_to_bf16( (_pf16Dst), m0 );
 		}
 		static inline void										int32_scast( __m512i _mInt32, float * _pfDst ) {
 			__m512 m0;
@@ -3961,7 +4502,7 @@ namespace nn9 {
 		static inline void										int32_scast( __m256i _mInt32, bfloat16_t * _pf16Dst ) {
 			__m256 m0;
 			int32x8_to_float32x8( _mInt32, m0 );
-			bfloat16_t::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pf16Dst), m0 );
+			bfloat16_t::storeu_fp32_to_bf16( (_pf16Dst), m0 );
 		}
 		static inline void										int32_scast( __m256i _mInt32, float * _pfDst ) {
 			__m256 m0;
@@ -4067,7 +4608,7 @@ namespace nn9 {
 		static inline void										uint32_scast( __m512i _mUint32, bfloat16_t * _pf16Dst ) {
 			__m512 m0;
 			uint32x16_to_float32x16( _mUint32, m0 );
-			bfloat16_t::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pf16Dst), m0 );
+			bfloat16_t::storeu_fp32_to_bf16( (_pf16Dst), m0 );
 		}
 		static inline void										uint32_scast( __m512i _mUint32, float * _pfDst ) {
 			__m512 m0;
@@ -4123,7 +4664,7 @@ namespace nn9 {
 		static inline void										uint32_scast( __m256i _mUint32, bfloat16_t * _pf16Dst ) {
 			__m256 m0;
 			uint32x8_to_float32x8( _mUint32, m0 );
-			bfloat16_t::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pf16Dst), m0 );
+			bfloat16_t::storeu_fp32_to_bf16( (_pf16Dst), m0 );
 		}
 		static inline void										uint32_scast( __m256i _mUint32, float * _pfDst ) {
 			__m256 m0;
@@ -4229,7 +4770,7 @@ namespace nn9 {
 		static inline void										int64_scast( __m512i _mInt64, bfloat16_t * _pf16Dst ) {
 			__m256 m0;
 			int64x8_to_float32x8( _mInt64, m0 );
-			bfloat16_t::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pf16Dst), m0 );
+			bfloat16_t::storeu_fp32_to_bf16( (_pf16Dst), m0 );
 		}
 		static inline void										int64_scast( __m512i _mInt64, float * _pfDst ) {
 			__m256 m0;
@@ -4399,7 +4940,7 @@ namespace nn9 {
 		static inline void										uint64_scast( __m512i _mUint64, bfloat16_t * _pf16Dst ) {
 			__m256 m0;
 			uint64x8_to_float32x8( _mUint64, m0 );
-			bfloat16_t::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pf16Dst), m0 );
+			bfloat16_t::storeu_fp32_to_bf16( (_pf16Dst), m0 );
 		}
 		static inline void										uint64_scast( __m512i _mUint64, float * _pfDst ) {
 			__m256 m0;
@@ -4485,7 +5026,7 @@ namespace nn9 {
 
 
 		// ===============================
-		// float
+		// float/nn9::float16/bfloat16_t
 		// ===============================
 		static inline void										float_scast( float _fSrc, int8_t &_i8Dst ) {
 			_i8Dst = static_cast<int8_t>(std::clamp<float>( _fSrc, static_cast<float>(INT8_MIN), static_cast<float>(INT8_MAX) ));
@@ -4500,13 +5041,13 @@ namespace nn9 {
 			_u16Dst = static_cast<uint16_t>(std::clamp<float>( _fSrc, 0.0f, static_cast<float>(UINT16_MAX) ));
 		}
 		static inline void										float_scast( float _fSrc, int32_t &_i32Dst ) {
-			_i32Dst = static_cast<int32_t>(std::clamp<float>( _fSrc, static_cast<float>(INT32_MIN), static_cast<float>(INT32_MAX) ));
+			_i32Dst = static_cast<int32_t>(std::clamp<float>( _fSrc, -2147483648.0f, 2147483520.0f ));
 		}
 		static inline void										float_scast( float _fSrc, uint32_t &_u32Dst ) {
 			_u32Dst = static_cast<uint32_t>(std::clamp<float>( _fSrc, 0.0f, static_cast<float>(UINT32_MAX) ));
 		}
 		static inline void										float_scast( float _fSrc, int64_t &_i64Dst ) {
-			_i64Dst = static_cast<int64_t>(std::clamp<float>( _fSrc, static_cast<float>(INT64_MIN), static_cast<float>(INT64_MAX) ));
+			_i64Dst = static_cast<int64_t>(std::clamp<float>( _fSrc, -9223372036854775808.0f, 9223371487098961920.0f ));
 		}
 		static inline void										float_scast( float _fSrc, uint64_t &_u64Dst ) {
 			_u64Dst = static_cast<uint64_t>(std::clamp<float>( _fSrc, 0.0f, static_cast<float>(UINT64_MAX) ));
@@ -4524,38 +5065,268 @@ namespace nn9 {
 			_dDst = static_cast<double>(_fSrc);
 		}
 		static inline void										float_scast( float _fSrc, bool &_bDst ) {
-			_bDst = _fSrc != 0;
+			_bDst = _fSrc != 0.0f;
 		}
 		static inline void										float_scast( float _fSrc, std::complex<float> & ) {
-			throw std::runtime_error( "float_scast: No conversion available for uint64_t -> std::complex<float>." );
+			throw std::runtime_error( "float_scast: No conversion available for float -> std::complex<float>." );
 		}
 		static inline void										float_scast( float _fSrc, std::complex<double> & ) {
-			throw std::runtime_error( "float_scast: No conversion available for uint64_t -> std::complex<double>." );
+			throw std::runtime_error( "float_scast: No conversion available for float -> std::complex<double>." );
 		}
 
 #ifdef __AVX512F__
-		static inline void										float_scast( __m512 mFloat, int8_t * _pi8Dst ) {
-			float16_to_int8x16( mFloat, _pi8Dst );
+		static inline void										float_scast( __m512 _mFloat, int8_t * _pi8Dst ) {
+			float32x16_to_int8x16( _mFloat, _pi8Dst );
 		}
-		static inline void										float_scast( __m512 mFloat, uint8_t * _pu8Dst ) {
-			float16_to_uint8x16( mFloat, _pu8Dst );
+		static inline void										float_scast( __m512 _mFloat, uint8_t * _pu8Dst ) {
+			float32x16_to_uint8x16( _mFloat, _pu8Dst );
 		}
-		static inline void										float_scast( __m512 mFloat, int16_t * _pi16Dst ) {
-			float16_to_int16x16( mFloat, _pi16Dst );
+		static inline void										float_scast( __m512 _mFloat, int16_t * _pi16Dst ) {
+			float32x16_to_int16x16( _mFloat, _pi16Dst );
 		}
-		static inline void										float_scast( __m512 mFloat, uint16_t * _pu16Dst ) {
-			float16_to_uint16x16( mFloat, _pu16Dst );
+		static inline void										float_scast( __m512 _mFloat, uint16_t * _pu16Dst ) {
+			float32x16_to_uint16x16( _mFloat, _pu16Dst );
 		}
-		static inline void										float_scast( __m512 mFloat, int32_t * _pi32Dst ) {
-			float16_to_int32x16( mFloat, _pi32Dst );
+		static inline void										float_scast( __m512 _mFloat, int32_t * _pi32Dst ) {
+			float32x16_to_int32x16( _mFloat, _pi32Dst );
 		}
-		static inline void										float_scast( __m512 mFloat, uint32_t * _pu32Dst ) {
-			float16_to_uint32x16( mFloat, _pu32Dst );
+		static inline void										float_scast( __m512 _mFloat, uint32_t * _pu32Dst ) {
+			float32x16_to_uint32x16( _mFloat, _pu32Dst );
 		}
-		static inline void										float_scast( __m512 mFloat, int64_t * _pi64Dst ) {
-			float16_to_int64x16( mFloat, _pi64Dst );
+		static inline void										float_scast( __m512 _mFloat, int64_t * _pi64Dst ) {
+			float32x16_to_int64x16( _mFloat, _pi64Dst );
+		}
+		static inline void										float_scast( __m512 _mFloat, uint64_t * _pu64Dst ) {
+			float32x16_to_uint64x16( _mFloat, _pu64Dst );
+		}
+		static inline void										float_scast( __m512 _mFloat, nn9::float16 * _pf32Dst ) {
+			nn9::float16::Convert16Float32ToFloat16( _pf32Dst, _mFloat );
+		}
+		static inline void										float_scast( __m512 _mFloat, bfloat16_t * _pf32Dst ) {
+			bfloat16_t::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pf32Dst), _mFloat );
+		}
+		static inline void										float_scast( __m512 _mFloat, float * _pfDst ) {
+			_mm512_storeu_ps( _pfDst, _mFloat );
+		}
+		static inline void										float_scast( __m512 _mFloat, double * _pdDst ) {
+			float32x16_to_float64x16( _mFloat, _pdDst );
+		}
+		static inline void										float_scast( __m512 _mFloat, bool * _pbDst ) {
+			float32x16_to_boolx16( _mFloat, _pbDst );
+		}
+		static inline void										float_scast( __m512 _mUint64, std::complex<float> * ) {
+			throw std::runtime_error( "float_scast: No conversion available for float -> std::complex<float>." );
+		}
+		static inline void										float_scast( __m512 _mUint64, std::complex<double> * ) {
+			throw std::runtime_error( "float_scast: No conversion available for float -> std::complex<double>." );
 		}
 #endif	// #ifdef __AVX512F__
+
+#ifdef __AVX2__
+		static inline void										float_scast( __m256 _mFloat, int8_t * _pi8Dst ) {
+			float32x8_to_int8x8( _mFloat, _pi8Dst );
+		}
+		static inline void										float_scast( __m256 _mFloat, uint8_t * _pu8Dst ) {
+			float32x8_to_uint8x8( _mFloat, _pu8Dst );
+		}
+		static inline void										float_scast( __m256 _mFloat, int16_t * _pi16Dst ) {
+			float32x8_to_int16x8( _mFloat, _pi16Dst );
+		}
+		static inline void										float_scast( __m256 _mFloat, uint16_t * _pu16Dst ) {
+			float32x8_to_uint16x8( _mFloat, _pu16Dst );
+		}
+		static inline void										float_scast( __m256 _mFloat, int32_t * _pi32Dst ) {
+			float32x8_to_int32x8( _mFloat, _pi32Dst );
+		}
+		static inline void										float_scast( __m256 _mFloat, uint32_t * _pu32Dst ) {
+			float32x8_to_uint32x8( _mFloat, _pu32Dst );
+		}
+		static inline void										float_scast( __m256 _mFloat, int64_t * _pi64Dst ) {
+			float32x8_to_int64x8( _mFloat, _pi64Dst );
+		}
+		static inline void										float_scast( __m256 _mFloat, uint64_t * _pu64Dst ) {
+			float32x8_to_uint64x8( _mFloat, _pu64Dst );
+		}
+		static inline void										float_scast( __m256 _mFloat, nn9::float16 * _pf32Dst ) {
+			nn9::float16::Convert8Float32ToFloat16( _pf32Dst, _mFloat );
+		}
+		static inline void										float_scast( __m256 _mFloat, bfloat16_t * _pf32Dst ) {
+			bfloat16_t::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pf32Dst), _mFloat );
+		}
+		static inline void										float_scast( __m256 _mFloat, float * _pfDst ) {
+			_mm256_storeu_ps( _pfDst, _mFloat );
+		}
+		static inline void										float_scast( __m256 _mFloat, double * _pdDst ) {
+			float32x8_to_float64x8( _mFloat, _pdDst );
+		}
+		static inline void										float_scast( __m256 _mFloat, bool * _pbDst ) {
+			float32x8_to_boolx8( _mFloat, _pbDst );
+		}
+		static inline void										float_scast( __m256 _mUint64, std::complex<float> * ) {
+			throw std::runtime_error( "float_scast: No conversion available for float -> std::complex<float>." );
+		}
+		static inline void										float_scast( __m256 _mUint64, std::complex<double> * ) {
+			throw std::runtime_error( "float_scast: No conversion available for float -> std::complex<double>." );
+		}
+#endif	// #ifdef __AVX2__
+
+
+		// ===============================
+		// double
+		// ===============================
+		static inline void										double_scast( double _dSrc, int8_t &_i8Dst ) {
+			_i8Dst = static_cast<int8_t>(std::clamp<double>( _dSrc, static_cast<double>(INT8_MIN), static_cast<double>(INT8_MAX) ));
+		}
+		static inline void										double_scast( double _dSrc, uint8_t &_u8Dst ) {
+			_u8Dst = static_cast<uint8_t>(std::clamp<double>( _dSrc, 0.0, static_cast<float>(UINT8_MAX) ));
+		}
+		static inline void										double_scast( double _dSrc, int16_t &_i16Dst ) {
+			_i16Dst = static_cast<int16_t>(std::clamp<double>( _dSrc, static_cast<double>(INT16_MIN), static_cast<double>(INT16_MAX) ));
+		}
+		static inline void										double_scast( double _dSrc, uint16_t &_u16Dst ) {
+			_u16Dst = static_cast<uint16_t>(std::clamp<double>( _dSrc, 0.0, static_cast<double>(UINT16_MAX) ));
+		}
+		static inline void										double_scast( double _dSrc, int32_t &_i32Dst ) {
+			_i32Dst = static_cast<int32_t>(std::clamp<double>( _dSrc, static_cast<double>(INT32_MIN), static_cast<double>(INT32_MAX) ));
+		}
+		static inline void										double_scast( double _dSrc, uint32_t &_u32Dst ) {
+			_u32Dst = static_cast<uint32_t>(std::clamp<double>( _dSrc, 0.0, static_cast<double>(UINT32_MAX) ));
+		}
+		static inline void										double_scast( double _dSrc, int64_t &_i64Dst ) {
+			_i64Dst = static_cast<int64_t>(std::clamp<double>( _dSrc, static_cast<double>(INT64_MIN), 9223372036854774784.0 ));
+		}
+		static inline void										double_scast( double _dSrc, uint64_t &_u64Dst ) {
+			_u64Dst = static_cast<uint64_t>(std::clamp<double>( _dSrc, 0.0, 18446744073709549568.0 ));
+		}
+		static inline void										double_scast( double _dSrc, nn9::float16 &_f16Dst ) {
+			_f16Dst = std::clamp<double>( _dSrc, -65504.0, 65504.0 );
+		}
+		static inline void										double_scast( double _dSrc, bfloat16_t &_f16Dst ) {
+			_f16Dst = static_cast<float>(_dSrc);
+		}
+		static inline void										double_scast( double _dSrc, float &_fDst ) {
+			_fDst = static_cast<float>(_dSrc);
+		}
+		static inline void										double_scast( double _dSrc, double &_dDst ) {
+			_dDst = _dSrc;
+		}
+		static inline void										double_scast( double _dSrc, bool &_bDst ) {
+			_bDst = _dSrc != 0.0;
+		}
+		static inline void										double_scast( double _dSrc, std::complex<float> & ) {
+			throw std::runtime_error( "double_scast: No conversion available for double -> std::complex<float>." );
+		}
+		static inline void										double_scast( double _dSrc, std::complex<double> & ) {
+			throw std::runtime_error( "double_scast: No conversion available for double -> std::complex<double>." );
+		}
+
+#ifdef __AVX512F__
+		static inline void										double_scast( __m512d _mDouble, int8_t * _pi8Dst ) {
+			float64x8_to_int8x8( _mDouble, _pi8Dst );
+		}
+		static inline void										double_scast( __m512d _mDouble, uint8_t * _pu8Dst ) {
+			float64x8_to_uint8x8( _mDouble, _pu8Dst );
+		}
+		static inline void										double_scast( __m512d _mDouble, int16_t * _pi16Dst ) {
+			float64x8_to_int16x8( _mDouble, _pi16Dst );
+		}
+		static inline void										double_scast( __m512d _mDouble, uint16_t * _pu16Dst ) {
+			float64x8_to_uint16x8( _mDouble, _pu16Dst );
+		}
+		static inline void										double_scast( __m512d _mDouble, int32_t * _pi32Dst ) {
+			float64x8_to_int32x8( _mDouble, _pi32Dst );
+		}
+		static inline void										double_scast( __m512d _mDouble, uint32_t * _pu32Dst ) {
+			float64x8_to_uint32x8( _mDouble, _pu32Dst );
+		}
+		static inline void										double_scast( __m512d _mDouble, int64_t * _pi64Dst ) {
+			float64x8_to_int64x8( _mDouble, _pi64Dst );
+		}
+		static inline void										double_scast( __m512d _mDouble, uint64_t * _pu64Dst ) {
+			float64x8_to_uint64x8( _mDouble, _pu64Dst );
+		}
+		static inline void										double_scast( __m512d _mDouble, nn9::float16 * _pf32Dst ) {
+			__m256 mTmp;
+			float64x8_to_float32x8( _mDouble, mTmp );
+			nn9::float16::Convert8Float32ToFloat16( _pf32Dst, mTmp );
+		}
+		static inline void										double_scast( __m512d _mDouble, bfloat16_t * _pf32Dst ) {
+			__m256 mTmp;
+			float64x8_to_float32x8( _mDouble, mTmp );
+			bfloat16_t::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pf32Dst), mTmp );
+		}
+		static inline void										double_scast( __m512d _mDouble, float * _pfDst ) {
+			float64x8_to_float32x8( _mDouble, _pfDst );
+		}
+		static inline void										double_scast( __m512d _mDouble, double * _pdDst ) {
+			_mm512_storeu_pd( _pdDst, _mDouble );
+		}
+		static inline void										double_scast( __m512d _mDouble, bool * _pbDst ) {
+			float64x8_to_boolx8( _mDouble, _pbDst );
+		}
+		static inline void										double_scast( __m512 _mDouble, std::complex<float> * ) {
+			throw std::runtime_error( "double_scast: No conversion available for float -> std::complex<float>." );
+		}
+		static inline void										double_scast( __m512 _mDouble, std::complex<double> * ) {
+			throw std::runtime_error( "double_scast: No conversion available for float -> std::complex<double>." );
+		}
+#endif	// #ifdef __AVX512F__
+
+#ifdef __AVX2__
+		static inline void										double_scast( __m256d _mDouble, int8_t * _pi8Dst ) {
+			float64x4_to_int8x4( _mDouble, _pi8Dst );
+		}
+		static inline void										double_scast( __m256d _mDouble, uint8_t * _pu8Dst ) {
+			float64x4_to_uint8x4( _mDouble, _pu8Dst );
+		}
+		static inline void										double_scast( __m256d _mDouble, int16_t * _pi16Dst ) {
+			float64x4_to_int16x4( _mDouble, _pi16Dst );
+		}
+		static inline void										double_scast( __m256d _mDouble, uint16_t * _pu16Dst ) {
+			float64x4_to_uint16x4( _mDouble, _pu16Dst );
+		}
+		static inline void										double_scast( __m256d _mDouble, int32_t * _pi32Dst ) {
+			float64x4_to_int32x4( _mDouble, _pi32Dst );
+		}
+		static inline void										double_scast( __m256d _mDouble, uint32_t * _pu32Dst ) {
+			float64x4_to_uint32x4( _mDouble, _pu32Dst );
+		}
+		static inline void										double_scast( __m256d _mDouble, int64_t * _pi64Dst ) {
+			float64x4_to_int64x4( _mDouble, _pi64Dst );
+		}
+		static inline void										double_scast( __m256d _mDouble, uint64_t * _pu64Dst ) {
+			float64x4_to_uint64x4( _mDouble, _pu64Dst );
+		}
+		static inline void										double_scast( __m256d _mDouble, nn9::float16 * _pf32Dst ) {
+			NN9_ALIGN( 32 )
+			float fTmp[4];
+			float64x4_to_float32x4( _mDouble, fTmp );
+			(*_pf32Dst++) = fTmp[0];
+			(*_pf32Dst++) = fTmp[1];
+			(*_pf32Dst++) = fTmp[2];
+			(*_pf32Dst++) = fTmp[3];
+		}
+		static inline void										double_scast( __m256d _mDouble, bfloat16_t * _pf32Dst ) {
+			__m128 mTmp;
+			float64x4_to_float32x4( _mDouble, mTmp );
+			bfloat16_t::storeu_fp32_to_bf16( _pf32Dst, mTmp );
+		}
+		static inline void										double_scast( __m256d _mDouble, float * _pfDst ) {
+			float64x4_to_float32x4( _mDouble, _pfDst );
+		}
+		static inline void										double_scast( __m256d _mDouble, double * _pdDst ) {
+			_mm256_storeu_pd( _pdDst, _mDouble );
+		}
+		static inline void										double_scast( __m256d _mDouble, bool * _pbDst ) {
+			float64x4_to_boolx4( _mDouble, _pbDst );
+		}
+		static inline void										double_scast( __m256 _mDouble, std::complex<float> * ) {
+			throw std::runtime_error( "double_scast: No conversion available for double -> std::complex<float>." );
+		}
+		static inline void										double_scast( __m256 _mDouble, std::complex<double> * ) {
+			throw std::runtime_error( "double_scast: No conversion available for double -> std::complex<double>." );
+		}
+#endif	// #ifdef __AVX2__
 	};
 
 }	// namespace nn9

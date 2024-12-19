@@ -42,7 +42,7 @@ int wmain( int _iArgC, wchar_t const * _wcpArgV[] ) {
 			//	}
 			//}
 
-			float iVales[64] = {
+			double iVales[64] = {
 				-1, 2, FLT_MAX, 0, -FLT_MAX, 256, 7, 8, 9, 10,
 				120, 221, 322, 423, 124, 125, 126, 127, 128, 129,
 				0x7F, -1, 77, -0x7F, 1, 64, 254, -500, -500, 500,
@@ -53,10 +53,10 @@ int wmain( int _iArgC, wchar_t const * _wcpArgV[] ) {
 			};
 			//__m512i mVal = _mm512_loadu_si512( reinterpret_cast<const __m512i *>(iVales) );
 			//__m256i mVal = _mm256_loadu_si256( reinterpret_cast<const __m256i *>(iVales) );
-			__m512 mVal = _mm512_loadu_ps( iVales );
-			int64_t ui16Dst[64];
-			nn9::Intrin::float_scast( mVal, ui16Dst );
-
+			//__m512 mVal = _mm512_loadu_ps( iVales );
+			__m512d mVal = _mm512_loadu_pd( iVales );
+			nn9::float16 ui16Dst[64];
+			nn9::Intrin::double_scast( mVal, ui16Dst );
 
 			/*nn9::Tensor tBFloat16 = tTensorTest.CopyAs( nn9::NN9_T_FLOAT16 );
 			auto vViewBf16 = tBFloat16.FullView<nn9::float16>();*/
