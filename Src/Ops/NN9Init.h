@@ -9,8 +9,10 @@
 #pragma once
 
 #include "NN9Math.h"
+#include "../Foundation/NN9Intrin.h"
 #include "../Types/NN9BFloat16.h"
 #include "../Types/NN9Float16.h"
+#include "../Types/NN9Types.h"
 #include "../Utilities/NN9Utilities.h"
 
 #include <cmath>
@@ -317,379 +319,87 @@ namespace nn9 {
 			}
 
 			// The types differ.
-			const ValueTypeIn * pvtiIn = &_vIn[0];
-			ValueTypeOut * pvtoOut = &_vOut[0];
+			const auto * pvtiIn = &_vIn[0];
+			auto * pvtoOut = &_vOut[0];
 			auto sSize = _vIn.size();
 
-			if constexpr ( nn9::Math::IsBFloat16<ValueTypeOut>() ) {
-				CopyToBFloat16<ValueTypeIn>( reinterpret_cast<bfloat16_t *>(pvtoOut), reinterpret_cast<const ValueTypeIn *>(pvtiIn), sSize );
-				return _vOut;
+#ifdef __AVX512F__
+			if ( Utilities::IsAvx512FSupported() ) {
+				if constexpr ( nn9::Types::SimdInt<ValueTypeIn>() ) {
+					constexpr size_t sRegSize = sizeof( __m512i ) / sizeof( ValueTypeIn );
+					while ( sSize >= sRegSize ) {
+						auto mReg = _mm512_loadu_epi8( pvtiIn );
+						Intrin::scast<ValueTypeIn>( mReg, pvtoOut );
+						sSize -= sRegSize;
+						pvtiIn += sRegSize;
+						pvtoOut += sRegSize;
+					}
+				}
+				else if constexpr ( nn9::Types::SimdFloat<ValueTypeIn>() ) {
+					constexpr size_t sRegSize = sizeof( __m512 ) / sizeof( ValueTypeIn );
+					while ( sSize >= sRegSize ) {
+						auto mReg = _mm512_loadu_ps( pvtiIn );
+						Intrin::scast<ValueTypeIn>( mReg, pvtoOut );
+						sSize -= sRegSize;
+						pvtiIn += sRegSize;
+						pvtoOut += sRegSize;
+					}
+				}
+				else if constexpr ( nn9::Types::SimdDouble<ValueTypeIn>() ) {
+					constexpr size_t sRegSize = sizeof( __m512d ) / sizeof( ValueTypeIn );
+					while ( sSize >= sRegSize ) {
+						auto mReg = _mm512_loadu_pd( pvtiIn );
+						Intrin::scast<ValueTypeIn>( mReg, pvtoOut );
+						sSize -= sRegSize;
+						pvtiIn += sRegSize;
+						pvtoOut += sRegSize;
+					}
+				}
 			}
-			if constexpr ( nn9::Math::IsBFloat16<ValueTypeIn>() ) {
-				CopyFromBFloat16<ValueTypeOut>( pvtoOut, reinterpret_cast<const bfloat16_t *>(pvtiIn), sSize );
-				return _vOut;
-			}
+#endif	// #ifdef __AVX512F__
 
-			if constexpr ( nn9::Math::IsFloat16<ValueTypeOut>() ) {
-				CopyToFloat16<ValueTypeIn>( reinterpret_cast<nn9::float16 *>(pvtoOut), reinterpret_cast<const ValueTypeIn *>(pvtiIn), sSize );
-				return _vOut;
+#ifdef __AVX2__
+			if ( Utilities::IsAvx2Supported() ) {
+				if constexpr ( nn9::Types::SimdInt<ValueTypeIn>() ) {
+					constexpr size_t sRegSize = sizeof( __m256i ) / sizeof( ValueTypeIn );
+					while ( sSize >= sRegSize ) {
+						auto mReg = _mm256_loadu_epi8( pvtiIn );
+						Intrin::scast<ValueTypeIn>( mReg, pvtoOut );
+						sSize -= sRegSize;
+						pvtiIn += sRegSize;
+						pvtoOut += sRegSize;
+					}
+				}
+				else if constexpr ( nn9::Types::SimdFloat<ValueTypeIn>() ) {
+					constexpr size_t sRegSize = sizeof( __m256 ) / sizeof( ValueTypeIn );
+					while ( sSize >= sRegSize ) {
+						auto mReg = _mm256_loadu_ps( reinterpret_cast<float const *>(pvtiIn) );
+						Intrin::scast<ValueTypeIn>( mReg, pvtoOut );
+						sSize -= sRegSize;
+						pvtiIn += sRegSize;
+						pvtoOut += sRegSize;
+					}
+				}
+				else if constexpr ( nn9::Types::SimdDouble<ValueTypeIn>() ) {
+					constexpr size_t sRegSize = sizeof( __m256d ) / sizeof( ValueTypeIn );
+					while ( sSize >= sRegSize ) {
+						auto mReg = _mm256_loadu_pd( pvtiIn );
+						Intrin::scast<ValueTypeIn>( mReg, pvtoOut );
+						sSize -= sRegSize;
+						pvtiIn += sRegSize;
+						pvtoOut += sRegSize;
+					}
+				}
 			}
-			if constexpr ( nn9::Math::IsFloat16<ValueTypeIn>() ) {
-				CopyFromFloat16<ValueTypeOut>( pvtoOut, reinterpret_cast<const nn9::float16 *>(pvtiIn), sSize );
-				return _vOut;
-			}
+#endif	// #ifdef __AVX2__
 
-			for ( size_t i = 0; i < sSize; ++i ) {
-				pvtoOut[i] = static_cast<ValueTypeOut>(pvtiIn[i]);
+			while ( sSize-- ) {
+				Intrin::scast( (*pvtiIn++), (*pvtoOut++) );
 			}
 			return _vOut;
 		}
 
 
-	protected :
-		/**
-		 * Copies from not-bfloat16_t to bfloat16_t.
-		 * 
-		 * \tparam _tTypeIn The non-bfloat16_t type from which to copy.
-		 * \param _pbfOut Pointer to the target array of bfloat16_t's.
-		 * \param _ptiIn Pointer to the array of the source data.
-		 * \param _sTotal The total elements to which both pointers point.
-		 **/
-		template <typename _tTypeIn>
-		static void													CopyToBFloat16( bfloat16_t * _pbfOut, const _tTypeIn * _ptiIn, size_t _sTotal ) {
-#ifdef __AVX512F__
-			if ( Utilities::IsAvx512FSupported() ) {
-				// Operate on 16 values at once.
-
-				while ( _sTotal >= 16 ) {
-					if constexpr ( nn9::Math::Is32BitFloat<_tTypeIn>() ) {
-						nn9::bfloat16::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pbfOut), _mm512_loadu_ps( _ptiIn ) );
-					}
-					else if constexpr ( nn9::Math::IsFloat16<_tTypeIn>() ) {
-						nn9::bfloat16::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pbfOut), nn9::float16::Convert16Float16ToFloat32( _ptiIn ) );
-					}
-					else {
-						NN9_ALIGN( 64 )
-						float fTmp[16];
-						fTmp[0] = float( _ptiIn[0] );
-						fTmp[1] = float( _ptiIn[1] );
-						fTmp[2] = float( _ptiIn[2] );
-						fTmp[3] = float( _ptiIn[3] );
-						fTmp[4] = float( _ptiIn[4] );
-						fTmp[5] = float( _ptiIn[5] );
-						fTmp[6] = float( _ptiIn[6] );
-						fTmp[7] = float( _ptiIn[7] );
-						fTmp[8] = float( _ptiIn[8] );
-						fTmp[9] = float( _ptiIn[9] );
-						fTmp[10] = float( _ptiIn[10] );
-						fTmp[11] = float( _ptiIn[11] );
-						fTmp[12] = float( _ptiIn[12] );
-						fTmp[13] = float( _ptiIn[13] );
-						fTmp[14] = float( _ptiIn[14] );
-						fTmp[15] = float( _ptiIn[15] );
-
-						nn9::bfloat16::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pbfOut), _mm512_load_ps( fTmp ) );
-					}
-
-					_pbfOut += 16;
-					_ptiIn += 16;
-					_sTotal -= 16;
-				}
-			}
-#endif	// #ifdef __AVX512F__
-
-#ifdef __AVX2__
-			if ( Utilities::IsAvx2Supported() ) {
-				// Operate on 8 values at once.
-
-				while ( _sTotal >= 8 ) {
-					if constexpr ( nn9::Math::Is32BitFloat<_tTypeIn>() ) {
-						nn9::bfloat16::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pbfOut), _mm256_loadu_ps( _ptiIn ) );
-					}
-					else if constexpr ( nn9::Math::IsFloat16<_tTypeIn>() ) {
-						nn9::bfloat16::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pbfOut), nn9::float16::Convert8Float16ToFloat32( _ptiIn ) );
-					}
-					else {
-						NN9_ALIGN( 32 )
-						float fTmp[8];
-						fTmp[0] = float( _ptiIn[0] );
-						fTmp[1] = float( _ptiIn[1] );
-						fTmp[2] = float( _ptiIn[2] );
-						fTmp[3] = float( _ptiIn[3] );
-						fTmp[4] = float( _ptiIn[4] );
-						fTmp[5] = float( _ptiIn[5] );
-						fTmp[6] = float( _ptiIn[6] );
-						fTmp[7] = float( _ptiIn[7] );
-
-						nn9::bfloat16::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(_pbfOut), _mm256_load_ps( fTmp ) );
-					}
-
-					_pbfOut += 8;
-					_ptiIn += 8;
-					_sTotal -= 8;
-				}
-			}
-#endif	// #ifdef __AVX2__
-
-			while ( _sTotal-- ) {
-				(*_pbfOut++) = float( (*_ptiIn++) );
-			}
-		}
-
-		/**
-		 * Copies from bfloat16_t to non-bfloat16_t.
-		 * 
-		 * \tparam _tTypeOut The non-bfloat16_t type to which to copy.
-		 * \param _ptiOut Pointer to the target array of not-bfloat16_t values.
-		 * \param _pbfIn Pointer to the array of the source bfloat16_t's.
-		 * \param _sTotal The total elements to which both pointers point.
-		 **/
-		template <typename _tTypeOut>
-		static void													CopyFromBFloat16( _tTypeOut * _ptiOut, const bfloat16_t * _pbfIn, size_t _sTotal ) {
-#ifdef __AVX512F__
-			if ( Utilities::IsAvx512FSupported() ) {
-				// Operate on 16 values at once.
-				while ( _sTotal >= 16 ) {
-					if constexpr ( nn9::Math::Is32BitFloat<_tTypeOut>() ) {
-						_mm512_storeu_ps( _ptiOut, nn9::bfloat16::loadu_bf16_to_fp32_16( reinterpret_cast<const uint16_t *>(_pbfIn) ) );
-					}
-					else if constexpr ( nn9::Math::IsFloat16<_tTypeOut>() ) {
-						nn9::float16::Convert16Float32ToFloat16( _ptiOut, nn9::bfloat16::loadu_bf16_to_fp32_16( reinterpret_cast<const uint16_t *>(_pbfIn) ) );
-					}
-					else {
-						NN9_ALIGN( 64 )
-						float fTmp[16];
-						_mm512_store_ps( fTmp, nn9::bfloat16::loadu_bf16_to_fp32_16( reinterpret_cast<const uint16_t *>(_pbfIn) ) );
-						_ptiOut[0] = _tTypeOut( fTmp[0] );
-						_ptiOut[1] = _tTypeOut( fTmp[1] );
-						_ptiOut[2] = _tTypeOut( fTmp[2] );
-						_ptiOut[3] = _tTypeOut( fTmp[3] );
-						_ptiOut[4] = _tTypeOut( fTmp[4] );
-						_ptiOut[5] = _tTypeOut( fTmp[5] );
-						_ptiOut[6] = _tTypeOut( fTmp[6] );
-						_ptiOut[7] = _tTypeOut( fTmp[7] );
-						_ptiOut[8] = _tTypeOut( fTmp[8] );
-						_ptiOut[9] = _tTypeOut( fTmp[9] );
-						_ptiOut[10] = _tTypeOut( fTmp[10] );
-						_ptiOut[11] = _tTypeOut( fTmp[11] );
-						_ptiOut[12] = _tTypeOut( fTmp[12] );
-						_ptiOut[13] = _tTypeOut( fTmp[13] );
-						_ptiOut[14] = _tTypeOut( fTmp[14] );
-						_ptiOut[15] = _tTypeOut( fTmp[15] );
-					}
-					_ptiOut += 16;
-					_pbfIn += 16;
-					_sTotal -= 16;
-				}
-			}
-#endif	// #ifdef __AVX512F__
-
-#ifdef __AVX2__
-			if ( Utilities::IsAvx2Supported() ) {
-				// Operate on 8 values at once.
-				while ( _sTotal >= 8 ) {
-					if constexpr ( nn9::Math::Is32BitFloat<_tTypeOut>() ) {
-						_mm256_storeu_ps( _ptiOut, nn9::bfloat16::loadu_bf16_to_fp32_8( reinterpret_cast<const uint16_t *>(_pbfIn) ) );
-					}
-					else if constexpr ( nn9::Math::IsFloat16<_tTypeOut>() ) {
-						nn9::float16::Convert8Float32ToFloat16( _ptiOut, nn9::bfloat16::loadu_bf16_to_fp32_8( reinterpret_cast<const uint16_t *>(_pbfIn) ) );
-					}
-					else {
-						NN9_ALIGN( 32 )
-						float fTmp[8];
-						_mm256_store_ps( fTmp, nn9::bfloat16::loadu_bf16_to_fp32_8( reinterpret_cast<const uint16_t *>(_pbfIn) ) );
-						_ptiOut[0] = _tTypeOut( fTmp[0] );
-						_ptiOut[1] = _tTypeOut( fTmp[1] );
-						_ptiOut[2] = _tTypeOut( fTmp[2] );
-						_ptiOut[3] = _tTypeOut( fTmp[3] );
-						_ptiOut[4] = _tTypeOut( fTmp[4] );
-						_ptiOut[5] = _tTypeOut( fTmp[5] );
-						_ptiOut[6] = _tTypeOut( fTmp[6] );
-						_ptiOut[7] = _tTypeOut( fTmp[7] );
-					}
-					_ptiOut += 8;
-					_pbfIn += 8;
-					_sTotal -= 8;
-				}
-			}
-#endif	// #ifdef __AVX2__
-
-			while ( _sTotal-- ) {
-				(*_ptiOut++) = _tTypeOut( (*_pbfIn++) );
-			}
-		}
-
-		/**
-		 * Copies from not-nn9::float16 to nn9::float16.
-		 * 
-		 * \tparam _tTypeIn The non-nn9::float16 type from which to copy.
-		 * \param _pbfOut Pointer to the target array of nn9::float16's.
-		 * \param _ptiIn Pointer to the array of the source data.
-		 * \param _sTotal The total elements to which both pointers point.
-		 **/
-		template <typename _tTypeIn>
-		static void													CopyToFloat16( nn9::float16 * _pbfOut, const _tTypeIn * _ptiIn, size_t _sTotal ) {
-#ifdef __AVX512F__
-			if ( Utilities::IsAvx512FSupported() ) {
-				// Operate on 16 values at once.
-
-				while ( _sTotal >= 16 ) {
-					if constexpr ( nn9::Math::Is32BitFloat<_tTypeIn>() ) {
-						nn9::float16::Convert16Float32ToFloat16( _pbfOut, _mm512_loadu_ps( _ptiIn ) );
-					}
-					else if constexpr ( nn9::Math::IsFloat16<_tTypeIn>() ) {
-						nn9::float16::Convert16Float32ToFloat16( _pbfOut, nn9::float16::Convert16Float16ToFloat32( _ptiIn ) );
-					}
-					else {
-						NN9_ALIGN( 64 )
-						float fTmp[16];
-						fTmp[0] = float( _ptiIn[0] );
-						fTmp[1] = float( _ptiIn[1] );
-						fTmp[2] = float( _ptiIn[2] );
-						fTmp[3] = float( _ptiIn[3] );
-						fTmp[4] = float( _ptiIn[4] );
-						fTmp[5] = float( _ptiIn[5] );
-						fTmp[6] = float( _ptiIn[6] );
-						fTmp[7] = float( _ptiIn[7] );
-						fTmp[8] = float( _ptiIn[8] );
-						fTmp[9] = float( _ptiIn[9] );
-						fTmp[10] = float( _ptiIn[10] );
-						fTmp[11] = float( _ptiIn[11] );
-						fTmp[12] = float( _ptiIn[12] );
-						fTmp[13] = float( _ptiIn[13] );
-						fTmp[14] = float( _ptiIn[14] );
-						fTmp[15] = float( _ptiIn[15] );
-
-						nn9::float16::Convert16Float32ToFloat16( _pbfOut, _mm512_load_ps( fTmp ) );
-					}
-
-					_pbfOut += 16;
-					_ptiIn += 16;
-					_sTotal -= 16;
-				}
-			}
-#endif	// #ifdef __AVX512F__
-
-#ifdef __AVX2__
-			if ( Utilities::IsAvx2Supported() ) {
-				// Operate on 8 values at once.
-
-				while ( _sTotal >= 8 ) {
-					if constexpr ( nn9::Math::Is32BitFloat<_tTypeIn>() ) {
-						nn9::float16::Convert8Float32ToFloat16( _pbfOut, _mm256_loadu_ps( _ptiIn ) );
-					}
-					else if constexpr ( nn9::Math::IsFloat16<_tTypeIn>() ) {
-						nn9::float16::Convert8Float32ToFloat16( _pbfOut, nn9::float16::Convert8Float16ToFloat32( _ptiIn ) );
-					}
-					else {
-						NN9_ALIGN( 32 )
-						float fTmp[8];
-						fTmp[0] = float( _ptiIn[0] );
-						fTmp[1] = float( _ptiIn[1] );
-						fTmp[2] = float( _ptiIn[2] );
-						fTmp[3] = float( _ptiIn[3] );
-						fTmp[4] = float( _ptiIn[4] );
-						fTmp[5] = float( _ptiIn[5] );
-						fTmp[6] = float( _ptiIn[6] );
-						fTmp[7] = float( _ptiIn[7] );
-
-						nn9::float16::Convert8Float32ToFloat16( _pbfOut, _mm256_load_ps( fTmp ) );
-					}
-
-					_pbfOut += 8;
-					_ptiIn += 8;
-					_sTotal -= 8;
-				}
-			}
-#endif	// #ifdef __AVX2__
-
-			while ( _sTotal-- ) {
-				(*_pbfOut++) = float( (*_ptiIn++) );
-			}
-		}
-
-		/**
-		 * Copies from nn9::float16 to non-nn9::float16.
-		 * 
-		 * \tparam _tTypeOut The non-nn9::float16 type to which to copy.
-		 * \param _ptiOut Pointer to the target array of not-nn9::float16 values.
-		 * \param _pbfIn Pointer to the array of the source nn9::float16's.
-		 * \param _sTotal The total elements to which both pointers point.
-		 **/
-		template <typename _tTypeOut>
-		static void													CopyFromFloat16( _tTypeOut * _ptiOut, const nn9::float16 * _pbfIn, size_t _sTotal ) {
-#ifdef __AVX512F__
-			if ( Utilities::IsAvx512FSupported() ) {
-				// Operate on 16 values at once.
-				while ( _sTotal >= 16 ) {
-					if constexpr ( nn9::Math::Is32BitFloat<_tTypeOut>() ) {
-						_mm512_storeu_ps( _ptiOut, nn9::float16::Convert16Float16ToFloat32( _pbfIn ) );
-					}
-					else if constexpr ( nn9::Math::IsFloat16<_tTypeOut>() ) {
-						nn9::float16::Convert16Float32ToFloat16( _ptiOut, nn9::float16::Convert16Float16ToFloat32( _pbfIn ) );
-					}
-					else {
-						NN9_ALIGN( 64 )
-						float fTmp[16];
-						_mm512_store_ps( fTmp, nn9::float16::Convert16Float16ToFloat32( _pbfIn ) );
-						_ptiOut[0] = _tTypeOut( fTmp[0] );
-						_ptiOut[1] = _tTypeOut( fTmp[1] );
-						_ptiOut[2] = _tTypeOut( fTmp[2] );
-						_ptiOut[3] = _tTypeOut( fTmp[3] );
-						_ptiOut[4] = _tTypeOut( fTmp[4] );
-						_ptiOut[5] = _tTypeOut( fTmp[5] );
-						_ptiOut[6] = _tTypeOut( fTmp[6] );
-						_ptiOut[7] = _tTypeOut( fTmp[7] );
-						_ptiOut[8] = _tTypeOut( fTmp[8] );
-						_ptiOut[9] = _tTypeOut( fTmp[9] );
-						_ptiOut[10] = _tTypeOut( fTmp[10] );
-						_ptiOut[11] = _tTypeOut( fTmp[11] );
-						_ptiOut[12] = _tTypeOut( fTmp[12] );
-						_ptiOut[13] = _tTypeOut( fTmp[13] );
-						_ptiOut[14] = _tTypeOut( fTmp[14] );
-						_ptiOut[15] = _tTypeOut( fTmp[15] );
-					}
-					_ptiOut += 16;
-					_pbfIn += 16;
-					_sTotal -= 16;
-				}
-			}
-#endif	// #ifdef __AVX512F__
-
-#ifdef __AVX2__
-			if ( Utilities::IsAvx2Supported() ) {
-				// Operate on 8 values at once.
-				while ( _sTotal >= 8 ) {
-					if constexpr ( nn9::Math::Is32BitFloat<_tTypeOut>() ) {
-						_mm256_storeu_ps( _ptiOut, nn9::float16::Convert8Float16ToFloat32( _pbfIn ) );
-					}
-					else if constexpr ( nn9::Math::IsFloat16<_tTypeOut>() ) {
-						nn9::float16::Convert8Float32ToFloat16( _ptiOut, nn9::float16::Convert8Float16ToFloat32( _pbfIn ) );
-					}
-					else {
-						NN9_ALIGN( 32 )
-						float fTmp[8];
-						_mm256_store_ps( fTmp, nn9::float16::Convert8Float16ToFloat32( _pbfIn ) );
-						_ptiOut[0] = _tTypeOut( fTmp[0] );
-						_ptiOut[1] = _tTypeOut( fTmp[1] );
-						_ptiOut[2] = _tTypeOut( fTmp[2] );
-						_ptiOut[3] = _tTypeOut( fTmp[3] );
-						_ptiOut[4] = _tTypeOut( fTmp[4] );
-						_ptiOut[5] = _tTypeOut( fTmp[5] );
-						_ptiOut[6] = _tTypeOut( fTmp[6] );
-						_ptiOut[7] = _tTypeOut( fTmp[7] );
-					}
-					_ptiOut += 8;
-					_pbfIn += 8;
-					_sTotal -= 8;
-				}
-			}
-#endif	// #ifdef __AVX2__
-
-			while ( _sTotal-- ) {
-				(*_ptiOut++) = _tTypeOut( (*_pbfIn++) );
-			}
-		}
 	};
 
 }	// namespace nn9

@@ -3336,7 +3336,6 @@ namespace nn9 {
 #endif	// #ifdef __AVX2__
 
 
-
 		// ===============================
 		// double
 		// ===============================
@@ -3470,7 +3469,6 @@ namespace nn9 {
 		static inline void										float64x8_to_float32x8( __m512d _mDouble, __m256 &_fDst ) {
 			_fDst = _mm512_cvtpd_ps( _mDouble );
 		}
-
 
 		/**
 		 * \brief Converts 8 doubles in a __m512d to 8 bool's using AVX-512.
@@ -3679,50 +3677,50 @@ namespace nn9 {
 		// ===============================
 		// int8_t
 		// ===============================
-		static inline void										int8_scast( int8_t _i8Src, int8_t &_i8Dst ) {
+		static inline void										scast( int8_t _i8Src, int8_t &_i8Dst ) {
 			_i8Dst = _i8Src;
 		}
-		static inline void										int8_scast( int8_t _i8Src, uint8_t &_u8Dst ) {
+		static inline void										scast( int8_t _i8Src, uint8_t &_u8Dst ) {
 			_u8Dst = static_cast<uint8_t>(std::max<int8_t>( _i8Src, 0 ));
 		}
-		static inline void										int8_scast( int8_t _i8Src, int16_t &_i16Dst ) {
+		static inline void										scast( int8_t _i8Src, int16_t &_i16Dst ) {
 			_i16Dst = _i8Src;
 		}
-		static inline void										int8_scast( int8_t _i8Src, uint16_t &_u16Dst ) {
+		static inline void										scast( int8_t _i8Src, uint16_t &_u16Dst ) {
 			_u16Dst = static_cast<uint16_t>(std::max<int8_t>( _i8Src, 0 ));
 		}
-		static inline void										int8_scast( int8_t _i8Src, int32_t &_i32Dst ) {
+		static inline void										scast( int8_t _i8Src, int32_t &_i32Dst ) {
 			_i32Dst = _i8Src;
 		}
-		static inline void										int8_scast( int8_t _i8Src, uint32_t &_u32Dst ) {
+		static inline void										scast( int8_t _i8Src, uint32_t &_u32Dst ) {
 			_u32Dst = static_cast<uint32_t>(std::max<int8_t>( _i8Src, 0 ));
 		}
-		static inline void										int8_scast( int8_t _i8Src, int64_t &_i64Dst ) {
+		static inline void										scast( int8_t _i8Src, int64_t &_i64Dst ) {
 			_i64Dst = _i8Src;
 		}
-		static inline void										int8_scast( int8_t _i8Src, uint64_t &_u64Dst ) {
+		static inline void										scast( int8_t _i8Src, uint64_t &_u64Dst ) {
 			_u64Dst = static_cast<uint64_t>(std::max<int8_t>( _i8Src, 0 ));
 		}
-		static inline void										int8_scast( int8_t _i8Src, nn9::float16 &_f16Dst ) {
+		static inline void										scast( int8_t _i8Src, nn9::float16 &_f16Dst ) {
 			_f16Dst = static_cast<float>(_i8Src);
 		}
-		static inline void										int8_scast( int8_t _i8Src, bfloat16_t &_f16Dst ) {
+		static inline void										scast( int8_t _i8Src, bfloat16_t &_f16Dst ) {
 			_f16Dst = static_cast<float>(_i8Src);
 		}
-		static inline void										int8_scast( int8_t _i8Src, float &_fDst ) {
+		static inline void										scast( int8_t _i8Src, float &_fDst ) {
 			_fDst = static_cast<float>(_i8Src);
 		}
-		static inline void										int8_scast( int8_t _i8Src, double &_dDst ) {
+		static inline void										scast( int8_t _i8Src, double &_dDst ) {
 			_dDst = static_cast<double>(_i8Src);
 		}
-		static inline void										int8_scast( int8_t _i8Src, bool &_bDst ) {
+		static inline void										scast( int8_t _i8Src, bool &_bDst ) {
 			_bDst = _i8Src != 0;
 		}
-		static inline void										int8_scast( int8_t _i8Src, std::complex<float> & ) {
-			throw std::runtime_error( "int8_scast: No conversion available for int8_t -> std::complex<float>." );
+		static inline void										scast( int8_t _i8Src, std::complex<float> & ) {
+			throw std::runtime_error( "scast: No conversion available for int8_t -> std::complex<float>." );
 		}
-		static inline void										int8_scast( int8_t _i8Src, std::complex<double> & ) {
-			throw std::runtime_error( "int8_scast: No conversion available for int8_t -> std::complex<double>." );
+		static inline void										scast( int8_t _i8Src, std::complex<double> & ) {
+			throw std::runtime_error( "scast: No conversion available for int8_t -> std::complex<double>." );
 		}
 
 #ifdef __AVX512F__
@@ -3855,50 +3853,50 @@ namespace nn9 {
 		// ===============================
 		// uint8_t
 		// ===============================
-		static inline void										uint8_scast( uint8_t _u8Src, int8_t &_i8Dst ) {
+		static inline void										scast( uint8_t _u8Src, int8_t &_i8Dst ) {
 			_i8Dst = static_cast<int8_t>(std::min<uint8_t>( _u8Src, INT8_MAX ));
 		}
-		static inline void										uint8_scast( uint8_t _u8Src, uint8_t &_u8Dst ) {
+		static inline void										scast( uint8_t _u8Src, uint8_t &_u8Dst ) {
 			_u8Dst = _u8Src;
 		}
-		static inline void										uint8_scast( uint8_t _u8Src, int16_t &_i16Dst ) {
+		static inline void										scast( uint8_t _u8Src, int16_t &_i16Dst ) {
 			_i16Dst = _u8Src;
 		}
-		static inline void										uint8_scast( uint8_t _u8Src, uint16_t &_u16Dst ) {
+		static inline void										scast( uint8_t _u8Src, uint16_t &_u16Dst ) {
 			_u16Dst = _u8Src;
 		}
-		static inline void										uint8_scast( uint8_t _u8Src, int32_t &_i32Dst ) {
+		static inline void										scast( uint8_t _u8Src, int32_t &_i32Dst ) {
 			_i32Dst = _u8Src;
 		}
-		static inline void										uint8_scast( uint8_t _u8Src, uint32_t &_u32Dst ) {
+		static inline void										scast( uint8_t _u8Src, uint32_t &_u32Dst ) {
 			_u32Dst = _u8Src;
 		}
-		static inline void										uint8_scast( uint8_t _u8Src, int64_t &_i64Dst ) {
+		static inline void										scast( uint8_t _u8Src, int64_t &_i64Dst ) {
 			_i64Dst = _u8Src;
 		}
-		static inline void										uint8_scast( uint8_t _u8Src, uint64_t &_u64Dst ) {
+		static inline void										scast( uint8_t _u8Src, uint64_t &_u64Dst ) {
 			_u64Dst = _u8Src;
 		}
-		static inline void										uint8_scast( uint8_t _u8Src, nn9::float16 &_f16Dst ) {
+		static inline void										scast( uint8_t _u8Src, nn9::float16 &_f16Dst ) {
 			_f16Dst = static_cast<float>(_u8Src);
 		}
-		static inline void										uint8_scast( uint8_t _u8Src, bfloat16_t &_f16Dst ) {
+		static inline void										scast( uint8_t _u8Src, bfloat16_t &_f16Dst ) {
 			_f16Dst = static_cast<float>(_u8Src);
 		}
-		static inline void										uint8_scast( uint8_t _u8Src, float &_fDst ) {
+		static inline void										scast( uint8_t _u8Src, float &_fDst ) {
 			_fDst = static_cast<float>(_u8Src);
 		}
-		static inline void										uint8_scast( uint8_t _u8Src, double &_dDst ) {
+		static inline void										scast( uint8_t _u8Src, double &_dDst ) {
 			_dDst = static_cast<double>(_u8Src);
 		}
-		static inline void										uint8_scast( uint8_t _u8Src, bool &_bDst ) {
+		static inline void										scast( uint8_t _u8Src, bool &_bDst ) {
 			_bDst = _u8Src != 0;
 		}
-		static inline void										uint8_scast( uint8_t _u8Src, std::complex<float> & ) {
-			throw std::runtime_error( "uint8_scast: No conversion available for uint8_t -> std::complex<float>." );
+		static inline void										scast( uint8_t _u8Src, std::complex<float> & ) {
+			throw std::runtime_error( "scast: No conversion available for uint8_t -> std::complex<float>." );
 		}
-		static inline void										uint8_scast( uint8_t _u8Src, std::complex<double> & ) {
-			throw std::runtime_error( "uint8_scast: No conversion available for uint8_t -> std::complex<double>." );
+		static inline void										scast( uint8_t _u8Src, std::complex<double> & ) {
+			throw std::runtime_error( "scast: No conversion available for uint8_t -> std::complex<double>." );
 		}
 
 #ifdef __AVX512F__
@@ -4031,50 +4029,50 @@ namespace nn9 {
 		// ===============================
 		// int16_t
 		// ===============================
-		static inline void										int16_scast( int16_t _i16Src, int8_t &_i8Dst ) {
+		static inline void										scast( int16_t _i16Src, int8_t &_i8Dst ) {
 			_i8Dst = static_cast<int8_t>(std::clamp<int16_t>( _i16Src, INT8_MIN, INT8_MAX ));
 		}
-		static inline void										int16_scast( int16_t _i16Src, uint8_t &_u8Dst ) {
+		static inline void										scast( int16_t _i16Src, uint8_t &_u8Dst ) {
 			_u8Dst = static_cast<uint8_t>(std::clamp<int16_t>( _i16Src, 0, UINT8_MAX ));
 		}
-		static inline void										int16_scast( int16_t _i16Src, int16_t &_i16Dst ) {
+		static inline void										scast( int16_t _i16Src, int16_t &_i16Dst ) {
 			_i16Dst = _i16Src;
 		}
-		static inline void										int16_scast( int16_t _i16Src, uint16_t &_u16Dst ) {
+		static inline void										scast( int16_t _i16Src, uint16_t &_u16Dst ) {
 			_u16Dst = static_cast<uint32_t>(std::max<int16_t>( _i16Src, 0 ));
 		}
-		static inline void										int16_scast( int16_t _i16Src, int32_t &_i32Dst ) {
+		static inline void										scast( int16_t _i16Src, int32_t &_i32Dst ) {
 			_i32Dst = _i16Src;
 		}
-		static inline void										int16_scast( int16_t _i16Src, uint32_t &_u32Dst ) {
+		static inline void										scast( int16_t _i16Src, uint32_t &_u32Dst ) {
 			_u32Dst = static_cast<uint32_t>(std::max<int16_t>( _i16Src, 0 ));
 		}
-		static inline void										int16_scast( int16_t _i16Src, int64_t &_i64Dst ) {
+		static inline void										scast( int16_t _i16Src, int64_t &_i64Dst ) {
 			_i64Dst = _i16Src;
 		}
-		static inline void										int16_scast( int16_t _i16Src, uint64_t &_u64Dst ) {
+		static inline void										scast( int16_t _i16Src, uint64_t &_u64Dst ) {
 			_u64Dst = static_cast<uint32_t>(std::max<int16_t>( _i16Src, 0 ));
 		}
-		static inline void										int16_scast( int16_t _i16Src, nn9::float16 &_f16Dst ) {
+		static inline void										scast( int16_t _i16Src, nn9::float16 &_f16Dst ) {
 			_f16Dst = static_cast<float>(_i16Src);
 		}
-		static inline void										int16_scast( int16_t _i16Src, bfloat16_t &_f16Dst ) {
+		static inline void										scast( int16_t _i16Src, bfloat16_t &_f16Dst ) {
 			_f16Dst = static_cast<float>(_i16Src);
 		}
-		static inline void										int16_scast( int16_t _i16Src, float &_fDst ) {
+		static inline void										scast( int16_t _i16Src, float &_fDst ) {
 			_fDst = static_cast<float>(_i16Src);
 		}
-		static inline void										int16_scast( int16_t _i16Src, double &_dDst ) {
+		static inline void										scast( int16_t _i16Src, double &_dDst ) {
 			_dDst = static_cast<double>(_i16Src);
 		}
-		static inline void										int16_scast( int16_t _i16Src, bool &_bDst ) {
+		static inline void										scast( int16_t _i16Src, bool &_bDst ) {
 			_bDst = _i16Src != 0;
 		}
-		static inline void										int16_scast( int16_t _i16Src, std::complex<float> & ) {
-			throw std::runtime_error( "int16_scast: No conversion available for int16_t -> std::complex<float>." );
+		static inline void										scast( int16_t _i16Src, std::complex<float> & ) {
+			throw std::runtime_error( "scast: No conversion available for int16_t -> std::complex<float>." );
 		}
-		static inline void										int16_scast( int16_t _i16Src, std::complex<double> & ) {
-			throw std::runtime_error( "int16_scast: No conversion available for int16_t -> std::complex<double>." );
+		static inline void										scast( int16_t _i16Src, std::complex<double> & ) {
+			throw std::runtime_error( "scast: No conversion available for int16_t -> std::complex<double>." );
 		}
 
 #ifdef __AVX512F__
@@ -4195,50 +4193,50 @@ namespace nn9 {
 		// ===============================
 		// uint16_t
 		// ===============================
-		static inline void										uint16_scast( uint16_t _u16Src, int8_t &_i8Dst ) {
+		static inline void										scast( uint16_t _u16Src, int8_t &_i8Dst ) {
 			_i8Dst = static_cast<int8_t>(std::min<uint16_t>( _u16Src, INT8_MAX ));
 		}
-		static inline void										uint16_scast( uint16_t _u16Src, uint8_t &_u8Dst ) {
+		static inline void										scast( uint16_t _u16Src, uint8_t &_u8Dst ) {
 			_u8Dst = static_cast<uint8_t>(std::min<uint16_t>( _u16Src, UINT8_MAX ));
 		}
-		static inline void										uint16_scast( uint16_t _u16Src, int16_t &_i16Dst ) {
+		static inline void										scast( uint16_t _u16Src, int16_t &_i16Dst ) {
 			_i16Dst = std::min<uint16_t>( _u16Src, INT16_MAX );
 		}
-		static inline void										uint16_scast( uint16_t _u16Src, uint16_t &_u16Dst ) {
+		static inline void										scast( uint16_t _u16Src, uint16_t &_u16Dst ) {
 			_u16Dst = _u16Dst;
 		}
-		static inline void										uint16_scast( uint16_t _u16Src, int32_t &_i32Dst ) {
+		static inline void										scast( uint16_t _u16Src, int32_t &_i32Dst ) {
 			_i32Dst = _u16Src;
 		}
-		static inline void										uint16_scast( uint16_t _u16Src, uint32_t &_u32Dst ) {
+		static inline void										scast( uint16_t _u16Src, uint32_t &_u32Dst ) {
 			_u32Dst = _u16Src;
 		}
-		static inline void										uint16_scast( uint16_t _u16Src, int64_t &_i64Dst ) {
+		static inline void										scast( uint16_t _u16Src, int64_t &_i64Dst ) {
 			_i64Dst = _u16Src;
 		}
-		static inline void										uint16_scast( uint16_t _u16Src, uint64_t &_u64Dst ) {
+		static inline void										scast( uint16_t _u16Src, uint64_t &_u64Dst ) {
 			_u64Dst = _u16Src;
 		}
-		static inline void										uint16_scast( uint16_t _u16Src, nn9::float16 &_f16Dst ) {
+		static inline void										scast( uint16_t _u16Src, nn9::float16 &_f16Dst ) {
 			_f16Dst = static_cast<float>(std::min<uint16_t>( _u16Src, 65504 ));
 		}
-		static inline void										uint16_scast( uint16_t _u16Src, bfloat16_t &_f16Dst ) {
+		static inline void										scast( uint16_t _u16Src, bfloat16_t &_f16Dst ) {
 			_f16Dst = static_cast<float>(_u16Src);
 		}
-		static inline void										uint16_scast( uint16_t _u16Src, float &_fDst ) {
+		static inline void										scast( uint16_t _u16Src, float &_fDst ) {
 			_fDst = static_cast<float>(_u16Src);
 		}
-		static inline void										uint16_scast( uint16_t _u16Src, double &_dDst ) {
+		static inline void										scast( uint16_t _u16Src, double &_dDst ) {
 			_dDst = static_cast<double>(_u16Src);
 		}
-		static inline void										uint16_scast( uint16_t _u16Src, bool &_bDst ) {
+		static inline void										scast( uint16_t _u16Src, bool &_bDst ) {
 			_bDst = _u16Src != 0;
 		}
-		static inline void										uint16_scast( uint16_t _u16Src, std::complex<float> & ) {
-			throw std::runtime_error( "int16_scast: No conversion available for uint16_t -> std::complex<float>." );
+		static inline void										scast( uint16_t _u16Src, std::complex<float> & ) {
+			throw std::runtime_error( "scast: No conversion available for uint16_t -> std::complex<float>." );
 		}
-		static inline void										uint16_scast( uint16_t _u16Src, std::complex<double> & ) {
-			throw std::runtime_error( "int16_scast: No conversion available for uint16_t -> std::complex<double>." );
+		static inline void										scast( uint16_t _u16Src, std::complex<double> & ) {
+			throw std::runtime_error( "scast: No conversion available for uint16_t -> std::complex<double>." );
 		}
 
 #ifdef __AVX512F__
@@ -4365,50 +4363,50 @@ namespace nn9 {
 		// ===============================
 		// int32_t
 		// ===============================
-		static inline void										int32_scast( int32_t _i32Src, int8_t &_i8Dst ) {
+		static inline void										scast( int32_t _i32Src, int8_t &_i8Dst ) {
 			_i8Dst = static_cast<int8_t>(std::clamp<int32_t>( _i32Src, INT8_MIN, INT8_MAX ));
 		}
-		static inline void										int32_scast( int32_t _i32Src, uint8_t &_u8Dst ) {
+		static inline void										scast( int32_t _i32Src, uint8_t &_u8Dst ) {
 			_u8Dst = static_cast<uint8_t>(std::clamp<int32_t>( _i32Src, 0, UINT8_MAX ));
 		}
-		static inline void										int32_scast( int32_t _i32Src, int16_t &_i16Dst ) {
+		static inline void										scast( int32_t _i32Src, int16_t &_i16Dst ) {
 			_i16Dst = static_cast<int16_t>(std::clamp<int32_t>( _i32Src, INT16_MIN, INT16_MAX ));
 		}
-		static inline void										int32_scast( int32_t _i32Src, uint16_t &_u16Dst ) {
+		static inline void										scast( int32_t _i32Src, uint16_t &_u16Dst ) {
 			_u16Dst = static_cast<uint16_t>(std::clamp<int32_t>( _i32Src, 0, UINT16_MAX ));
 		}
-		static inline void										int32_scast( int32_t _i32Src, int32_t &_i32Dst ) {
+		static inline void										scast( int32_t _i32Src, int32_t &_i32Dst ) {
 			_i32Dst = _i32Src;
 		}
-		static inline void										int32_scast( int32_t _i32Src, uint32_t &_u32Dst ) {
+		static inline void										scast( int32_t _i32Src, uint32_t &_u32Dst ) {
 			_u32Dst = static_cast<uint32_t>(std::max<int32_t>( _i32Src, 0 ));
 		}
-		static inline void										int32_scast( int32_t _i32Src, int64_t &_i64Dst ) {
+		static inline void										scast( int32_t _i32Src, int64_t &_i64Dst ) {
 			_i64Dst = _i32Src;
 		}
-		static inline void										int32_scast( int32_t _i32Src, uint64_t &_u64Dst ) {
+		static inline void										scast( int32_t _i32Src, uint64_t &_u64Dst ) {
 			_u64Dst = static_cast<uint64_t>(std::max<int32_t>( _i32Src, 0 ));
 		}
-		static inline void										int32_scast( int32_t _i32Src, nn9::float16 &_f16Dst ) {
+		static inline void										scast( int32_t _i32Src, nn9::float16 &_f16Dst ) {
 			_f16Dst = static_cast<float>(std::clamp<float>( static_cast<float>(_i32Src), -65504.0f, 65504.0f ));
 		}
-		static inline void										int32_scast( int32_t _i32Src, bfloat16_t &_f16Dst ) {
+		static inline void										scast( int32_t _i32Src, bfloat16_t &_f16Dst ) {
 			_f16Dst = static_cast<float>(_i32Src);
 		}
-		static inline void										int32_scast( int32_t _i32Src, float &_fDst ) {
+		static inline void										scast( int32_t _i32Src, float &_fDst ) {
 			_fDst = static_cast<float>(_i32Src);
 		}
-		static inline void										int32_scast( int32_t _i32Src, double &_dDst ) {
+		static inline void										scast( int32_t _i32Src, double &_dDst ) {
 			_dDst = static_cast<double>(_i32Src);
 		}
-		static inline void										int32_scast( int32_t _i32Src, bool &_bDst ) {
+		static inline void										scast( int32_t _i32Src, bool &_bDst ) {
 			_bDst = _i32Src != 0;
 		}
-		static inline void										int32_scast( int32_t _i32Src, std::complex<float> & ) {
-			throw std::runtime_error( "int32_scast: No conversion available for int32_t -> std::complex<float>." );
+		static inline void										scast( int32_t _i32Src, std::complex<float> & ) {
+			throw std::runtime_error( "scast: No conversion available for int32_t -> std::complex<float>." );
 		}
-		static inline void										int32_scast( int32_t _i32Src, std::complex<double> & ) {
-			throw std::runtime_error( "int32_scast: No conversion available for int32_t -> std::complex<double>." );
+		static inline void										scast( int32_t _i32Src, std::complex<double> & ) {
+			throw std::runtime_error( "scast: No conversion available for int32_t -> std::complex<double>." );
 		}
 
 #ifdef __AVX512F__
@@ -4527,50 +4525,50 @@ namespace nn9 {
 		// ===============================
 		// uint32_t
 		// ===============================
-		static inline void										uint32_scast( uint32_t _u32Src, int8_t &_i8Dst ) {
+		static inline void										scast( uint32_t _u32Src, int8_t &_i8Dst ) {
 			_i8Dst = static_cast<int8_t>(std::min<uint32_t>( _u32Src, INT8_MAX ));
 		}
-		static inline void										uint32_scast( uint32_t _u32Src, uint8_t &_u8Dst ) {
+		static inline void										scast( uint32_t _u32Src, uint8_t &_u8Dst ) {
 			_u8Dst = static_cast<uint8_t>(std::min<uint32_t>( _u32Src, UINT8_MAX ));
 		}
-		static inline void										uint32_scast( uint32_t _u32Src, int16_t &_i16Dst ) {
+		static inline void										scast( uint32_t _u32Src, int16_t &_i16Dst ) {
 			_i16Dst = static_cast<int16_t>(std::min<uint32_t>( _u32Src, INT16_MAX ));
 		}
-		static inline void										uint32_scast( uint32_t _u32Src, uint16_t &_u16Dst ) {
+		static inline void										scast( uint32_t _u32Src, uint16_t &_u16Dst ) {
 			_u16Dst = static_cast<uint16_t>(std::min<uint32_t>( _u32Src, UINT16_MAX ));
 		}
-		static inline void										uint32_scast( uint32_t _u32Src, int32_t &_i32Dst ) {
+		static inline void										scast( uint32_t _u32Src, int32_t &_i32Dst ) {
 			_i32Dst = std::min<uint32_t>( _u32Src, INT16_MAX );
 		}
-		static inline void										uint32_scast( uint32_t _u32Src, uint32_t &_u32Dst ) {
+		static inline void										scast( uint32_t _u32Src, uint32_t &_u32Dst ) {
 			_u32Dst = _u32Src;
 		}
-		static inline void										uint32_scast( uint32_t _u32Src, int64_t &_i64Dst ) {
+		static inline void										scast( uint32_t _u32Src, int64_t &_i64Dst ) {
 			_i64Dst = _u32Src;
 		}
-		static inline void										uint32_scast( uint32_t _u32Src, uint64_t &_u64Dst ) {
+		static inline void										scast( uint32_t _u32Src, uint64_t &_u64Dst ) {
 			_u64Dst = _u32Src;
 		}
-		static inline void										uint32_scast( uint32_t _u32Src, nn9::float16 &_f16Dst ) {
+		static inline void										scast( uint32_t _u32Src, nn9::float16 &_f16Dst ) {
 			_f16Dst = static_cast<float>(std::min<float>( static_cast<float>(_u32Src), 65504.0f ));
 		}
-		static inline void										uint32_scast( uint32_t _u32Src, bfloat16_t &_f16Dst ) {
+		static inline void										scast( uint32_t _u32Src, bfloat16_t &_f16Dst ) {
 			_f16Dst = static_cast<float>(_u32Src);
 		}
-		static inline void										uint32_scast( uint32_t _u32Src, float &_fDst ) {
+		static inline void										scast( uint32_t _u32Src, float &_fDst ) {
 			_fDst = static_cast<float>(_u32Src);
 		}
-		static inline void										uint32_scast( uint32_t _u32Src, double &_dDst ) {
+		static inline void										scast( uint32_t _u32Src, double &_dDst ) {
 			_dDst = static_cast<double>(_u32Src);
 		}
-		static inline void										uint32_scast( uint32_t _u32Src, bool &_bDst ) {
+		static inline void										scast( uint32_t _u32Src, bool &_bDst ) {
 			_bDst = _u32Src != 0;
 		}
-		static inline void										uint32_scast( uint32_t _u32Src, std::complex<float> & ) {
-			throw std::runtime_error( "uint32_scast: No conversion available for uint32_t -> std::complex<float>." );
+		static inline void										scast( uint32_t _u32Src, std::complex<float> & ) {
+			throw std::runtime_error( "scast: No conversion available for uint32_t -> std::complex<float>." );
 		}
-		static inline void										uint32_scast( uint32_t _u32Src, std::complex<double> & ) {
-			throw std::runtime_error( "uint32_scast: No conversion available for uint32_t -> std::complex<double>." );
+		static inline void										scast( uint32_t _u32Src, std::complex<double> & ) {
+			throw std::runtime_error( "scast: No conversion available for uint32_t -> std::complex<double>." );
 		}
 
 #ifdef __AVX512F__
@@ -4689,50 +4687,50 @@ namespace nn9 {
 		// ===============================
 		// int64_t
 		// ===============================
-		static inline void										int64_scast( int64_t _i64Src, int8_t &_i8Dst ) {
+		static inline void										scast( int64_t _i64Src, int8_t &_i8Dst ) {
 			_i8Dst = static_cast<int8_t>(std::clamp<int64_t>( _i64Src, INT8_MIN, INT8_MAX ));
 		}
-		static inline void										int64_scast( int64_t _i64Src, uint8_t &_u8Dst ) {
+		static inline void										scast( int64_t _i64Src, uint8_t &_u8Dst ) {
 			_u8Dst = static_cast<uint8_t>(std::clamp<int64_t>( _i64Src, 0, UINT8_MAX ));
 		}
-		static inline void										int64_scast( int64_t _i64Src, int16_t &_i16Dst ) {
+		static inline void										scast( int64_t _i64Src, int16_t &_i16Dst ) {
 			_i16Dst = static_cast<int16_t>(std::clamp<int64_t>( _i64Src, INT16_MIN, INT16_MAX ));
 		}
-		static inline void										int64_scast( int64_t _i64Src, uint16_t &_u16Dst ) {
+		static inline void										scast( int64_t _i64Src, uint16_t &_u16Dst ) {
 			_u16Dst = static_cast<uint16_t>(std::clamp<int64_t>( _i64Src, 0, UINT16_MAX ));
 		}
-		static inline void										int64_scast( int64_t _i64Src, int32_t &_i32Dst ) {
+		static inline void										scast( int64_t _i64Src, int32_t &_i32Dst ) {
 			_i32Dst = static_cast<int16_t>(std::clamp<int64_t>( _i64Src, INT32_MIN, INT32_MAX ));
 		}
-		static inline void										int64_scast( int64_t _i64Src, uint32_t &_u32Dst ) {
+		static inline void										scast( int64_t _i64Src, uint32_t &_u32Dst ) {
 			_u32Dst = static_cast<uint16_t>(std::clamp<int64_t>( _i64Src, 0, UINT32_MAX ));
 		}
-		static inline void										int64_scast( int64_t _i64Src, int64_t &_i64Dst ) {
+		static inline void										scast( int64_t _i64Src, int64_t &_i64Dst ) {
 			_i64Dst = _i64Src;
 		}
-		static inline void										int64_scast( int64_t _i64Src, uint64_t &_u64Dst ) {
+		static inline void										scast( int64_t _i64Src, uint64_t &_u64Dst ) {
 			_u64Dst = static_cast<uint64_t>(std::max<int64_t>( _i64Src, 0 ));
 		}
-		static inline void										int64_scast( int64_t _i64Src, nn9::float16 &_f16Dst ) {
+		static inline void										scast( int64_t _i64Src, nn9::float16 &_f16Dst ) {
 			_f16Dst = static_cast<float>(std::clamp<float>( static_cast<float>(_i64Src), -65504.0f, 65504.0f ));
 		}
-		static inline void										int64_scast( int64_t _i64Src, bfloat16_t &_f16Dst ) {
+		static inline void										scast( int64_t _i64Src, bfloat16_t &_f16Dst ) {
 			_f16Dst = static_cast<float>(_i64Src);
 		}
-		static inline void										int64_scast( int64_t _i64Src, float &_fDst ) {
+		static inline void										scast( int64_t _i64Src, float &_fDst ) {
 			_fDst = static_cast<float>(_i64Src);
 		}
-		static inline void										int64_scast( int64_t _i64Src, double &_dDst ) {
+		static inline void										scast( int64_t _i64Src, double &_dDst ) {
 			_dDst = static_cast<double>(_i64Src);
 		}
-		static inline void										int64_scast( int64_t _i64Src, bool &_bDst ) {
+		static inline void										scast( int64_t _i64Src, bool &_bDst ) {
 			_bDst = _i64Src != 0;
 		}
-		static inline void										int64_scast( int64_t _i64Src, std::complex<float> & ) {
-			throw std::runtime_error( "int64_scast: No conversion available for int64_t -> std::complex<float>." );
+		static inline void										scast( int64_t _i64Src, std::complex<float> & ) {
+			throw std::runtime_error( "scast: No conversion available for int64_t -> std::complex<float>." );
 		}
-		static inline void										int64_scast( int64_t _i64Src, std::complex<double> & ) {
-			throw std::runtime_error( "int64_scast: No conversion available for int64_t -> std::complex<double>." );
+		static inline void										scast( int64_t _i64Src, std::complex<double> & ) {
+			throw std::runtime_error( "scast: No conversion available for int64_t -> std::complex<double>." );
 		}
 
 #ifdef __AVX512F__
@@ -4859,50 +4857,50 @@ namespace nn9 {
 		// ===============================
 		// uint64_t
 		// ===============================
-		static inline void										uint64_scast( uint64_t _u64Src, int8_t &_i8Dst ) {
+		static inline void										scast( uint64_t _u64Src, int8_t &_i8Dst ) {
 			_i8Dst = static_cast<int8_t>(std::min<uint64_t>( _u64Src, INT8_MAX ));
 		}
-		static inline void										uint64_scast( uint64_t _u64Src, uint8_t &_u8Dst ) {
+		static inline void										scast( uint64_t _u64Src, uint8_t &_u8Dst ) {
 			_u8Dst = static_cast<uint8_t>(std::min<uint64_t>( _u64Src, UINT8_MAX ));
 		}
-		static inline void										uint64_scast( uint64_t _u64Src, int16_t &_i16Dst ) {
+		static inline void										scast( uint64_t _u64Src, int16_t &_i16Dst ) {
 			_i16Dst = static_cast<int16_t>(std::min<uint64_t>( _u64Src, INT16_MAX ));
 		}
-		static inline void										uint64_scast( uint64_t _u64Src, uint16_t &_u16Dst ) {
+		static inline void										scast( uint64_t _u64Src, uint16_t &_u16Dst ) {
 			_u16Dst = static_cast<uint16_t>(std::min<uint64_t>( _u64Src, UINT16_MAX ));
 		}
-		static inline void										uint64_scast( uint64_t _u64Src, int32_t &_i32Dst ) {
+		static inline void										scast( uint64_t _u64Src, int32_t &_i32Dst ) {
 			_i32Dst = static_cast<int32_t>(std::min<uint64_t>( _u64Src, INT32_MAX ));
 		}
-		static inline void										uint64_scast( uint64_t _u64Src, uint32_t &_u32Dst ) {
+		static inline void										scast( uint64_t _u64Src, uint32_t &_u32Dst ) {
 			_u32Dst = static_cast<uint32_t>(std::min<uint64_t>( _u64Src, UINT32_MAX ));
 		}
-		static inline void										uint64_scast( uint64_t _u64Src, int64_t &_i64Dst ) {
+		static inline void										scast( uint64_t _u64Src, int64_t &_i64Dst ) {
 			_i64Dst = static_cast<int64_t>(std::min<uint64_t>( _u64Src, INT64_MAX ));
 		}
-		static inline void										uint64_scast( uint64_t _u64Src, uint64_t &_u64Dst ) {
+		static inline void										scast( uint64_t _u64Src, uint64_t &_u64Dst ) {
 			_u64Dst = _u64Src;
 		}
-		static inline void										uint64_scast( uint64_t _u64Src, nn9::float16 &_f16Dst ) {
+		static inline void										scast( uint64_t _u64Src, nn9::float16 &_f16Dst ) {
 			_f16Dst = static_cast<float>(std::min<double>( static_cast<double>(_u64Src), 65504.0f ));
 		}
-		static inline void										uint64_scast( uint64_t _u64Src, bfloat16_t &_f16Dst ) {
+		static inline void										scast( uint64_t _u64Src, bfloat16_t &_f16Dst ) {
 			_f16Dst = static_cast<float>(_u64Src);
 		}
-		static inline void										uint64_scast( uint64_t _u64Src, float &_fDst ) {
+		static inline void										scast( uint64_t _u64Src, float &_fDst ) {
 			_fDst = static_cast<float>(_u64Src);
 		}
-		static inline void										uint64_scast( uint64_t _u64Src, double &_dDst ) {
+		static inline void										scast( uint64_t _u64Src, double &_dDst ) {
 			_dDst = static_cast<double>(_u64Src);
 		}
-		static inline void										uint64_scast( uint64_t _u64Src, bool &_bDst ) {
+		static inline void										scast( uint64_t _u64Src, bool &_bDst ) {
 			_bDst = _u64Src != 0;
 		}
-		static inline void										uint64_scast( uint64_t _u64Src, std::complex<float> & ) {
-			throw std::runtime_error( "uint64_scast: No conversion available for uint64_t -> std::complex<float>." );
+		static inline void										scast( uint64_t _u64Src, std::complex<float> & ) {
+			throw std::runtime_error( "scast: No conversion available for uint64_t -> std::complex<float>." );
 		}
-		static inline void										uint64_scast( uint64_t _u64Src, std::complex<double> & ) {
-			throw std::runtime_error( "uint64_scast: No conversion available for uint64_t -> std::complex<double>." );
+		static inline void										scast( uint64_t _u64Src, std::complex<double> & ) {
+			throw std::runtime_error( "scast: No conversion available for uint64_t -> std::complex<double>." );
 		}
 
 #ifdef __AVX512F__
@@ -5028,50 +5026,142 @@ namespace nn9 {
 		// ===============================
 		// float/nn9::float16/bfloat16_t
 		// ===============================
-		static inline void										float_scast( float _fSrc, int8_t &_i8Dst ) {
+		static inline void										scast( float _fSrc, int8_t &_i8Dst ) {
 			_i8Dst = static_cast<int8_t>(std::clamp<float>( _fSrc, static_cast<float>(INT8_MIN), static_cast<float>(INT8_MAX) ));
 		}
-		static inline void										float_scast( float _fSrc, uint8_t &_u8Dst ) {
+		static inline void										scast( float _fSrc, uint8_t &_u8Dst ) {
 			_u8Dst = static_cast<uint8_t>(std::clamp<float>( _fSrc, 0.0f, static_cast<float>(UINT8_MAX) ));
 		}
-		static inline void										float_scast( float _fSrc, int16_t &_i16Dst ) {
+		static inline void										scast( float _fSrc, int16_t &_i16Dst ) {
 			_i16Dst = static_cast<int16_t>(std::clamp<float>( _fSrc, static_cast<float>(INT16_MIN), static_cast<float>(INT16_MAX) ));
 		}
-		static inline void										float_scast( float _fSrc, uint16_t &_u16Dst ) {
+		static inline void										scast( float _fSrc, uint16_t &_u16Dst ) {
 			_u16Dst = static_cast<uint16_t>(std::clamp<float>( _fSrc, 0.0f, static_cast<float>(UINT16_MAX) ));
 		}
-		static inline void										float_scast( float _fSrc, int32_t &_i32Dst ) {
+		static inline void										scast( float _fSrc, int32_t &_i32Dst ) {
 			_i32Dst = static_cast<int32_t>(std::clamp<float>( _fSrc, -2147483648.0f, 2147483520.0f ));
 		}
-		static inline void										float_scast( float _fSrc, uint32_t &_u32Dst ) {
+		static inline void										scast( float _fSrc, uint32_t &_u32Dst ) {
 			_u32Dst = static_cast<uint32_t>(std::clamp<float>( _fSrc, 0.0f, static_cast<float>(UINT32_MAX) ));
 		}
-		static inline void										float_scast( float _fSrc, int64_t &_i64Dst ) {
+		static inline void										scast( float _fSrc, int64_t &_i64Dst ) {
 			_i64Dst = static_cast<int64_t>(std::clamp<float>( _fSrc, -9223372036854775808.0f, 9223371487098961920.0f ));
 		}
-		static inline void										float_scast( float _fSrc, uint64_t &_u64Dst ) {
+		static inline void										scast( float _fSrc, uint64_t &_u64Dst ) {
 			_u64Dst = static_cast<uint64_t>(std::clamp<float>( _fSrc, 0.0f, static_cast<float>(UINT64_MAX) ));
 		}
-		static inline void										float_scast( float _fSrc, nn9::float16 &_f16Dst ) {
+		static inline void										scast( float _fSrc, nn9::float16 &_f16Dst ) {
 			_f16Dst = std::clamp<float>( _fSrc, -65504.0f, 65504.0f );
 		}
-		static inline void										float_scast( float _fSrc, bfloat16_t &_f16Dst ) {
+		static inline void										scast( float _fSrc, bfloat16_t &_f16Dst ) {
 			_f16Dst = static_cast<float>(_fSrc);
 		}
-		static inline void										float_scast( float _fSrc, float &_fDst ) {
+		static inline void										scast( float _fSrc, float &_fDst ) {
 			_fDst = _fSrc;
 		}
-		static inline void										float_scast( float _fSrc, double &_dDst ) {
+		static inline void										scast( float _fSrc, double &_dDst ) {
 			_dDst = static_cast<double>(_fSrc);
 		}
-		static inline void										float_scast( float _fSrc, bool &_bDst ) {
+		static inline void										scast( float _fSrc, bool &_bDst ) {
 			_bDst = _fSrc != 0.0f;
 		}
-		static inline void										float_scast( float _fSrc, std::complex<float> & ) {
-			throw std::runtime_error( "float_scast: No conversion available for float -> std::complex<float>." );
+		static inline void										scast( float _fSrc, std::complex<float> & ) {
+			throw std::runtime_error( "scast: No conversion available for float -> std::complex<float>." );
 		}
-		static inline void										float_scast( float _fSrc, std::complex<double> & ) {
-			throw std::runtime_error( "float_scast: No conversion available for float -> std::complex<double>." );
+		static inline void										scast( float _fSrc, std::complex<double> & ) {
+			throw std::runtime_error( "scast: No conversion available for float -> std::complex<double>." );
+		}
+
+		static inline void										scast( nn9::float16 _fSrc, int8_t &_i8Dst ) {
+			_i8Dst = static_cast<int8_t>(std::clamp<float>( _fSrc, static_cast<float>(INT8_MIN), static_cast<float>(INT8_MAX) ));
+		}
+		static inline void										scast( nn9::float16 _fSrc, uint8_t &_u8Dst ) {
+			_u8Dst = static_cast<uint8_t>(std::clamp<float>( _fSrc, 0.0f, static_cast<float>(UINT8_MAX) ));
+		}
+		static inline void										scast( nn9::float16 _fSrc, int16_t &_i16Dst ) {
+			_i16Dst = static_cast<int16_t>(std::clamp<float>( _fSrc, static_cast<float>(INT16_MIN), static_cast<float>(INT16_MAX) ));
+		}
+		static inline void										scast( nn9::float16 _fSrc, uint16_t &_u16Dst ) {
+			_u16Dst = static_cast<uint16_t>(std::max<float>( _fSrc, 0.0f ));
+		}
+		static inline void										scast( nn9::float16 _fSrc, int32_t &_i32Dst ) {
+			_i32Dst = static_cast<int32_t>(static_cast<float>(_fSrc));
+		}
+		static inline void										scast( nn9::float16 _fSrc, uint32_t &_u32Dst ) {
+			_u32Dst = static_cast<uint32_t>(std::max<float>( _fSrc, 0.0f ));
+		}
+		static inline void										scast( nn9::float16 _fSrc, int64_t &_i64Dst ) {
+			_i64Dst = static_cast<int64_t>(static_cast<float>(_fSrc));
+		}
+		static inline void										scast( nn9::float16 _fSrc, uint64_t &_u64Dst ) {
+			_u64Dst = static_cast<uint64_t>(std::max<float>( _fSrc, 0.0f ));
+		}
+		static inline void										scast( nn9::float16 _fSrc, nn9::float16 &_f16Dst ) {
+			_f16Dst.m_u16Value = _fSrc.m_u16Value;
+		}
+		static inline void										scast( nn9::float16 _fSrc, bfloat16_t &_f16Dst ) {
+			_f16Dst = static_cast<float>(_fSrc);
+		}
+		static inline void										scast( nn9::float16 _fSrc, float &_fDst ) {
+			_fDst = _fSrc;
+		}
+		static inline void										scast( nn9::float16 _fSrc, double &_dDst ) {
+			_dDst = static_cast<double>(_fSrc);
+		}
+		static inline void										scast( nn9::float16 _fSrc, bool &_bDst ) {
+			_bDst = static_cast<float>(_fSrc) != 0.0f;
+		}
+		static inline void										scast( nn9::float16 _fSrc, std::complex<float> & ) {
+			throw std::runtime_error( "scast: No conversion available for nn9::float16 -> std::complex<float>." );
+		}
+		static inline void										scast( nn9::float16 _fSrc, std::complex<double> & ) {
+			throw std::runtime_error( "scast: No conversion available for nn9::float16 -> std::complex<double>." );
+		}
+
+		static inline void										scast( bfloat16_t _fSrc, int8_t &_i8Dst ) {
+			_i8Dst = static_cast<int8_t>(std::clamp<float>( _fSrc, static_cast<float>(INT8_MIN), static_cast<float>(INT8_MAX) ));
+		}
+		static inline void										scast( bfloat16_t _fSrc, uint8_t &_u8Dst ) {
+			_u8Dst = static_cast<uint8_t>(std::clamp<float>( _fSrc, 0.0f, static_cast<float>(UINT8_MAX) ));
+		}
+		static inline void										scast( bfloat16_t _fSrc, int16_t &_i16Dst ) {
+			_i16Dst = static_cast<int16_t>(std::clamp<float>( _fSrc, static_cast<float>(INT16_MIN), static_cast<float>(INT16_MAX) ));
+		}
+		static inline void										scast( bfloat16_t _fSrc, uint16_t &_u16Dst ) {
+			_u16Dst = static_cast<uint16_t>(std::clamp<float>( _fSrc, 0.0f, static_cast<float>(UINT16_MAX) ));
+		}
+		static inline void										scast( bfloat16_t _fSrc, int32_t &_i32Dst ) {
+			_i32Dst = static_cast<int32_t>(std::clamp<float>( _fSrc, -2147483648.0f, 2147483520.0f ));
+		}
+		static inline void										scast( bfloat16_t _fSrc, uint32_t &_u32Dst ) {
+			_u32Dst = static_cast<uint32_t>(std::clamp<float>( _fSrc, 0.0f, static_cast<float>(UINT32_MAX) ));
+		}
+		static inline void										scast( bfloat16_t _fSrc, int64_t &_i64Dst ) {
+			_i64Dst = static_cast<int64_t>(std::clamp<float>( _fSrc, -9223372036854775808.0f, 9223371487098961920.0f ));
+		}
+		static inline void										scast( bfloat16_t _fSrc, uint64_t &_u64Dst ) {
+			_u64Dst = static_cast<uint64_t>(std::clamp<float>( _fSrc, 0.0f, static_cast<float>(UINT64_MAX) ));
+		}
+		static inline void										scast( bfloat16_t _fSrc, nn9::float16 &_f16Dst ) {
+			_f16Dst.m_u16Value = _fSrc.m_u16Value;
+		}
+		static inline void										scast( bfloat16_t _fSrc, bfloat16_t &_f16Dst ) {
+			_f16Dst = static_cast<float>(_fSrc);
+		}
+		static inline void										scast( bfloat16_t _fSrc, float &_fDst ) {
+			_fDst = _fSrc;
+		}
+		static inline void										scast( bfloat16_t _fSrc, double &_dDst ) {
+			_dDst = static_cast<double>(_fSrc);
+		}
+		static inline void										scast( bfloat16_t _fSrc, bool &_bDst ) {
+			_bDst = static_cast<float>(_fSrc) != 0.0f;
+		}
+		static inline void										scast( bfloat16_t _fSrc, std::complex<float> & ) {
+			throw std::runtime_error( "scast: No conversion available for bfloat16_t -> std::complex<float>." );
+		}
+		static inline void										scast( bfloat16_t _fSrc, std::complex<double> & ) {
+			throw std::runtime_error( "scast: No conversion available for bfloat16_t -> std::complex<double>." );
 		}
 
 #ifdef __AVX512F__
@@ -5174,50 +5264,50 @@ namespace nn9 {
 		// ===============================
 		// double
 		// ===============================
-		static inline void										double_scast( double _dSrc, int8_t &_i8Dst ) {
+		static inline void										scast( double _dSrc, int8_t &_i8Dst ) {
 			_i8Dst = static_cast<int8_t>(std::clamp<double>( _dSrc, static_cast<double>(INT8_MIN), static_cast<double>(INT8_MAX) ));
 		}
-		static inline void										double_scast( double _dSrc, uint8_t &_u8Dst ) {
+		static inline void										scast( double _dSrc, uint8_t &_u8Dst ) {
 			_u8Dst = static_cast<uint8_t>(std::clamp<double>( _dSrc, 0.0, static_cast<float>(UINT8_MAX) ));
 		}
-		static inline void										double_scast( double _dSrc, int16_t &_i16Dst ) {
+		static inline void										scast( double _dSrc, int16_t &_i16Dst ) {
 			_i16Dst = static_cast<int16_t>(std::clamp<double>( _dSrc, static_cast<double>(INT16_MIN), static_cast<double>(INT16_MAX) ));
 		}
-		static inline void										double_scast( double _dSrc, uint16_t &_u16Dst ) {
+		static inline void										scast( double _dSrc, uint16_t &_u16Dst ) {
 			_u16Dst = static_cast<uint16_t>(std::clamp<double>( _dSrc, 0.0, static_cast<double>(UINT16_MAX) ));
 		}
-		static inline void										double_scast( double _dSrc, int32_t &_i32Dst ) {
+		static inline void										scast( double _dSrc, int32_t &_i32Dst ) {
 			_i32Dst = static_cast<int32_t>(std::clamp<double>( _dSrc, static_cast<double>(INT32_MIN), static_cast<double>(INT32_MAX) ));
 		}
-		static inline void										double_scast( double _dSrc, uint32_t &_u32Dst ) {
+		static inline void										scast( double _dSrc, uint32_t &_u32Dst ) {
 			_u32Dst = static_cast<uint32_t>(std::clamp<double>( _dSrc, 0.0, static_cast<double>(UINT32_MAX) ));
 		}
-		static inline void										double_scast( double _dSrc, int64_t &_i64Dst ) {
+		static inline void										scast( double _dSrc, int64_t &_i64Dst ) {
 			_i64Dst = static_cast<int64_t>(std::clamp<double>( _dSrc, static_cast<double>(INT64_MIN), 9223372036854774784.0 ));
 		}
-		static inline void										double_scast( double _dSrc, uint64_t &_u64Dst ) {
+		static inline void										scast( double _dSrc, uint64_t &_u64Dst ) {
 			_u64Dst = static_cast<uint64_t>(std::clamp<double>( _dSrc, 0.0, 18446744073709549568.0 ));
 		}
-		static inline void										double_scast( double _dSrc, nn9::float16 &_f16Dst ) {
+		static inline void										scast( double _dSrc, nn9::float16 &_f16Dst ) {
 			_f16Dst = std::clamp<double>( _dSrc, -65504.0, 65504.0 );
 		}
-		static inline void										double_scast( double _dSrc, bfloat16_t &_f16Dst ) {
+		static inline void										scast( double _dSrc, bfloat16_t &_f16Dst ) {
 			_f16Dst = static_cast<float>(_dSrc);
 		}
-		static inline void										double_scast( double _dSrc, float &_fDst ) {
+		static inline void										scast( double _dSrc, float &_fDst ) {
 			_fDst = static_cast<float>(_dSrc);
 		}
-		static inline void										double_scast( double _dSrc, double &_dDst ) {
+		static inline void										scast( double _dSrc, double &_dDst ) {
 			_dDst = _dSrc;
 		}
-		static inline void										double_scast( double _dSrc, bool &_bDst ) {
+		static inline void										scast( double _dSrc, bool &_bDst ) {
 			_bDst = _dSrc != 0.0;
 		}
-		static inline void										double_scast( double _dSrc, std::complex<float> & ) {
-			throw std::runtime_error( "double_scast: No conversion available for double -> std::complex<float>." );
+		static inline void										scast( double _dSrc, std::complex<float> & ) {
+			throw std::runtime_error( "scast: No conversion available for double -> std::complex<float>." );
 		}
-		static inline void										double_scast( double _dSrc, std::complex<double> & ) {
-			throw std::runtime_error( "double_scast: No conversion available for double -> std::complex<double>." );
+		static inline void										scast( double _dSrc, std::complex<double> & ) {
+			throw std::runtime_error( "scast: No conversion available for double -> std::complex<double>." );
 		}
 
 #ifdef __AVX512F__
@@ -5325,6 +5415,67 @@ namespace nn9 {
 		}
 		static inline void										double_scast( __m256 _mDouble, std::complex<double> * ) {
 			throw std::runtime_error( "double_scast: No conversion available for double -> std::complex<double>." );
+		}
+#endif	// #ifdef __AVX2__
+
+
+#ifdef __AVX512F__
+		template <typename _tInType, typename _tOutType>
+		static inline void										scast( __m512i _mSrc, _tOutType * _ptDst ) {
+			if constexpr ( std::is_same<_tInType, int8_t>::value ) { int8_scast( _mSrc, _ptDst ); }
+			else if constexpr ( std::is_same<_tInType, uint8_t>::value || std::is_same<_tInType, bool>::value ) { uint8_scast( _mSrc, _ptDst ); }
+			else if constexpr ( std::is_same<_tInType, int16_t>::value ) { int16_scast( _mSrc, _ptDst ); }
+			else if constexpr ( std::is_same<_tInType, uint16_t>::value ) { uint16_scast( _mSrc, _ptDst ); }
+			else if constexpr ( std::is_same<_tInType, int32_t>::value ) { int32_scast( _mSrc, _ptDst ); }
+			else if constexpr ( std::is_same<_tInType, uint32_t>::value ) { uint32_scast( _mSrc, _ptDst ); }
+			else if constexpr ( std::is_same<_tInType, int64_t>::value ) { int64_scast( _mSrc, _ptDst ); }
+			else if constexpr ( std::is_same<_tInType, uint64_t>::value ) { uint64_scast( _mSrc, _ptDst ); }
+
+			else { throw std::runtime_error( "scast<__m512i,>: Invalid input type." ); }
+		}
+
+		template <typename _tInType, typename _tOutType>
+		static inline void										scast( __m512 _mSrc, _tOutType * _ptDst ) {
+			if constexpr ( std::is_same<_tInType, float>::value || std::is_same<_tInType, nn9::float16>::value || std::is_same<_tInType, bfloat16_t>::value ) { float_scast( _mSrc, _ptDst ); }
+
+			else { throw std::runtime_error( "scast<__m512,>: Invalid input type." ); }
+		}
+
+		template <typename _tInType, typename _tOutType>
+		static inline void										scast( __m512d _mSrc, _tOutType * _ptDst ) {
+			if constexpr ( std::is_same<_tInType, double>::value ) { double_scast( _mSrc, _ptDst ); }
+
+			else { throw std::runtime_error( "scast<__m512d,>: Invalid input type." ); }
+		}
+#endif	// #ifdef __AVX512F__
+
+#ifdef __AVX2__
+		template <typename _tInType, typename _tOutType>
+		static inline void										scast( __m256i _mSrc, _tOutType * _ptDst ) {
+			if constexpr ( std::is_same<_tInType, int8_t>::value ) { int8_scast( _mSrc, _ptDst ); }
+			else if constexpr ( std::is_same<_tInType, uint8_t>::value || std::is_same<_tInType, bool>::value ) { uint8_scast( _mSrc, _ptDst ); }
+			else if constexpr ( std::is_same<_tInType, int16_t>::value ) { int16_scast( _mSrc, _ptDst ); }
+			else if constexpr ( std::is_same<_tInType, uint16_t>::value ) { uint16_scast( _mSrc, _ptDst ); }
+			else if constexpr ( std::is_same<_tInType, int32_t>::value ) { int32_scast( _mSrc, _ptDst ); }
+			else if constexpr ( std::is_same<_tInType, uint32_t>::value ) { uint32_scast( _mSrc, _ptDst ); }
+			else if constexpr ( std::is_same<_tInType, int64_t>::value ) { int64_scast( _mSrc, _ptDst ); }
+			else if constexpr ( std::is_same<_tInType, uint64_t>::value ) { uint64_scast( _mSrc, _ptDst ); }
+
+			else { throw std::runtime_error( "scast<__m256i,>: Invalid input type." ); }
+		}
+
+		template <typename _tInType, typename _tOutType>
+		static inline void										scast( __m256 _mSrc, _tOutType * _ptDst ) {
+			if constexpr ( std::is_same<_tInType, float>::value || std::is_same<_tInType, nn9::float16>::value || std::is_same<_tInType, bfloat16_t>::value ) { float_scast( _mSrc, _ptDst ); }
+
+			else { throw std::runtime_error( "scast<__m256,>: Invalid input type." ); }
+		}
+
+		template <typename _tInType, typename _tOutType>
+		static inline void										scast( __m256d _mSrc, _tOutType * _ptDst ) {
+			if constexpr ( std::is_same<_tInType, double>::value ) { double_scast( _mSrc, _ptDst ); }
+
+			else { throw std::runtime_error( "scast<__m256d,>: Invalid input type." ); }
 		}
 #endif	// #ifdef __AVX2__
 	};

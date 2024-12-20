@@ -21,6 +21,7 @@ int wmain( int _iArgC, wchar_t const * _wcpArgV[] ) {
 
 		
 		auto vView = tTensorTest.FullView<float>();
+		
 		nn9::Init::OrthogonalInitialization( 60, 28 * 28, vView );
 		nn9::Math::Asinh( vView );
 		auto vRange = tTensorTest.RangeView<float>( 28, 200 );
@@ -30,7 +31,7 @@ int wmain( int _iArgC, wchar_t const * _wcpArgV[] ) {
 			for ( size_t I = 0; I < vRange.size(); ++I ) {
 				vRange[I] = 90.0f;
 			}
-
+			nn9::Math::Mul( vView, 200.0 );
 			//for ( int I = 0; I < 60; ++I ) {
 			//	for ( int H = 0; H < 28; ++H ) {
 			//		for ( int W = 0; W < 28; ++W ) {
@@ -43,7 +44,7 @@ int wmain( int _iArgC, wchar_t const * _wcpArgV[] ) {
 			//}
 
 			double iVales[64] = {
-				-1, 2, FLT_MAX, 0, -FLT_MAX, 256, 7, 8, 9, 10,
+				-1, 2, DBL_MAX, 0, -FLT_MAX, 256, 7, 8, 9, 10,
 				120, 221, 322, 423, 124, 125, 126, 127, 128, 129,
 				0x7F, -1, 77, -0x7F, 1, 64, 254, -500, -500, 500,
 				0x7F, INT16_MIN, 32, -0x7F, 1, 64, 254, -500, -500, 500,
@@ -55,13 +56,13 @@ int wmain( int _iArgC, wchar_t const * _wcpArgV[] ) {
 			//__m256i mVal = _mm256_loadu_si256( reinterpret_cast<const __m256i *>(iVales) );
 			//__m512 mVal = _mm512_loadu_ps( iVales );
 			__m512d mVal = _mm512_loadu_pd( iVales );
-			nn9::float16 ui16Dst[64];
+			float ui16Dst[64];
 			nn9::Intrin::double_scast( mVal, ui16Dst );
 
-			/*nn9::Tensor tBFloat16 = tTensorTest.CopyAs( nn9::NN9_T_FLOAT16 );
-			auto vViewBf16 = tBFloat16.FullView<nn9::float16>();*/
-			nn9::Tensor tBFloat16 = tTensorTest.CopyAs( nn9::NN9_T_BFLOAT16 );
-			auto vViewBf16 = tBFloat16.FullView<bfloat16_t>();
+			nn9::Tensor tBFloat16 = tTensorTest.CopyAs( nn9::NN9_T_FLOAT16 );
+			auto vViewBf16 = tBFloat16.FullView<nn9::float16>();
+			/*nn9::Tensor tBFloat16 = tTensorTest.CopyAs( nn9::NN9_T_BFLOAT16 );
+			auto vViewBf16 = tBFloat16.FullView<bfloat16_t>();*/
 			/*nn9::Tensor tBFloat16 = tTensorTest.CopyAs( nn9::NN9_T_INT32 );
 			auto vViewBf16 = tBFloat16.FullView<int32_t>();*/
 
@@ -83,7 +84,7 @@ int wmain( int _iArgC, wchar_t const * _wcpArgV[] ) {
 
 
 			dSum = 0.0;
-			nn9::Math::Mul( vViewBf16, 200.0 );
+			
 			tTimer.Start();
 			for ( int i = 0; i < 50000; ++i ) {
 				//dSum += nn9::Math::KahanSum( vViewNewFloat );

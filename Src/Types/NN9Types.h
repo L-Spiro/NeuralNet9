@@ -58,6 +58,154 @@ namespace nn9 {
 	public :
 		// == Functions.
 		/**
+		 * A constexpr function that checks if T is a 64-bit float type.
+		 *
+		 * \tparam T The type to check.
+		 * \return Returns true if T is float, false otherwise.
+		 */
+		template <typename T>
+		static constexpr bool											Is64BitFloat() { return std::is_same<T, double>::value; }
+
+		/**
+		 * A constexpr function that checks if T is a 32-bit float type.
+		 *
+		 * \tparam T The type to check.
+		 * \return Returns true if T is float, false otherwise.
+		 */
+		template <typename T>
+		static constexpr bool											Is32BitFloat() { return std::is_same<T, float>::value; }
+
+		/**
+		 * A constexpr function that checks if T is a bfloat16_t type.
+		 *
+		 * \tparam T The type to check.
+		 * \return Returns true if T is bfloat16_t, false otherwise.
+		 */
+		template <typename T>
+		static constexpr bool											IsBFloat16() { return std::is_same<T, bfloat16_t>::value; }
+
+		/**
+		 * A constexpr function that checks if T is a nn9::float16 type.
+		 *
+		 * \tparam T The type to check.
+		 * \return Returns true if T is nn9::float16, false otherwise.
+		 */
+		template <typename T>
+		static constexpr bool											IsFloat16() { return std::is_same<T, nn9::float16>::value; }
+
+		/**
+		 * A constexpr function that checks if T is a int8_t type.
+		 *
+		 * \tparam T The type to check.
+		 * \return Returns true if T is int8_t, false otherwise.
+		 */
+		template <typename T>
+		static constexpr bool											IsInt8() { return std::is_same<T, int8_t>::value; }
+
+		/**
+		 * A constexpr function that checks if T is a uint8_t type.
+		 *
+		 * \tparam T The type to check.
+		 * \return Returns true if T is uint8_t, false otherwise.
+		 */
+		template <typename T>
+		static constexpr bool											IsUint8() { return std::is_same<T, uint8_t>::value; }
+
+		/**
+		 * A constexpr function that checks if T is a int16_t type.
+		 *
+		 * \tparam T The type to check.
+		 * \return Returns true if T is int16_t, false otherwise.
+		 */
+		template <typename T>
+		static constexpr bool											IsInt16() { return std::is_same<T, int16_t>::value; }
+
+		/**
+		 * A constexpr function that checks if T is a uint16_t type.
+		 *
+		 * \tparam T The type to check.
+		 * \return Returns true if T is uint16_t, false otherwise.
+		 */
+		template <typename T>
+		static constexpr bool											IsUint16() { return std::is_same<T, uint16_t>::value; }
+
+		/**
+		 * A constexpr function that checks if T is a int32_t type.
+		 *
+		 * \tparam T The type to check.
+		 * \return Returns true if T is int32_t, false otherwise.
+		 */
+		template <typename T>
+		static constexpr bool											IsInt32() { return std::is_same<T, int32_t>::value; }
+
+		/**
+		 * A constexpr function that checks if T is a uint32_t type.
+		 *
+		 * \tparam T The type to check.
+		 * \return Returns true if T is uint32_t, false otherwise.
+		 */
+		template <typename T>
+		static constexpr bool											IsUint32() { return std::is_same<T, uint32_t>::value; }
+
+		/**
+		 * A constexpr function that checks if T is a int64_t type.
+		 *
+		 * \tparam T The type to check.
+		 * \return Returns true if T is int64_t, false otherwise.
+		 */
+		template <typename T>
+		static constexpr bool											IsInt64() { return std::is_same<T, int64_t>::value; }
+
+		/**
+		 * A constexpr function that checks if T is a uint64_t type.
+		 *
+		 * \tparam T The type to check.
+		 * \return Returns true if T is uint64_t, false otherwise.
+		 */
+		template <typename T>
+		static constexpr bool											IsUint64() { return std::is_same<T, uint64_t>::value; }
+
+		/**
+		 * A constexpr function that checks if T is a type that is suitable for an integer SIMD register (__m512i/__m256i).
+		 *
+		 * \tparam T The type to check.
+		 * \return Returns true if T is an integer type, false otherwise.
+		 */
+		template <typename T>
+		static constexpr bool											SimdInt() { return std::is_integral<T>::value; }
+
+		/**
+		 * A constexpr function that checks if T is a type that is suitable for a float SIMD register (__m512/__m256).
+		 *
+		 * \tparam T The type to check.
+		 * \return Returns true if T is float type suitable for a 32-bit foating-point SIMD register, false otherwise.
+		 */
+		template <typename T>
+		static constexpr bool											SimdFloat() { return IsFloat16<T>() || IsBFloat16<T>() || Is32BitFloat<T>(); }
+
+		/**
+		 * A constexpr function that checks if T is a type that is suitable for a double SIMD register (__m512d/__m256d).
+		 *
+		 * \tparam T The type to check.
+		 * \return Returns true if T is float type suitable for a 64-bit foating-point SIMD register, false otherwise.
+		 */
+		template <typename T>
+		static constexpr bool											SimdDouble() { return IsFloat16<T>() || IsBFloat16<T>() || Is32BitFloat<T>(); }
+
+		/**
+		 * \brief A constexpr function that checks if T is an unsigned type.
+		 *
+		 * This relies on std::is_unsigned, which checks if T is an unsigned integral type.
+		 * Types like unsigned int, unsigned long, etc., will return Returns true.
+		 * Non-integral types or signed integral types will return false.
+		 *
+		 * \tparam T The type to check.
+		 * \return Returns true if T is an unsigned integral type, false otherwise.
+		 */
+		template <typename T>
+		static constexpr bool											IsUnsigned() { return std::is_unsigned<T>::value; }
+
+		/**
 		 * Gets the size of a known type.
 		 * 
 		 * \param _tType The type whose size is to be obtained.
