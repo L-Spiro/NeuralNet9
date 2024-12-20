@@ -60,22 +60,22 @@ namespace nn9 {
 						__m512 mSrc = bfloat16::loadu_bf16_to_fp32_16( reinterpret_cast<uint16_t *>(pSrc) );
 						_mm512_store_ps( fTmp, mSrc );
 
-						scast( _fFunc( fTmp[0] ), fTmp[0] );
-						scast( _fFunc( fTmp[1] ), fTmp[1] );
-						scast( _fFunc( fTmp[2] ), fTmp[2] );
-						scast( _fFunc( fTmp[3] ), fTmp[3] );
-						scast( _fFunc( fTmp[4] ), fTmp[4] );
-						scast( _fFunc( fTmp[5] ), fTmp[5] );
-						scast( _fFunc( fTmp[6] ), fTmp[6] );
-						scast( _fFunc( fTmp[7] ), fTmp[7] );
-						scast( _fFunc( fTmp[8] ), fTmp[8] );
-						scast( _fFunc( fTmp[9] ), fTmp[9] );
-						scast( _fFunc( fTmp[10] ), fTmp[10] );
-						scast( _fFunc( fTmp[11] ), fTmp[11] );
-						scast( _fFunc( fTmp[12] ), fTmp[12] );
-						scast( _fFunc( fTmp[13] ), fTmp[13] );
-						scast( _fFunc( fTmp[14] ), fTmp[14] );
-						scast( _fFunc( fTmp[15] ), fTmp[15] );
+						Intrin::scast( _fFunc( fTmp[0] ), fTmp[0] );
+						Intrin::scast( _fFunc( fTmp[1] ), fTmp[1] );
+						Intrin::scast( _fFunc( fTmp[2] ), fTmp[2] );
+						Intrin::scast( _fFunc( fTmp[3] ), fTmp[3] );
+						Intrin::scast( _fFunc( fTmp[4] ), fTmp[4] );
+						Intrin::scast( _fFunc( fTmp[5] ), fTmp[5] );
+						Intrin::scast( _fFunc( fTmp[6] ), fTmp[6] );
+						Intrin::scast( _fFunc( fTmp[7] ), fTmp[7] );
+						Intrin::scast( _fFunc( fTmp[8] ), fTmp[8] );
+						Intrin::scast( _fFunc( fTmp[9] ), fTmp[9] );
+						Intrin::scast( _fFunc( fTmp[10] ), fTmp[10] );
+						Intrin::scast( _fFunc( fTmp[11] ), fTmp[11] );
+						Intrin::scast( _fFunc( fTmp[12] ), fTmp[12] );
+						Intrin::scast( _fFunc( fTmp[13] ), fTmp[13] );
+						Intrin::scast( _fFunc( fTmp[14] ), fTmp[14] );
+						Intrin::scast( _fFunc( fTmp[15] ), fTmp[15] );
 
 						sSize -= 16;
 						__m512 mDst = _mm512_load_ps( fTmp );
@@ -83,7 +83,7 @@ namespace nn9 {
 						pSrc += 16;
 					}
 					while ( sSize ) {
-						scast( _fFunc( (*pSrc) ), (*pSrc) );
+						Intrin::scast( _fFunc( (*pSrc) ), (*pSrc) );
 						++pSrc;
 						--sSize;
 					}
@@ -101,22 +101,22 @@ namespace nn9 {
 						__m512 mVal = nn9::float16::Convert16Float16ToFloat32( pSrc );
 						_mm512_store_ps( fTmp, mVal );
 
-						scast( _fFunc( fTmp[0] ), fTmp[0] );
-						scast( _fFunc( fTmp[1] ), fTmp[1] );
-						scast( _fFunc( fTmp[2] ), fTmp[2] );
-						scast( _fFunc( fTmp[3] ), fTmp[3] );
-						scast( _fFunc( fTmp[4] ), fTmp[4] );
-						scast( _fFunc( fTmp[5] ), fTmp[5] );
-						scast( _fFunc( fTmp[6] ), fTmp[6] );
-						scast( _fFunc( fTmp[7] ), fTmp[7] );
-						scast( _fFunc( fTmp[8] ), fTmp[8] );
-						scast( _fFunc( fTmp[9] ), fTmp[9] );
-						scast( _fFunc( fTmp[10] ), fTmp[10] );
-						scast( _fFunc( fTmp[11] ), fTmp[11] );
-						scast( _fFunc( fTmp[12] ), fTmp[12] );
-						scast( _fFunc( fTmp[13] ), fTmp[13] );
-						scast( _fFunc( fTmp[14] ), fTmp[14] );
-						scast( _fFunc( fTmp[15] ), fTmp[15] );
+						Intrin::scast( _fFunc( fTmp[0] ), fTmp[0] );
+						Intrin::scast( _fFunc( fTmp[1] ), fTmp[1] );
+						Intrin::scast( _fFunc( fTmp[2] ), fTmp[2] );
+						Intrin::scast( _fFunc( fTmp[3] ), fTmp[3] );
+						Intrin::scast( _fFunc( fTmp[4] ), fTmp[4] );
+						Intrin::scast( _fFunc( fTmp[5] ), fTmp[5] );
+						Intrin::scast( _fFunc( fTmp[6] ), fTmp[6] );
+						Intrin::scast( _fFunc( fTmp[7] ), fTmp[7] );
+						Intrin::scast( _fFunc( fTmp[8] ), fTmp[8] );
+						Intrin::scast( _fFunc( fTmp[9] ), fTmp[9] );
+						Intrin::scast( _fFunc( fTmp[10] ), fTmp[10] );
+						Intrin::scast( _fFunc( fTmp[11] ), fTmp[11] );
+						Intrin::scast( _fFunc( fTmp[12] ), fTmp[12] );
+						Intrin::scast( _fFunc( fTmp[13] ), fTmp[13] );
+						Intrin::scast( _fFunc( fTmp[14] ), fTmp[14] );
+						Intrin::scast( _fFunc( fTmp[15] ), fTmp[15] );
 
 						__m512 mDst = _mm512_load_ps( fTmp );
 						nn9::float16::Convert16Float32ToFloat16( pSrc, mDst );
@@ -125,7 +125,7 @@ namespace nn9 {
 						sSize -= 16;
 					}
 					while ( sSize ) {
-						scast( _fFunc( (*pSrc) ), (*pSrc) );
+						Intrin::scast( _fFunc( (*pSrc) ), (*pSrc) );
 						++pSrc;
 						--sSize;
 					}
@@ -147,14 +147,14 @@ namespace nn9 {
 						__m256 mSrc = bfloat16::loadu_bf16_to_fp32_8( reinterpret_cast<uint16_t *>(pSrc) );
 						_mm256_store_ps( fTmp, mSrc );
 
-						scast( _fFunc( fTmp[0] ), fTmp[0] );
-						scast( _fFunc( fTmp[1] ), fTmp[1] );
-						scast( _fFunc( fTmp[2] ), fTmp[2] );
-						scast( _fFunc( fTmp[3] ), fTmp[3] );
-						scast( _fFunc( fTmp[4] ), fTmp[4] );
-						scast( _fFunc( fTmp[5] ), fTmp[5] );
-						scast( _fFunc( fTmp[6] ), fTmp[6] );
-						scast( _fFunc( fTmp[7] ), fTmp[7] );
+						Intrin::scast( _fFunc( fTmp[0] ), fTmp[0] );
+						Intrin::scast( _fFunc( fTmp[1] ), fTmp[1] );
+						Intrin::scast( _fFunc( fTmp[2] ), fTmp[2] );
+						Intrin::scast( _fFunc( fTmp[3] ), fTmp[3] );
+						Intrin::scast( _fFunc( fTmp[4] ), fTmp[4] );
+						Intrin::scast( _fFunc( fTmp[5] ), fTmp[5] );
+						Intrin::scast( _fFunc( fTmp[6] ), fTmp[6] );
+						Intrin::scast( _fFunc( fTmp[7] ), fTmp[7] );
 
 						sSize -= 8;
 						__m256 mDst = _mm256_load_ps( fTmp );
@@ -162,7 +162,7 @@ namespace nn9 {
 						pSrc += 8;
 					}
 					while ( sSize ) {
-						scast( _fFunc( (*pSrc) ), (*pSrc) );
+						Intrin::scast( _fFunc( (*pSrc) ), (*pSrc) );
 						++pSrc;
 						--sSize;
 					}
@@ -180,14 +180,14 @@ namespace nn9 {
 						__m256 mVal = nn9::float16::Convert8Float16ToFloat32( pSrc );
 						_mm256_store_ps( fTmp, mVal );
 
-						scast( _fFunc( fTmp[0] ), fTmp[0] );
-						scast( _fFunc( fTmp[1] ), fTmp[1] );
-						scast( _fFunc( fTmp[2] ), fTmp[2] );
-						scast( _fFunc( fTmp[3] ), fTmp[3] );
-						scast( _fFunc( fTmp[4] ), fTmp[4] );
-						scast( _fFunc( fTmp[5] ), fTmp[5] );
-						scast( _fFunc( fTmp[6] ), fTmp[6] );
-						scast( _fFunc( fTmp[7] ), fTmp[7] );
+						Intrin::scast( _fFunc( fTmp[0] ), fTmp[0] );
+						Intrin::scast( _fFunc( fTmp[1] ), fTmp[1] );
+						Intrin::scast( _fFunc( fTmp[2] ), fTmp[2] );
+						Intrin::scast( _fFunc( fTmp[3] ), fTmp[3] );
+						Intrin::scast( _fFunc( fTmp[4] ), fTmp[4] );
+						Intrin::scast( _fFunc( fTmp[5] ), fTmp[5] );
+						Intrin::scast( _fFunc( fTmp[6] ), fTmp[6] );
+						Intrin::scast( _fFunc( fTmp[7] ), fTmp[7] );
 
 						__m256 mDst = _mm256_load_ps( fTmp );
 						nn9::float16::Convert8Float32ToFloat16( pSrc, mDst );
@@ -196,7 +196,7 @@ namespace nn9 {
 						sSize -= 8;
 					}
 					while ( sSize ) {
-						scast( _fFunc( (*pSrc) ), (*pSrc) );
+						Intrin::scast( _fFunc( (*pSrc) ), (*pSrc) );
 						++pSrc;
 						--sSize;
 					}
@@ -205,11 +205,10 @@ namespace nn9 {
 			}
 #endif	// #ifdef __AVX2__
 			for ( auto & aThis : _vValues ) {
-				scast( _fFunc( aThis ), aThis );
+				Intrin::scast( _fFunc( aThis ), aThis );
 			}
 			return _vValues;
 		}
-
 
 		/**
 		 * Applies the given function to each item in the view.
@@ -245,64 +244,64 @@ namespace nn9 {
 						_mm512_store_ps( fTmp, mSrc );
 
 						if constexpr ( nn9::Types::IsBFloat16<ValueTypeOut>() ) {
-							scast( _fFunc( fTmp[0] ), fTmp[0] );
-							scast( _fFunc( fTmp[1] ), fTmp[1] );
-							scast( _fFunc( fTmp[2] ), fTmp[2] );
-							scast( _fFunc( fTmp[3] ), fTmp[3] );
-							scast( _fFunc( fTmp[4] ), fTmp[4] );
-							scast( _fFunc( fTmp[5] ), fTmp[5] );
-							scast( _fFunc( fTmp[6] ), fTmp[6] );
-							scast( _fFunc( fTmp[7] ), fTmp[7] );
-							scast( _fFunc( fTmp[8] ), fTmp[8] );
-							scast( _fFunc( fTmp[9] ), fTmp[9] );
-							scast( _fFunc( fTmp[10] ), fTmp[10] );
-							scast( _fFunc( fTmp[11] ), fTmp[11] );
-							scast( _fFunc( fTmp[12] ), fTmp[12] );
-							scast( _fFunc( fTmp[13] ), fTmp[13] );
-							scast( _fFunc( fTmp[14] ), fTmp[14] );
-							scast( _fFunc( fTmp[15] ), fTmp[15] );
+							Intrin::scast( _fFunc( fTmp[0] ), fTmp[0] );
+							Intrin::scast( _fFunc( fTmp[1] ), fTmp[1] );
+							Intrin::scast( _fFunc( fTmp[2] ), fTmp[2] );
+							Intrin::scast( _fFunc( fTmp[3] ), fTmp[3] );
+							Intrin::scast( _fFunc( fTmp[4] ), fTmp[4] );
+							Intrin::scast( _fFunc( fTmp[5] ), fTmp[5] );
+							Intrin::scast( _fFunc( fTmp[6] ), fTmp[6] );
+							Intrin::scast( _fFunc( fTmp[7] ), fTmp[7] );
+							Intrin::scast( _fFunc( fTmp[8] ), fTmp[8] );
+							Intrin::scast( _fFunc( fTmp[9] ), fTmp[9] );
+							Intrin::scast( _fFunc( fTmp[10] ), fTmp[10] );
+							Intrin::scast( _fFunc( fTmp[11] ), fTmp[11] );
+							Intrin::scast( _fFunc( fTmp[12] ), fTmp[12] );
+							Intrin::scast( _fFunc( fTmp[13] ), fTmp[13] );
+							Intrin::scast( _fFunc( fTmp[14] ), fTmp[14] );
+							Intrin::scast( _fFunc( fTmp[15] ), fTmp[15] );
 
 							__m512 mDst = _mm512_load_ps( fTmp );
 							bfloat16::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(pDst), mDst );
 						}
 						else if constexpr ( nn9::Types::IsFloat16<ValueTypeOut>() ) {
-							scast( _fFunc( fTmp[0] ), fTmp[0] );
-							scast( _fFunc( fTmp[1] ), fTmp[1] );
-							scast( _fFunc( fTmp[2] ), fTmp[2] );
-							scast( _fFunc( fTmp[3] ), fTmp[3] );
-							scast( _fFunc( fTmp[4] ), fTmp[4] );
-							scast( _fFunc( fTmp[5] ), fTmp[5] );
-							scast( _fFunc( fTmp[6] ), fTmp[6] );
-							scast( _fFunc( fTmp[7] ), fTmp[7] );
-							scast( _fFunc( fTmp[8] ), fTmp[8] );
-							scast( _fFunc( fTmp[9] ), fTmp[9] );
-							scast( _fFunc( fTmp[10] ), fTmp[10] );
-							scast( _fFunc( fTmp[11] ), fTmp[11] );
-							scast( _fFunc( fTmp[12] ), fTmp[12] );
-							scast( _fFunc( fTmp[13] ), fTmp[13] );
-							scast( _fFunc( fTmp[14] ), fTmp[14] );
-							scast( _fFunc( fTmp[15] ), fTmp[15] );
+							Intrin::scast( _fFunc( fTmp[0] ), fTmp[0] );
+							Intrin::scast( _fFunc( fTmp[1] ), fTmp[1] );
+							Intrin::scast( _fFunc( fTmp[2] ), fTmp[2] );
+							Intrin::scast( _fFunc( fTmp[3] ), fTmp[3] );
+							Intrin::scast( _fFunc( fTmp[4] ), fTmp[4] );
+							Intrin::scast( _fFunc( fTmp[5] ), fTmp[5] );
+							Intrin::scast( _fFunc( fTmp[6] ), fTmp[6] );
+							Intrin::scast( _fFunc( fTmp[7] ), fTmp[7] );
+							Intrin::scast( _fFunc( fTmp[8] ), fTmp[8] );
+							Intrin::scast( _fFunc( fTmp[9] ), fTmp[9] );
+							Intrin::scast( _fFunc( fTmp[10] ), fTmp[10] );
+							Intrin::scast( _fFunc( fTmp[11] ), fTmp[11] );
+							Intrin::scast( _fFunc( fTmp[12] ), fTmp[12] );
+							Intrin::scast( _fFunc( fTmp[13] ), fTmp[13] );
+							Intrin::scast( _fFunc( fTmp[14] ), fTmp[14] );
+							Intrin::scast( _fFunc( fTmp[15] ), fTmp[15] );
 
 							__m512 mDst = _mm512_load_ps( fTmp );
 							nn9::float16::Convert16Float32ToFloat16( reinterpret_cast<nn9::float16 *>(pDst), mDst );
 						}
 						else {
-							scast( _fFunc( fTmp[0] ), pDst[0] );
-							scast( _fFunc( fTmp[1] ), pDst[1] );
-							scast( _fFunc( fTmp[2] ), pDst[2] );
-							scast( _fFunc( fTmp[3] ), pDst[3] );
-							scast( _fFunc( fTmp[4] ), pDst[4] );
-							scast( _fFunc( fTmp[5] ), pDst[5] );
-							scast( _fFunc( fTmp[6] ), pDst[6] );
-							scast( _fFunc( fTmp[7] ), pDst[7] );
-							scast( _fFunc( fTmp[8] ), pDst[8] );
-							scast( _fFunc( fTmp[9] ), pDst[9] );
-							scast( _fFunc( fTmp[10] ), pDst[10] );
-							scast( _fFunc( fTmp[11] ), pDst[11] );
-							scast( _fFunc( fTmp[12] ), pDst[12] );
-							scast( _fFunc( fTmp[13] ), pDst[13] );
-							scast( _fFunc( fTmp[14] ), pDst[14] );
-							scast( _fFunc( fTmp[15] ), pDst[15] );
+							Intrin::scast( _fFunc( fTmp[0] ), pDst[0] );
+							Intrin::scast( _fFunc( fTmp[1] ), pDst[1] );
+							Intrin::scast( _fFunc( fTmp[2] ), pDst[2] );
+							Intrin::scast( _fFunc( fTmp[3] ), pDst[3] );
+							Intrin::scast( _fFunc( fTmp[4] ), pDst[4] );
+							Intrin::scast( _fFunc( fTmp[5] ), pDst[5] );
+							Intrin::scast( _fFunc( fTmp[6] ), pDst[6] );
+							Intrin::scast( _fFunc( fTmp[7] ), pDst[7] );
+							Intrin::scast( _fFunc( fTmp[8] ), pDst[8] );
+							Intrin::scast( _fFunc( fTmp[9] ), pDst[9] );
+							Intrin::scast( _fFunc( fTmp[10] ), pDst[10] );
+							Intrin::scast( _fFunc( fTmp[11] ), pDst[11] );
+							Intrin::scast( _fFunc( fTmp[12] ), pDst[12] );
+							Intrin::scast( _fFunc( fTmp[13] ), pDst[13] );
+							Intrin::scast( _fFunc( fTmp[14] ), pDst[14] );
+							Intrin::scast( _fFunc( fTmp[15] ), pDst[15] );
 						}
 
 						sSize -= 16;
@@ -310,7 +309,7 @@ namespace nn9 {
 						pDst += 16;
 					}
 					while ( sSize-- ) {
-						scast( _fFunc( (*pSrc++) ), (*pDst++) );
+						Intrin::scast( _fFunc( (*pSrc++) ), (*pDst++) );
 					}
 					return _vOut;
 				}
@@ -328,71 +327,71 @@ namespace nn9 {
 						_mm512_store_ps( fTmp, mVal );
 
 						if constexpr ( nn9::Types::IsBFloat16<ValueTypeOut>() ) {
-							scast( _fFunc( fTmp[0] ), fTmp[0] );
-							scast( _fFunc( fTmp[1] ), fTmp[1] );
-							scast( _fFunc( fTmp[2] ), fTmp[2] );
-							scast( _fFunc( fTmp[3] ), fTmp[3] );
-							scast( _fFunc( fTmp[4] ), fTmp[4] );
-							scast( _fFunc( fTmp[5] ), fTmp[5] );
-							scast( _fFunc( fTmp[6] ), fTmp[6] );
-							scast( _fFunc( fTmp[7] ), fTmp[7] );
-							scast( _fFunc( fTmp[8] ), fTmp[8] );
-							scast( _fFunc( fTmp[9] ), fTmp[9] );
-							scast( _fFunc( fTmp[10] ), fTmp[10] );
-							scast( _fFunc( fTmp[11] ), fTmp[11] );
-							scast( _fFunc( fTmp[12] ), fTmp[12] );
-							scast( _fFunc( fTmp[13] ), fTmp[13] );
-							scast( _fFunc( fTmp[14] ), fTmp[14] );
-							scast( _fFunc( fTmp[15] ), fTmp[15] );
+							Intrin::scast( _fFunc( fTmp[0] ), fTmp[0] );
+							Intrin::scast( _fFunc( fTmp[1] ), fTmp[1] );
+							Intrin::scast( _fFunc( fTmp[2] ), fTmp[2] );
+							Intrin::scast( _fFunc( fTmp[3] ), fTmp[3] );
+							Intrin::scast( _fFunc( fTmp[4] ), fTmp[4] );
+							Intrin::scast( _fFunc( fTmp[5] ), fTmp[5] );
+							Intrin::scast( _fFunc( fTmp[6] ), fTmp[6] );
+							Intrin::scast( _fFunc( fTmp[7] ), fTmp[7] );
+							Intrin::scast( _fFunc( fTmp[8] ), fTmp[8] );
+							Intrin::scast( _fFunc( fTmp[9] ), fTmp[9] );
+							Intrin::scast( _fFunc( fTmp[10] ), fTmp[10] );
+							Intrin::scast( _fFunc( fTmp[11] ), fTmp[11] );
+							Intrin::scast( _fFunc( fTmp[12] ), fTmp[12] );
+							Intrin::scast( _fFunc( fTmp[13] ), fTmp[13] );
+							Intrin::scast( _fFunc( fTmp[14] ), fTmp[14] );
+							Intrin::scast( _fFunc( fTmp[15] ), fTmp[15] );
 
 							__m512 mDst = _mm512_load_ps( fTmp );
 							bfloat16::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(pDst), mDst );
 						}
 						else if constexpr ( nn9::Types::IsFloat16<ValueTypeOut>() ) {
-							scast( _fFunc( fTmp[0] ), fTmp[0] );
-							scast( _fFunc( fTmp[1] ), fTmp[1] );
-							scast( _fFunc( fTmp[2] ), fTmp[2] );
-							scast( _fFunc( fTmp[3] ), fTmp[3] );
-							scast( _fFunc( fTmp[4] ), fTmp[4] );
-							scast( _fFunc( fTmp[5] ), fTmp[5] );
-							scast( _fFunc( fTmp[6] ), fTmp[6] );
-							scast( _fFunc( fTmp[7] ), fTmp[7] );
-							scast( _fFunc( fTmp[8] ), fTmp[8] );
-							scast( _fFunc( fTmp[9] ), fTmp[9] );
-							scast( _fFunc( fTmp[10] ), fTmp[10] );
-							scast( _fFunc( fTmp[11] ), fTmp[11] );
-							scast( _fFunc( fTmp[12] ), fTmp[12] );
-							scast( _fFunc( fTmp[13] ), fTmp[13] );
-							scast( _fFunc( fTmp[14] ), fTmp[14] );
-							scast( _fFunc( fTmp[15] ), fTmp[15] );
+							Intrin::scast( _fFunc( fTmp[0] ), fTmp[0] );
+							Intrin::scast( _fFunc( fTmp[1] ), fTmp[1] );
+							Intrin::scast( _fFunc( fTmp[2] ), fTmp[2] );
+							Intrin::scast( _fFunc( fTmp[3] ), fTmp[3] );
+							Intrin::scast( _fFunc( fTmp[4] ), fTmp[4] );
+							Intrin::scast( _fFunc( fTmp[5] ), fTmp[5] );
+							Intrin::scast( _fFunc( fTmp[6] ), fTmp[6] );
+							Intrin::scast( _fFunc( fTmp[7] ), fTmp[7] );
+							Intrin::scast( _fFunc( fTmp[8] ), fTmp[8] );
+							Intrin::scast( _fFunc( fTmp[9] ), fTmp[9] );
+							Intrin::scast( _fFunc( fTmp[10] ), fTmp[10] );
+							Intrin::scast( _fFunc( fTmp[11] ), fTmp[11] );
+							Intrin::scast( _fFunc( fTmp[12] ), fTmp[12] );
+							Intrin::scast( _fFunc( fTmp[13] ), fTmp[13] );
+							Intrin::scast( _fFunc( fTmp[14] ), fTmp[14] );
+							Intrin::scast( _fFunc( fTmp[15] ), fTmp[15] );
 
 							__m512 mDst = _mm512_load_ps( fTmp );
 							nn9::float16::Convert16Float32ToFloat16( reinterpret_cast<nn9::float16 *>(pDst), mDst );
 						}
 						else {
-							scast( _fFunc( fTmp[0] ), pDst[0] );
-							scast( _fFunc( fTmp[1] ), pDst[1] );
-							scast( _fFunc( fTmp[2] ), pDst[2] );
-							scast( _fFunc( fTmp[3] ), pDst[3] );
-							scast( _fFunc( fTmp[4] ), pDst[4] );
-							scast( _fFunc( fTmp[5] ), pDst[5] );
-							scast( _fFunc( fTmp[6] ), pDst[6] );
-							scast( _fFunc( fTmp[7] ), pDst[7] );
-							scast( _fFunc( fTmp[8] ), pDst[8] );
-							scast( _fFunc( fTmp[9] ), pDst[9] );
-							scast( _fFunc( fTmp[10] ), pDst[10] );
-							scast( _fFunc( fTmp[11] ), pDst[11] );
-							scast( _fFunc( fTmp[12] ), pDst[12] );
-							scast( _fFunc( fTmp[13] ), pDst[13] );
-							scast( _fFunc( fTmp[14] ), pDst[14] );
-							scast( _fFunc( fTmp[15] ), pDst[15] );
+							Intrin::scast( _fFunc( fTmp[0] ), pDst[0] );
+							Intrin::scast( _fFunc( fTmp[1] ), pDst[1] );
+							Intrin::scast( _fFunc( fTmp[2] ), pDst[2] );
+							Intrin::scast( _fFunc( fTmp[3] ), pDst[3] );
+							Intrin::scast( _fFunc( fTmp[4] ), pDst[4] );
+							Intrin::scast( _fFunc( fTmp[5] ), pDst[5] );
+							Intrin::scast( _fFunc( fTmp[6] ), pDst[6] );
+							Intrin::scast( _fFunc( fTmp[7] ), pDst[7] );
+							Intrin::scast( _fFunc( fTmp[8] ), pDst[8] );
+							Intrin::scast( _fFunc( fTmp[9] ), pDst[9] );
+							Intrin::scast( _fFunc( fTmp[10] ), pDst[10] );
+							Intrin::scast( _fFunc( fTmp[11] ), pDst[11] );
+							Intrin::scast( _fFunc( fTmp[12] ), pDst[12] );
+							Intrin::scast( _fFunc( fTmp[13] ), pDst[13] );
+							Intrin::scast( _fFunc( fTmp[14] ), pDst[14] );
+							Intrin::scast( _fFunc( fTmp[15] ), pDst[15] );
 						}
 
 						pSrc += 16;
 						sSize -= 16;
 					}
 					while ( sSize-- ) {
-						scast( _fFunc( (*pSrc++) ), (*pDst++) );
+						Intrin::scast( _fFunc( (*pSrc++) ), (*pDst++) );
 					}
 					return _vOut;
 				}
@@ -414,40 +413,40 @@ namespace nn9 {
 						_mm256_store_ps( fTmp, mSrc );
 
 						if constexpr ( nn9::Types::IsBFloat16<ValueTypeOut>() ) {
-							scast( _fFunc( fTmp[0] ), fTmp[0] );
-							scast( _fFunc( fTmp[1] ), fTmp[1] );
-							scast( _fFunc( fTmp[2] ), fTmp[2] );
-							scast( _fFunc( fTmp[3] ), fTmp[3] );
-							scast( _fFunc( fTmp[4] ), fTmp[4] );
-							scast( _fFunc( fTmp[5] ), fTmp[5] );
-							scast( _fFunc( fTmp[6] ), fTmp[6] );
-							scast( _fFunc( fTmp[7] ), fTmp[7] );
+							Intrin::scast( _fFunc( fTmp[0] ), fTmp[0] );
+							Intrin::scast( _fFunc( fTmp[1] ), fTmp[1] );
+							Intrin::scast( _fFunc( fTmp[2] ), fTmp[2] );
+							Intrin::scast( _fFunc( fTmp[3] ), fTmp[3] );
+							Intrin::scast( _fFunc( fTmp[4] ), fTmp[4] );
+							Intrin::scast( _fFunc( fTmp[5] ), fTmp[5] );
+							Intrin::scast( _fFunc( fTmp[6] ), fTmp[6] );
+							Intrin::scast( _fFunc( fTmp[7] ), fTmp[7] );
 
 							__m256 mDst = _mm256_load_ps( fTmp );
 							bfloat16::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(pDst), mDst );
 						}
 						else if constexpr ( nn9::Types::IsFloat16<ValueTypeOut>() ) {
-							scast( _fFunc( fTmp[0] ), fTmp[0] );
-							scast( _fFunc( fTmp[1] ), fTmp[1] );
-							scast( _fFunc( fTmp[2] ), fTmp[2] );
-							scast( _fFunc( fTmp[3] ), fTmp[3] );
-							scast( _fFunc( fTmp[4] ), fTmp[4] );
-							scast( _fFunc( fTmp[5] ), fTmp[5] );
-							scast( _fFunc( fTmp[6] ), fTmp[6] );
-							scast( _fFunc( fTmp[7] ), fTmp[7] );
+							Intrin::scast( _fFunc( fTmp[0] ), fTmp[0] );
+							Intrin::scast( _fFunc( fTmp[1] ), fTmp[1] );
+							Intrin::scast( _fFunc( fTmp[2] ), fTmp[2] );
+							Intrin::scast( _fFunc( fTmp[3] ), fTmp[3] );
+							Intrin::scast( _fFunc( fTmp[4] ), fTmp[4] );
+							Intrin::scast( _fFunc( fTmp[5] ), fTmp[5] );
+							Intrin::scast( _fFunc( fTmp[6] ), fTmp[6] );
+							Intrin::scast( _fFunc( fTmp[7] ), fTmp[7] );
 
 							__m256 mDst = _mm256_load_ps( fTmp );
 							nn9::float16::Convert8Float32ToFloat16( reinterpret_cast<nn9::float16 *>(pDst), mDst );
 						}
 						else {
-							scast( _fFunc( fTmp[0] ), pDst[0] );
-							scast( _fFunc( fTmp[1] ), pDst[1] );
-							scast( _fFunc( fTmp[2] ), pDst[2] );
-							scast( _fFunc( fTmp[3] ), pDst[3] );
-							scast( _fFunc( fTmp[4] ), pDst[4] );
-							scast( _fFunc( fTmp[5] ), pDst[5] );
-							scast( _fFunc( fTmp[6] ), pDst[6] );
-							scast( _fFunc( fTmp[7] ), pDst[7] );
+							Intrin::scast( _fFunc( fTmp[0] ), pDst[0] );
+							Intrin::scast( _fFunc( fTmp[1] ), pDst[1] );
+							Intrin::scast( _fFunc( fTmp[2] ), pDst[2] );
+							Intrin::scast( _fFunc( fTmp[3] ), pDst[3] );
+							Intrin::scast( _fFunc( fTmp[4] ), pDst[4] );
+							Intrin::scast( _fFunc( fTmp[5] ), pDst[5] );
+							Intrin::scast( _fFunc( fTmp[6] ), pDst[6] );
+							Intrin::scast( _fFunc( fTmp[7] ), pDst[7] );
 						}
 
 						sSize -= 8;
@@ -455,7 +454,7 @@ namespace nn9 {
 						pDst += 8;
 					}
 					while ( sSize-- ) {
-						scast( _fFunc( (*pSrc++) ), (*pDst++) );
+						Intrin::scast( _fFunc( (*pSrc++) ), (*pDst++) );
 					}
 					return _vOut;
 				}
@@ -473,47 +472,47 @@ namespace nn9 {
 						_mm256_store_ps( fTmp, mVal );
 
 						if constexpr ( nn9::Types::IsBFloat16<ValueTypeOut>() ) {
-							scast( _fFunc( fTmp[0] ), fTmp[0] );
-							scast( _fFunc( fTmp[1] ), fTmp[1] );
-							scast( _fFunc( fTmp[2] ), fTmp[2] );
-							scast( _fFunc( fTmp[3] ), fTmp[3] );
-							scast( _fFunc( fTmp[4] ), fTmp[4] );
-							scast( _fFunc( fTmp[5] ), fTmp[5] );
-							scast( _fFunc( fTmp[6] ), fTmp[6] );
-							scast( _fFunc( fTmp[7] ), fTmp[7] );
+							Intrin::scast( _fFunc( fTmp[0] ), fTmp[0] );
+							Intrin::scast( _fFunc( fTmp[1] ), fTmp[1] );
+							Intrin::scast( _fFunc( fTmp[2] ), fTmp[2] );
+							Intrin::scast( _fFunc( fTmp[3] ), fTmp[3] );
+							Intrin::scast( _fFunc( fTmp[4] ), fTmp[4] );
+							Intrin::scast( _fFunc( fTmp[5] ), fTmp[5] );
+							Intrin::scast( _fFunc( fTmp[6] ), fTmp[6] );
+							Intrin::scast( _fFunc( fTmp[7] ), fTmp[7] );
 
 							__m256 mDst = _mm256_load_ps( fTmp );
 							bfloat16::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(pDst), mDst );
 						}
 						else if constexpr ( nn9::Types::IsFloat16<ValueTypeOut>() ) {
-							scast( _fFunc( fTmp[0] ), fTmp[0] );
-							scast( _fFunc( fTmp[1] ), fTmp[1] );
-							scast( _fFunc( fTmp[2] ), fTmp[2] );
-							scast( _fFunc( fTmp[3] ), fTmp[3] );
-							scast( _fFunc( fTmp[4] ), fTmp[4] );
-							scast( _fFunc( fTmp[5] ), fTmp[5] );
-							scast( _fFunc( fTmp[6] ), fTmp[6] );
-							scast( _fFunc( fTmp[7] ), fTmp[7] );
+							Intrin::scast( _fFunc( fTmp[0] ), fTmp[0] );
+							Intrin::scast( _fFunc( fTmp[1] ), fTmp[1] );
+							Intrin::scast( _fFunc( fTmp[2] ), fTmp[2] );
+							Intrin::scast( _fFunc( fTmp[3] ), fTmp[3] );
+							Intrin::scast( _fFunc( fTmp[4] ), fTmp[4] );
+							Intrin::scast( _fFunc( fTmp[5] ), fTmp[5] );
+							Intrin::scast( _fFunc( fTmp[6] ), fTmp[6] );
+							Intrin::scast( _fFunc( fTmp[7] ), fTmp[7] );
 
 							__m256 mDst = _mm256_load_ps( fTmp );
 							nn9::float16::Convert8Float32ToFloat16( reinterpret_cast<nn9::float16 *>(pDst), mDst );
 						}
 						else {
-							scast( _fFunc( fTmp[0] ), pDst[0] );
-							scast( _fFunc( fTmp[1] ), pDst[1] );
-							scast( _fFunc( fTmp[2] ), pDst[2] );
-							scast( _fFunc( fTmp[3] ), pDst[3] );
-							scast( _fFunc( fTmp[4] ), pDst[4] );
-							scast( _fFunc( fTmp[5] ), pDst[5] );
-							scast( _fFunc( fTmp[6] ), pDst[6] );
-							scast( _fFunc( fTmp[7] ), pDst[7] );
+							Intrin::scast( _fFunc( fTmp[0] ), pDst[0] );
+							Intrin::scast( _fFunc( fTmp[1] ), pDst[1] );
+							Intrin::scast( _fFunc( fTmp[2] ), pDst[2] );
+							Intrin::scast( _fFunc( fTmp[3] ), pDst[3] );
+							Intrin::scast( _fFunc( fTmp[4] ), pDst[4] );
+							Intrin::scast( _fFunc( fTmp[5] ), pDst[5] );
+							Intrin::scast( _fFunc( fTmp[6] ), pDst[6] );
+							Intrin::scast( _fFunc( fTmp[7] ), pDst[7] );
 						}
 
 						pSrc += 8;
 						sSize -= 8;
 					}
 					while ( sSize-- ) {
-						scast( _fFunc( (*pSrc++) ), (*pDst++) );
+						Intrin::scast( _fFunc( (*pSrc++) ), (*pDst++) );
 					}
 					return _vOut;
 				}
@@ -521,7 +520,7 @@ namespace nn9 {
 #endif	// #ifdef __AVX2__
 
 			for ( size_t i = 0; i < _vIn.size(); ++i ) {
-				scast( _fFunc( _vIn[i] ), _vOut[i] );
+				Intrin::scast( _fFunc( _vIn[i] ), _vOut[i] );
 			}
 			return _vOut;
 		}
@@ -772,9 +771,1135 @@ namespace nn9 {
 		}
 #endif	// #ifdef __AVX2__
 
+
 		// ===============================
 		// Trigonometric Functions
 		// ===============================
+		/**
+		 * Computes element-wise cos().
+		 * 
+		 * \tparam _tType The view/container type.
+		 * \param _vValues The input/output view.
+		 * \return Returns _vValues.
+		 */
+		template <typename _tType>
+		static _tType &												Cos( _tType &_vValues ) {
+			if constexpr ( Types::IsBool<_tType>() ) {
+				// cos( 1 ) = 0.5403023058681397650.
+				// cos( 0 ) = 1.
+				return Func<_tType>( _vValues, [](auto x) { return true; } );
+			}
+			return Func<_tType>( _vValues, [](auto x) { return static_cast<_tType::value_type>(std::cos( static_cast<double>(x) )); } );
+		}
+
+		/**
+		 * Applies Cos() to an array of inputs.
+		 * 
+		 * \param _tType The view/container type.
+		 * \param _vValues The input/output view to modify.
+		 * \return Returns _vValues.
+		 **/
+		template <typename _tType>
+		static std::vector<_tType> &								Cos( std::vector<_tType> &_vValues ) {
+			for ( auto & aThis : _vValues ) { Cos( aThis ); }
+			return _vValues;
+		}
+
+		/**
+		 * Computes element-wise cos().
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut>
+		static _tTypeOut &											Cos( const _tTypeIn &_vIn, _tTypeOut &_vOut ) {
+			if constexpr ( Types::IsBool<_tTypeIn>() ) {
+				return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return true; } );
+			}
+			return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return static_cast<_tTypeIn::value_type>(std::cos( static_cast<double>(x) )); } );
+		}
+
+		/**
+		 * Applies Cos() to an array of inputs and outputs.
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \throw If NN9_SAFETY_CHECK, throws if _vIn and _vOut are not the same lengths.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut>
+		static std::vector<_tTypeOut> &								Cos( const std::vector<_tTypeIn> &_vIn, std::vector<_tTypeOut> &_vOut ) {
+#ifdef NN9_SAFETY_CHECK
+			if ( _vIn.size() != _vOut.size() ) { throw std::runtime_error( "Math::Cos: Input and outputs must have the same number of elements." ); }
+#endif	// #ifdef NN9_SAFETY_CHECK
+
+			for ( size_t i = 0; i < _vIn.size(); ++i ) { Cos( _vIn[i], _vOut[i] ); }
+			return _vOut;
+		}
+
+		/**
+		 * Computes element-wise sin().
+		 * 
+		 * \tparam _tType The view/container type.
+		 * \param _vValues The input/output view.
+		 * \return Returns _vValues.
+		 */
+		template <typename _tType>
+		static _tType &												Sin( _tType &_vValues ) {
+			if constexpr ( Types::IsBool<_tType>() ) {
+				// sin( 1 ) = 1.
+				// sin( 0 ) = 0.
+				//return Func<_tType>( _vValues, [](auto x) { return x; } );
+				return _vValues;	// Assuming well formed bool values, no changes will be made via this operation.
+			}
+			return Func<_tType>( _vValues, [](auto x) { return static_cast<_tType::value_type>(std::sin( static_cast<double>(x) )); } );
+		}
+
+		/**
+		 * Applies Sin() to an array of inputs.
+		 * 
+		 * \param _tType The view/container type.
+		 * \param _vValues The input/output view to modify.
+		 * \return Returns _vValues.
+		 **/
+		template <typename _tType>
+		static std::vector<_tType> &								Sin( std::vector<_tType> &_vValues ) {
+			for ( auto & aThis : _vValues ) { Sin( aThis ); }
+			return _vValues;
+		}
+
+		/**
+		 * Computes element-wise sin().
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut>
+		static _tTypeOut &											Sin( const _tTypeIn &_vIn, _tTypeOut &_vOut ) {
+			if constexpr ( Types::IsBool<_tTypeIn>() ) {
+				return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return x; } );
+			}
+			return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return static_cast<_tTypeIn::value_type>(std::sin( static_cast<double>(x) )); } );
+		}
+
+		/**
+		 * Applies Sin() to an array of inputs and outputs.
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \throw If NN9_SAFETY_CHECK, throws if _vIn and _vOut are not the same lengths.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut>
+		static std::vector<_tTypeOut> &								Sin( const std::vector<_tTypeIn> &_vIn, std::vector<_tTypeOut> &_vOut ) {
+#ifdef NN9_SAFETY_CHECK
+			if ( _vIn.size() != _vOut.size() ) { throw std::runtime_error( "Math::Sin: Input and outputs must have the same number of elements." ); }
+#endif	// #ifdef NN9_SAFETY_CHECK
+
+			for ( size_t i = 0; i < _vIn.size(); ++i ) { Sin( _vIn[i], _vOut[i] ); }
+			return _vOut;
+		}
+
+		/**
+		 * Computes element-wise tan().
+		 * 
+		 * \tparam _tType The view/container type.
+		 * \param _vValues The input/output view.
+		 * \return Returns _vValues.
+		 */
+		template <typename _tType>
+		static _tType &												Tan( _tType &_vValues ) {
+			if constexpr ( Types::IsBool<_tType>() ) {
+				// tan( 1 ) = 1.5574077246549.
+				// tan( 0 ) = 0.
+				//return Func<_tType>( _vValues, [](auto x) { return x; } );
+				return _vValues;	// Assuming well formed bool values, no changes will be made via this operation.
+			}
+			return Func<_tType>( _vValues, [](auto x) { return static_cast<_tType::value_type>(std::tan( static_cast<double>(x) )); } );
+		}
+
+		/**
+		 * Applies Tan() to an array of inputs.
+		 * 
+		 * \param _tType The view/container type.
+		 * \param _vValues The input/output view to modify.
+		 * \return Returns _vValues.
+		 **/
+		template <typename _tType>
+		static std::vector<_tType> &								Tan( std::vector<_tType> &_vValues ) {
+			for ( auto & aThis : _vValues ) { Tan( aThis ); }
+			return _vValues;
+		}
+
+		/**
+		 * Computes element-wise tan().
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut>
+		static _tTypeOut &											Tan( const _tTypeIn &_vIn, _tTypeOut &_vOut ) {
+			if constexpr ( Types::IsBool<_tTypeIn>() ) {
+				return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return x; } );
+			}
+			return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return static_cast<_tTypeIn::value_type>(std::tan( static_cast<double>(x) )); } );
+		}
+
+		/**
+		 * Applies Tan() to an array of inputs and outputs.
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \throw If NN9_SAFETY_CHECK, throws if _vIn and _vOut are not the same lengths.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut>
+		static std::vector<_tTypeOut> &								Tan( const std::vector<_tTypeIn> &_vIn, std::vector<_tTypeOut> &_vOut ) {
+#ifdef NN9_SAFETY_CHECK
+			if ( _vIn.size() != _vOut.size() ) { throw std::runtime_error( "Math::Tan: Input and outputs must have the same number of elements." ); }
+#endif	// #ifdef NN9_SAFETY_CHECK
+
+			for ( size_t i = 0; i < _vIn.size(); ++i ) { Tan( _vIn[i], _vOut[i] ); }
+			return _vOut;
+		}
+
+		/**
+		 * Computes element-wise acos().
+		 * 
+		 * \tparam _tType The view/container type.
+		 * \param _vValues The input/output view.
+		 * \return Returns _vValues.
+		 */
+		template <typename _tType>
+		static _tType &												Acos( _tType &_vValues ) {
+			if constexpr ( Types::IsBool<_tType>() ) {
+				// acos( 1 ) = 0.
+				// acos( 0 ) = 1.57079632679.
+				return Func<_tType>( _vValues, [](auto x) { return !x; } );
+			}
+			return Func<_tType>( _vValues, [](auto x) { return static_cast<_tType::value_type>(std::acos( static_cast<double>(x) )); } );
+		}
+
+		/**
+		 * Applies Acos() to an array of inputs.
+		 * 
+		 * \param _tType The view/container type.
+		 * \param _vValues The input/output view to modify.
+		 * \return Returns _vValues.
+		 **/
+		template <typename _tType>
+		static std::vector<_tType> &								Acos( std::vector<_tType> &_vValues ) {
+			for ( auto & aThis : _vValues ) { Acos( aThis ); }
+			return _vValues;
+		}
+
+		/**
+		 * Computes element-wise acos().
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut>
+		static _tTypeOut &											Acos( const _tTypeIn &_vIn, _tTypeOut &_vOut ) {
+			if constexpr ( Types::IsBool<_tTypeIn>() ) {
+				return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return !x; } );
+			}
+			return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return static_cast<_tTypeIn::value_type>(std::acos( static_cast<double>(x) )); } );
+		}
+
+		/**
+		 * Applies Acos() to an array of inputs and outputs.
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \throw If NN9_SAFETY_CHECK, throws if _vIn and _vOut are not the same lengths.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut>
+		static std::vector<_tTypeOut> &								Acos( const std::vector<_tTypeIn> &_vIn, std::vector<_tTypeOut> &_vOut ) {
+#ifdef NN9_SAFETY_CHECK
+			if ( _vIn.size() != _vOut.size() ) { throw std::runtime_error( "Math::Acos: Input and outputs must have the same number of elements." ); }
+#endif	// #ifdef NN9_SAFETY_CHECK
+
+			for ( size_t i = 0; i < _vIn.size(); ++i ) { Acos( _vIn[i], _vOut[i] ); }
+			return _vOut;
+		}
+
+		/**
+		 * Computes element-wise asin().
+		 * 
+		 * \tparam _tType The view/container type.
+		 * \param _vValues The input/output view.
+		 * \return Returns _vValues.
+		 */
+		template <typename _tType>
+		static _tType &												Asin( _tType &_vValues ) {
+			if constexpr ( Types::IsBool<_tType>() ) {
+				// asin( 1 ) = 1.57079632679.
+				// asin( 0 ) = 0.
+				//return Func<_tType>( _vValues, [](auto x) { return x; } );
+				return _vValues;	// Assuming well formed bool values, no changes will be made via this operation.
+			}
+			return Func<_tType>( _vValues, [](auto x) { return static_cast<_tType::value_type>(std::asin( static_cast<double>(x) )); } );
+		}
+
+		/**
+		 * Applies Asin() to an array of inputs.
+		 * 
+		 * \param _tType The view/container type.
+		 * \param _vValues The input/output view to modify.
+		 * \return Returns _vValues.
+		 **/
+		template <typename _tType>
+		static std::vector<_tType> &								Asin( std::vector<_tType> &_vValues ) {
+			for ( auto & aThis : _vValues ) { Asin( aThis ); }
+			return _vValues;
+		}
+
+		/**
+		 * Computes element-wise asin().
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut>
+		static _tTypeOut &											Asin( const _tTypeIn &_vIn, _tTypeOut &_vOut ) {
+			if constexpr ( Types::IsBool<_tTypeIn>() ) {
+				return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return x; } );
+			}
+			return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return static_cast<_tTypeIn::value_type>(std::asin( static_cast<double>(x) )); } );
+		}
+
+		/**
+		 * Applies Asin() to an array of inputs and outputs.
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \throw If NN9_SAFETY_CHECK, throws if _vIn and _vOut are not the same lengths.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut>
+		static std::vector<_tTypeOut> &								Asin( const std::vector<_tTypeIn> &_vIn, std::vector<_tTypeOut> &_vOut ) {
+#ifdef NN9_SAFETY_CHECK
+			if ( _vIn.size() != _vOut.size() ) { throw std::runtime_error( "Math::Asin: Input and outputs must have the same number of elements." ); }
+#endif	// #ifdef NN9_SAFETY_CHECK
+
+			for ( size_t i = 0; i < _vIn.size(); ++i ) { Asin( _vIn[i], _vOut[i] ); }
+			return _vOut;
+		}
+
+		/**
+		 * Computes element-wise atan().
+		 * 
+		 * \tparam _tType The view/container type.
+		 * \param _vValues The input/output view.
+		 * \return Returns _vValues.
+		 */
+		template <typename _tType>
+		static _tType &												Atan( _tType &_vValues ) {
+			if constexpr ( Types::IsBool<_tType>() ) {
+				// atan( 1 ) = 0.7853981633974.
+				// atan( 0 ) = 0.
+				//return Func<_tType>( _vValues, [](auto x) { return x; } );
+				return _vValues;	// Assuming well formed bool values, no changes will be made via this operation.
+			}
+			return Func<_tType>( _vValues, [](auto x) { return static_cast<_tType::value_type>(std::atan( static_cast<double>(x) )); } );
+		}
+
+		/**
+		 * Applies Atan() to an array of inputs.
+		 * 
+		 * \param _tType The view/container type.
+		 * \param _vValues The input/output view to modify.
+		 * \return Returns _vValues.
+		 **/
+		template <typename _tType>
+		static std::vector<_tType> &								Atan( std::vector<_tType> &_vValues ) {
+			for ( auto & aThis : _vValues ) { Atan( aThis ); }
+			return _vValues;
+		}
+
+		/**
+		 * Computes element-wise atan().
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut>
+		static _tTypeOut &											Atan( const _tTypeIn &_vIn, _tTypeOut &_vOut ) {
+			if constexpr ( Types::IsBool<_tTypeIn>() ) {
+				return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return x; } );
+			}
+			return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return static_cast<_tTypeIn::value_type>(std::atan( static_cast<double>(x) )); } );
+		}
+
+		/**
+		 * Applies Atan() to an array of inputs and outputs.
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \throw If NN9_SAFETY_CHECK, throws if _vIn and _vOut are not the same lengths.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut>
+		static std::vector<_tTypeOut> &								Atan( const std::vector<_tTypeIn> &_vIn, std::vector<_tTypeOut> &_vOut ) {
+#ifdef NN9_SAFETY_CHECK
+			if ( _vIn.size() != _vOut.size() ) { throw std::runtime_error( "Math::Atan: Input and outputs must have the same number of elements." ); }
+#endif	// #ifdef NN9_SAFETY_CHECK
+
+			for ( size_t i = 0; i < _vIn.size(); ++i ) { Atan( _vIn[i], _vOut[i] ); }
+			return _vOut;
+		}
+
+
+		// ===============================
+		// Hyperbolic Functions
+		// ===============================
+		/**
+		 * Computes element-wise cosh().
+		 * 
+		 * \tparam _tType The view/container type.
+		 * \param _vValues The input/output view.
+		 * \return Returns _vValues.
+		 */
+		template <typename _tType>
+		static _tType &												Cosh( _tType &_vValues ) {
+			if constexpr ( Types::IsBool<_tType>() ) {
+				// cosh( 1 ) = 1.54308063481524.
+				// cosh( 0 ) = 1.
+				return Func<_tType>( _vValues, [](auto x) { return true; } );
+			}
+			return Func<_tType>( _vValues, [](auto x) { return static_cast<_tType::value_type>(std::cosh( static_cast<double>(x) )); } );
+		}
+
+		/**
+		 * Applies Cosh() to an array of inputs.
+		 * 
+		 * \param _tType The view/container type.
+		 * \param _vValues The input/output view to modify.
+		 * \return Returns _vValues.
+		 **/
+		template <typename _tType>
+		static std::vector<_tType> &								Cosh( std::vector<_tType> &_vValues ) {
+			for ( auto & aThis : _vValues ) { Cosh( aThis ); }
+			return _vValues;
+		}
+
+		/**
+		 * Computes element-wise cosh().
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut>
+		static _tTypeOut &											Cosh( const _tTypeIn &_vIn, _tTypeOut &_vOut ) {
+			if constexpr ( Types::IsBool<_tTypeIn>() ) {
+				return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return true; } );
+			}
+			return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return static_cast<_tTypeIn::value_type>(std::cosh( static_cast<double>(x) )); } );
+		}
+
+		/**
+		 * Applies Cosh() to an array of inputs and outputs.
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \throw If NN9_SAFETY_CHECK, throws if _vIn and _vOut are not the same lengths.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut>
+		static std::vector<_tTypeOut> &								Cosh( const std::vector<_tTypeIn> &_vIn, std::vector<_tTypeOut> &_vOut ) {
+#ifdef NN9_SAFETY_CHECK
+			if ( _vIn.size() != _vOut.size() ) { throw std::runtime_error( "Math::Cosh: Input and outputs must have the same number of elements." ); }
+#endif	// #ifdef NN9_SAFETY_CHECK
+
+			for ( size_t i = 0; i < _vIn.size(); ++i ) { Cosh( _vIn[i], _vOut[i] ); }
+			return _vOut;
+		}
+
+		/**
+		 * Computes element-wise sinh().
+		 * 
+		 * \tparam _tType The view/container type.
+		 * \param _vValues The input/output view.
+		 * \return Returns _vValues.
+		 */
+		template <typename _tType>
+		static _tType &												Sinh( _tType &_vValues ) {
+			if constexpr ( Types::IsBool<_tType>() ) {
+				// sinh( 1 ) = 1.1752011936438.
+				// sinh( 0 ) = 0.
+				//return Func<_tType>( _vValues, [](auto x) { return x; } );
+				return _vValues;	// Assuming well formed bool values, no changes will be made via this operation.
+			}
+			return Func<_tType>( _vValues, [](auto x) { return static_cast<_tType::value_type>(std::sinh( static_cast<double>(x) )); } );
+		}
+
+		/**
+		 * Applies Sinh() to an array of inputs.
+		 * 
+		 * \param _tType The view/container type.
+		 * \param _vValues The input/output view to modify.
+		 * \return Returns _vValues.
+		 **/
+		template <typename _tType>
+		static std::vector<_tType> &								Sinh( std::vector<_tType> &_vValues ) {
+			for ( auto & aThis : _vValues ) { Sinh( aThis ); }
+			return _vValues;
+		}
+
+		/**
+		 * Computes element-wise sinh().
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut>
+		static _tTypeOut &											Sinh( const _tTypeIn &_vIn, _tTypeOut &_vOut ) {
+			if constexpr ( Types::IsBool<_tTypeIn>() ) {
+				return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return x; } );
+			}
+			return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return static_cast<_tTypeIn::value_type>(std::sinh( static_cast<double>(x) )); } );
+		}
+
+		/**
+		 * Applies Sinh() to an array of inputs and outputs.
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \throw If NN9_SAFETY_CHECK, throws if _vIn and _vOut are not the same lengths.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut>
+		static std::vector<_tTypeOut> &								Sinh( const std::vector<_tTypeIn> &_vIn, std::vector<_tTypeOut> &_vOut ) {
+#ifdef NN9_SAFETY_CHECK
+			if ( _vIn.size() != _vOut.size() ) { throw std::runtime_error( "Math::Sinh: Input and outputs must have the same number of elements." ); }
+#endif	// #ifdef NN9_SAFETY_CHECK
+
+			for ( size_t i = 0; i < _vIn.size(); ++i ) { Sinh( _vIn[i], _vOut[i] ); }
+			return _vOut;
+		}
+
+		/**
+		 * Computes element-wise tanh().
+		 * 
+		 * \tparam _tType The view/container type.
+		 * \param _vValues The input/output view.
+		 * \return Returns _vValues.
+		 */
+		template <typename _tType>
+		static _tType &												Tanh( _tType &_vValues ) {
+			if constexpr ( Types::IsBool<_tType>() ) {
+				// tanh( 1 ) = 0.76159415595576.
+				// tanh( 0 ) = 0.
+				//return Func<_tType>( _vValues, [](auto x) { return x; } );
+				return _vValues;	// Assuming well formed bool values, no changes will be made via this operation.
+			}
+			return Func<_tType>( _vValues, [](auto x) { return static_cast<_tType::value_type>(std::tanh( static_cast<double>(x) )); } );
+		}
+
+		/**
+		 * Applies Tanh() to an array of inputs.
+		 * 
+		 * \param _tType The view/container type.
+		 * \param _vValues The input/output view to modify.
+		 * \return Returns _vValues.
+		 **/
+		template <typename _tType>
+		static std::vector<_tType> &								Tanh( std::vector<_tType> &_vValues ) {
+			for ( auto & aThis : _vValues ) { Tanh( aThis ); }
+			return _vValues;
+		}
+
+		/**
+		 * Computes element-wise tanh().
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut>
+		static _tTypeOut &											Tanh( const _tTypeIn &_vIn, _tTypeOut &_vOut ) {
+			if constexpr ( Types::IsBool<_tTypeIn>() ) {
+				return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return x; } );
+			}
+			return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return static_cast<_tTypeIn::value_type>(std::tanh( static_cast<double>(x) )); } );
+		}
+
+		/**
+		 * Applies Tanh() to an array of inputs and outputs.
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \throw If NN9_SAFETY_CHECK, throws if _vIn and _vOut are not the same lengths.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut>
+		static std::vector<_tTypeOut> &								Tanh( const std::vector<_tTypeIn> &_vIn, std::vector<_tTypeOut> &_vOut ) {
+#ifdef NN9_SAFETY_CHECK
+			if ( _vIn.size() != _vOut.size() ) { throw std::runtime_error( "Math::Tanh: Input and outputs must have the same number of elements." ); }
+#endif	// #ifdef NN9_SAFETY_CHECK
+
+			for ( size_t i = 0; i < _vIn.size(); ++i ) { Tanh( _vIn[i], _vOut[i] ); }
+			return _vOut;
+		}
+
+		/**
+		 * Computes element-wise acosh().
+		 * 
+		 * \tparam _tType The view/container type.
+		 * \param _vValues The input/output view.
+		 * \return Returns _vValues.
+		 */
+		template <typename _tType>
+		static _tType &												Acosh( _tType &_vValues ) {
+			if constexpr ( Types::IsBool<_tType>() ) {
+				// acosh( 1 ) = 0.
+				// acosh( 0 ) = NaN.
+				return Func<_tType>( _vValues, [](auto x) { return false; } );
+			}
+			return Func<_tType>( _vValues, [](auto x) { return static_cast<_tType::value_type>(std::acosh( static_cast<double>(x) )); } );
+		}
+
+		/**
+		 * Applies Acosh() to an array of inputs.
+		 * 
+		 * \param _tType The view/container type.
+		 * \param _vValues The input/output view to modify.
+		 * \return Returns _vValues.
+		 **/
+		template <typename _tType>
+		static std::vector<_tType> &								Acosh( std::vector<_tType> &_vValues ) {
+			for ( auto & aThis : _vValues ) { Acosh( aThis ); }
+			return _vValues;
+		}
+
+		/**
+		 * Computes element-wise acosh().
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut>
+		static _tTypeOut &											Acosh( const _tTypeIn &_vIn, _tTypeOut &_vOut ) {
+			if constexpr ( Types::IsBool<_tTypeIn>() ) {
+				return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return false; } );
+			}
+			return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return static_cast<_tTypeIn::value_type>(std::acosh( static_cast<double>(x) )); } );
+		}
+
+		/**
+		 * Applies Acosh() to an array of inputs and outputs.
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \throw If NN9_SAFETY_CHECK, throws if _vIn and _vOut are not the same lengths.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut>
+		static std::vector<_tTypeOut> &								Acosh( const std::vector<_tTypeIn> &_vIn, std::vector<_tTypeOut> &_vOut ) {
+#ifdef NN9_SAFETY_CHECK
+			if ( _vIn.size() != _vOut.size() ) { throw std::runtime_error( "Math::Acosh: Input and outputs must have the same number of elements." ); }
+#endif	// #ifdef NN9_SAFETY_CHECK
+
+			for ( size_t i = 0; i < _vIn.size(); ++i ) { Acosh( _vIn[i], _vOut[i] ); }
+			return _vOut;
+		}
+
+		/**
+		 * Computes element-wise asinh().
+		 * 
+		 * \tparam _tType The view/container type.
+		 * \param _vValues The input/output view.
+		 * \return Returns _vValues.
+		 */
+		template <typename _tType>
+		static _tType &												Asinh( _tType &_vValues ) {
+			if constexpr ( Types::IsBool<_tType>() ) {
+				// asinh( 1 ) = 0.881373587019543.
+				// asinh( 0 ) = 0.
+				//return Func<_tType>( _vValues, [](auto x) { return x; } );
+				return _vValues;	// Assuming well formed bool values, no changes will be made via this operation.
+			}
+			return Func<_tType>( _vValues, [](auto x) { return static_cast<_tType::value_type>(std::asinh( static_cast<double>(x) )); } );
+		}
+
+		/**
+		 * Applies Asinh() to an array of inputs.
+		 * 
+		 * \param _tType The view/container type.
+		 * \param _vValues The input/output view to modify.
+		 * \return Returns _vValues.
+		 **/
+		template <typename _tType>
+		static std::vector<_tType> &								Asinh( std::vector<_tType> &_vValues ) {
+			for ( auto & aThis : _vValues ) { Asinh( aThis ); }
+			return _vValues;
+		}
+
+		/**
+		 * Computes element-wise asinh().
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut>
+		static _tTypeOut &											Asinh( const _tTypeIn &_vIn, _tTypeOut &_vOut ) {
+			if constexpr ( Types::IsBool<_tTypeIn>() ) {
+				return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return x; } );
+			}
+			return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return static_cast<_tTypeIn::value_type>(std::asinh( static_cast<double>(x) )); } );
+		}
+
+		/**
+		 * Applies Asinh() to an array of inputs and outputs.
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \throw If NN9_SAFETY_CHECK, throws if _vIn and _vOut are not the same lengths.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut>
+		static std::vector<_tTypeOut> &								Asinh( const std::vector<_tTypeIn> &_vIn, std::vector<_tTypeOut> &_vOut ) {
+#ifdef NN9_SAFETY_CHECK
+			if ( _vIn.size() != _vOut.size() ) { throw std::runtime_error( "Math::Asinh: Input and outputs must have the same number of elements." ); }
+#endif	// #ifdef NN9_SAFETY_CHECK
+
+			for ( size_t i = 0; i < _vIn.size(); ++i ) { Asinh( _vIn[i], _vOut[i] ); }
+			return _vOut;
+		}
+
+		/**
+		 * Computes element-wise atanh().
+		 * 
+		 * \tparam _tType The view/container type.
+		 * \param _vValues The input/output view.
+		 * \return Returns _vValues.
+		 */
+		template <typename _tType>
+		static _tType &												Atanh( _tType &_vValues ) {
+			if constexpr ( Types::IsBool<_tType>() ) {
+				// atanh( 1 ) = inf.
+				// atanh( 0 ) = 0.
+				//return Func<_tType>( _vValues, [](auto x) { return x; } );
+				return _vValues;	// Assuming well formed bool values, no changes will be made via this operation.
+			}
+			return Func<_tType>( _vValues, [](auto x) { return static_cast<_tType::value_type>(std::atanh( static_cast<double>(x) )); } );
+		}
+
+		/**
+		 * Applies Atanh() to an array of inputs.
+		 * 
+		 * \param _tType The view/container type.
+		 * \param _vValues The input/output view to modify.
+		 * \return Returns _vValues.
+		 **/
+		template <typename _tType>
+		static std::vector<_tType> &								Atanh( std::vector<_tType> &_vValues ) {
+			for ( auto & aThis : _vValues ) { Atanh( aThis ); }
+			return _vValues;
+		}
+
+		/**
+		 * Computes element-wise atanh().
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut>
+		static _tTypeOut &											Atanh( const _tTypeIn &_vIn, _tTypeOut &_vOut ) {
+			if constexpr ( Types::IsBool<_tTypeIn>() ) {
+				return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return x; } );
+			}
+			return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return static_cast<_tTypeIn::value_type>(std::atanh( static_cast<double>(x) )); } );
+		}
+
+		/**
+		 * Applies Atanh() to an array of inputs and outputs.
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \throw If NN9_SAFETY_CHECK, throws if _vIn and _vOut are not the same lengths.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut>
+		static std::vector<_tTypeOut> &								Atanh( const std::vector<_tTypeIn> &_vIn, std::vector<_tTypeOut> &_vOut ) {
+#ifdef NN9_SAFETY_CHECK
+			if ( _vIn.size() != _vOut.size() ) { throw std::runtime_error( "Math::Atanh: Input and outputs must have the same number of elements." ); }
+#endif	// #ifdef NN9_SAFETY_CHECK
+
+			for ( size_t i = 0; i < _vIn.size(); ++i ) { Atanh( _vIn[i], _vOut[i] ); }
+			return _vOut;
+		}
+
+
+		// ===============================
+		// Exponential and Logarithmic Functions
+		// ===============================
+		/**
+		 * Computes element-wise exp().
+		 * 
+		 * \tparam _tType The view/container type.
+		 * \param _vValues The input/output view.
+		 * \return Returns _vValues.
+		 */
+		template <typename _tType>
+		static _tType &												Exp( _tType &_vValues ) {
+			if constexpr ( Types::IsBool<_tType>() ) {
+				// exp( 1 ) = 2.718281828459.
+				// exp( 0 ) = 1.
+				return Func<_tType>( _vValues, [](auto x) { return true; } );
+			}
+			return Func<_tType>( _vValues, [](auto x) { return static_cast<_tType::value_type>(std::exp( static_cast<double>(x) )); } );
+		}
+
+		/**
+		 * Applies Exp() to an array of inputs.
+		 * 
+		 * \param _tType The view/container type.
+		 * \param _vValues The input/output view to modify.
+		 * \return Returns _vValues.
+		 **/
+		template <typename _tType>
+		static std::vector<_tType> &								Exp( std::vector<_tType> &_vValues ) {
+			for ( auto & aThis : _vValues ) { Exp( aThis ); }
+			return _vValues;
+		}
+
+		/**
+		 * Computes element-wise exp().
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut>
+		static _tTypeOut &											Exp( const _tTypeIn &_vIn, _tTypeOut &_vOut ) {
+			if constexpr ( Types::IsBool<_tTypeIn>() ) {
+				return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return true; } );
+			}
+			return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return static_cast<_tTypeIn::value_type>(std::exp( static_cast<double>(x) )); } );
+		}
+
+		/**
+		 * Applies Exp() to an array of inputs and outputs.
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \throw If NN9_SAFETY_CHECK, throws if _vIn and _vOut are not the same lengths.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut>
+		static std::vector<_tTypeOut> &								Exp( const std::vector<_tTypeIn> &_vIn, std::vector<_tTypeOut> &_vOut ) {
+#ifdef NN9_SAFETY_CHECK
+			if ( _vIn.size() != _vOut.size() ) { throw std::runtime_error( "Math::Exp: Input and outputs must have the same number of elements." ); }
+#endif	// #ifdef NN9_SAFETY_CHECK
+
+			for ( size_t i = 0; i < _vIn.size(); ++i ) { Exp( _vIn[i], _vOut[i] ); }
+			return _vOut;
+		}
+
+		/**
+		 * Computes element-wise log().
+		 * 
+		 * \tparam _tType The view/container type.
+		 * \param _vValues The input/output view.
+		 * \return Returns _vValues.
+		 */
+		template <typename _tType>
+		static _tType &												Log( _tType &_vValues ) {
+			if constexpr ( Types::IsBool<_tType>() ) {
+				// log( 1 ) = 0.
+				// log( 0 ) = -inf.
+				return Func<_tType>( _vValues, [](auto x) { return !x; } );
+			}
+			return Func<_tType>( _vValues, [](auto x) { return static_cast<_tType::value_type>(std::log( static_cast<double>(x) )); } );
+		}
+
+		/**
+		 * Applies Log() to an array of inputs.
+		 * 
+		 * \param _tType The view/container type.
+		 * \param _vValues The input/output view to modify.
+		 * \return Returns _vValues.
+		 **/
+		template <typename _tType>
+		static std::vector<_tType> &								Log( std::vector<_tType> &_vValues ) {
+			for ( auto & aThis : _vValues ) { Log( aThis ); }
+			return _vValues;
+		}
+
+		/**
+		 * Computes element-wise log().
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut>
+		static _tTypeOut &											Log( const _tTypeIn &_vIn, _tTypeOut &_vOut ) {
+			if constexpr ( Types::IsBool<_tTypeIn>() ) {
+				return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return !x; } );
+			}
+			return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return static_cast<_tTypeIn::value_type>(std::log( static_cast<double>(x) )); } );
+		}
+
+		/**
+		 * Applies Log() to an array of inputs and outputs.
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \throw If NN9_SAFETY_CHECK, throws if _vIn and _vOut are not the same lengths.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut>
+		static std::vector<_tTypeOut> &								Log( const std::vector<_tTypeIn> &_vIn, std::vector<_tTypeOut> &_vOut ) {
+#ifdef NN9_SAFETY_CHECK
+			if ( _vIn.size() != _vOut.size() ) { throw std::runtime_error( "Math::Log: Input and outputs must have the same number of elements." ); }
+#endif	// #ifdef NN9_SAFETY_CHECK
+
+			for ( size_t i = 0; i < _vIn.size(); ++i ) { Log( _vIn[i], _vOut[i] ); }
+			return _vOut;
+		}
+
+		/**
+		 * Computes element-wise log10().
+		 * 
+		 * \tparam _tType The view/container type.
+		 * \param _vValues The input/output view.
+		 * \return Returns _vValues.
+		 */
+		template <typename _tType>
+		static _tType &												Log10( _tType &_vValues ) {
+			if constexpr ( Types::IsBool<_tType>() ) {
+				// log10( 1 ) = 0.
+				// log10( 0 ) = -inf.
+				return Func<_tType>( _vValues, [](auto x) { return !x; } );
+			}
+			return Func<_tType>( _vValues, [](auto x) { return static_cast<_tType::value_type>(std::log10( static_cast<double>(x) )); } );
+		}
+
+		/**
+		 * Applies Log10() to an array of inputs.
+		 * 
+		 * \param _tType The view/container type.
+		 * \param _vValues The input/output view to modify.
+		 * \return Returns _vValues.
+		 **/
+		template <typename _tType>
+		static std::vector<_tType> &								Log10( std::vector<_tType> &_vValues ) {
+			for ( auto & aThis : _vValues ) { Log10( aThis ); }
+			return _vValues;
+		}
+
+		/**
+		 * Computes element-wise log10().
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut>
+		static _tTypeOut &											Log10( const _tTypeIn &_vIn, _tTypeOut &_vOut ) {
+			if constexpr ( Types::IsBool<_tTypeIn>() ) {
+				return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return !x; } );
+			}
+			return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return static_cast<_tTypeIn::value_type>(std::log10( static_cast<double>(x) )); } );
+		}
+
+		/**
+		 * Applies Log10() to an array of inputs and outputs.
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \throw If NN9_SAFETY_CHECK, throws if _vIn and _vOut are not the same lengths.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut>
+		static std::vector<_tTypeOut> &								Log10( const std::vector<_tTypeIn> &_vIn, std::vector<_tTypeOut> &_vOut ) {
+#ifdef NN9_SAFETY_CHECK
+			if ( _vIn.size() != _vOut.size() ) { throw std::runtime_error( "Math::Log10: Input and outputs must have the same number of elements." ); }
+#endif	// #ifdef NN9_SAFETY_CHECK
+
+			for ( size_t i = 0; i < _vIn.size(); ++i ) { Log10( _vIn[i], _vOut[i] ); }
+			return _vOut;
+		}
+
+		/**
+		 * Computes element-wise log2().
+		 * 
+		 * \tparam _tType The view/container type.
+		 * \param _vValues The input/output view.
+		 * \return Returns _vValues.
+		 */
+		template <typename _tType>
+		static _tType &												Log2( _tType &_vValues ) {
+			if constexpr ( Types::IsBool<_tType>() ) {
+				// log2( 1 ) = 0.
+				// log2( 0 ) = -inf.
+				return Func<_tType>( _vValues, [](auto x) { return !x; } );
+			}
+			return Func<_tType>( _vValues, [](auto x) { return static_cast<_tType::value_type>(std::log2( static_cast<double>(x) )); } );
+		}
+
+		/**
+		 * Applies Log2() to an array of inputs.
+		 * 
+		 * \param _tType The view/container type.
+		 * \param _vValues The input/output view to modify.
+		 * \return Returns _vValues.
+		 **/
+		template <typename _tType>
+		static std::vector<_tType> &								Log2( std::vector<_tType> &_vValues ) {
+			for ( auto & aThis : _vValues ) { Log2( aThis ); }
+			return _vValues;
+		}
+
+		/**
+		 * Computes element-wise log2().
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut>
+		static _tTypeOut &											Log2( const _tTypeIn &_vIn, _tTypeOut &_vOut ) {
+			if constexpr ( Types::IsBool<_tTypeIn>() ) {
+				return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return !x; } );
+			}
+			return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return static_cast<_tTypeIn::value_type>(std::log2( static_cast<double>(x) )); } );
+		}
+
+		/**
+		 * Applies Log2() to an array of inputs and outputs.
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \throw If NN9_SAFETY_CHECK, throws if _vIn and _vOut are not the same lengths.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut>
+		static std::vector<_tTypeOut> &								Log2( const std::vector<_tTypeIn> &_vIn, std::vector<_tTypeOut> &_vOut ) {
+#ifdef NN9_SAFETY_CHECK
+			if ( _vIn.size() != _vOut.size() ) { throw std::runtime_error( "Math::Log2: Input and outputs must have the same number of elements." ); }
+#endif	// #ifdef NN9_SAFETY_CHECK
+
+			for ( size_t i = 0; i < _vIn.size(); ++i ) { Log2( _vIn[i], _vOut[i] ); }
+			return _vOut;
+		}
+
+		/**
+		 * Computes element-wise x*x.
+		 * 
+		 * \tparam _tType The view/container type.
+		 * \param _vValues The input/output view.
+		 * \return Returns _vValues.
+		 */
+		template <typename _tType>
+		static _tType &												Square( _tType &_vValues ) {
+#ifdef __AVX512F__
+			if ( Utilities::IsAvx512FSupported() ) {
+				if constexpr ( Types::IsInt8<_tType>() ) {
+					return FuncAvx512<_tType>( _vValues, [](auto x) { return SquareInt8( x ); }, [](auto x) { return in32_t( x ) * x; } );
+				}
+				if constexpr ( Types::IsUint8<_tType>() ) {
+					return FuncAvx512<_tType>( _vValues, [](auto x) { return SquareUint8( x ); }, [](auto x) { return uin32_t( x ) * x; } );
+				}
+				if constexpr ( Types::IsInt16<_tType>() ) {
+					return FuncAvx512<_tType>( _vValues, [](auto x) { return SquareInt16( x ); }, [](auto x) { return in32_t( x ) * x; } );
+				}
+				if constexpr ( Types::IsUint16<_tType>() ) {
+					return FuncAvx512<_tType>( _vValues, [](auto x) { return SquareUint16( x ); }, [](auto x) { return uin32_t( x ) * x; } );
+				}
+				if constexpr ( Types::IsInt32<_tType>() ) {
+					return FuncAvx512<_tType>( _vValues, [](auto x) { return SquareInt32( x ); }, [](auto x) { return in32_t( x ) * x; } );
+				}
+				if constexpr ( Types::IsUint32<_tType>() ) {
+					return FuncAvx512<_tType>( _vValues, [](auto x) { return SquareUint32( x ); }, [](auto x) { return uin32_t( x ) * x; } );
+				}
+			}
+#endif	// #ifdef __AVX512F__
+			if constexpr ( Types::IsBool<_tType>() ) {
+				//return Func<_tType>( _vValues, [](auto x) { return x; } );
+				return _vValues;	// Assuming well formed bool values, no changes will be made via x*x.
+			}
+			return Func<_tType>( _vValues, [](auto x) { return x * x; } );
+		}
 #if 0
 		/**
 		 * Applies the given function to each item in the view.
@@ -1703,7 +2828,7 @@ namespace nn9 {
 #endif	// #ifdef __AVX2__
 
 			while ( _sSize ) {
-				scast( std::abs<int8_t>( (*_pfIn++) ), (*_pfOut++) );
+				Intrin::scast( std::abs<int8_t>( (*_pfIn++) ), (*_pfOut++) );
 				--_sSize;
 			}
 		}
@@ -1749,7 +2874,7 @@ namespace nn9 {
 #endif	// #ifdef __AVX2__
 
 			while ( _sSize ) {
-				scast( std::abs<int16_t>( (*_pfIn++) ), (*_pfOut++) );
+				Intrin::scast( std::abs<int16_t>( (*_pfIn++) ), (*_pfOut++) );
 				--_sSize;
 			}
 		}
@@ -1795,7 +2920,7 @@ namespace nn9 {
 #endif	// #ifdef __AVX2__
 
 			while ( _sSize ) {
-				scast( std::abs<int32_t>( (*_pfIn++) ), (*_pfOut++) );
+				Intrin::scast( std::abs<int32_t>( (*_pfIn++) ), (*_pfOut++) );
 				--_sSize;
 			}
 		}

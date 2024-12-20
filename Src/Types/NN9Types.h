@@ -166,6 +166,15 @@ namespace nn9 {
 		static constexpr bool											IsUint64() { return std::is_same<T, uint64_t>::value; }
 
 		/**
+		 * A constexpr function that checks if T is a bool type.
+		 *
+		 * \tparam T The type to check.
+		 * \return Returns true if T is bool, false otherwise.
+		 */
+		template <typename T>
+		static constexpr bool											IsBool() { return std::is_same<T, bool>::value; }
+
+		/**
 		 * A constexpr function that checks if T is a type that is suitable for an integer SIMD register (__m512i/__m256i).
 		 *
 		 * \tparam T The type to check.
@@ -178,7 +187,7 @@ namespace nn9 {
 		 * A constexpr function that checks if T is a type that is suitable for a float SIMD register (__m512/__m256).
 		 *
 		 * \tparam T The type to check.
-		 * \return Returns true if T is float type suitable for a 32-bit foating-point SIMD register, false otherwise.
+		 * \return Returns true if T is a type suitable for a 32-bit foating-point SIMD register, false otherwise.
 		 */
 		template <typename T>
 		static constexpr bool											SimdFloat() { return IsFloat16<T>() || IsBFloat16<T>() || Is32BitFloat<T>(); }
@@ -187,10 +196,19 @@ namespace nn9 {
 		 * A constexpr function that checks if T is a type that is suitable for a double SIMD register (__m512d/__m256d).
 		 *
 		 * \tparam T The type to check.
-		 * \return Returns true if T is float type suitable for a 64-bit foating-point SIMD register, false otherwise.
+		 * \return Returns true if T is a type suitable for a 64-bit foating-point SIMD register, false otherwise.
 		 */
 		template <typename T>
 		static constexpr bool											SimdDouble() { return IsFloat16<T>() || IsBFloat16<T>() || Is32BitFloat<T>(); }
+
+		/**
+		 * A constexpr function that checks if T is an integer type.
+		 *
+		 * \tparam T The type to check.
+		 * \return Returns true if T is an integer type, false otherwise.
+		 */
+		template <typename T>
+		static constexpr bool											IsInt() { return std::is_integral<T>::value; }
 
 		/**
 		 * \brief A constexpr function that checks if T is an unsigned type.
