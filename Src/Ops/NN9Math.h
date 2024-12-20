@@ -8,6 +8,7 @@
 
 #pragma once
 
+#include "../Foundation/NN9Intrin.h"
 #include "../Foundation/NN9Math.h"
 #include "../Types/NN9BFloat16.h"
 #include "../Types/NN9Float16.h"
@@ -30,11 +31,751 @@ namespace nn9 {
 	 */
 	class Math {
 	public :
-
 		// == Functions.
 		// ===============================
 		// Utilities
 		// ===============================
+		/**
+		 * Applies the given function to each item in the view.
+		 * 
+		 * \tparam _tType The view/container type.
+		 * \tparam _tFunc The function type.
+		 * \param _vValues The input/output view to modify.
+		 * \param _fFunc A pointer to the function to call on each item in the view.
+		 * \return Returns _vValues.
+		 **/
+		template <typename _tType, typename _tFunc>
+		static _tType &												Func( _tType &_vValues, _tFunc _fFunc ) {
+			using ValueType = typename _tType::value_type;
+#ifdef __AVX512F__
+			if constexpr ( nn9::Types::IsBFloat16<ValueType>() ) {
+				if ( Utilities::IsAvx512FSupported() ) {
+					// Decode 16 bfloat16_t's at once for super-fast processing.
+					bfloat16_t * pSrc = reinterpret_cast<bfloat16_t *>(&_vValues[0]);
+					size_t sSize = _vValues.size();
+					NN9_ALIGN( 64 )
+					float fTmp[16];
+
+					while ( sSize >= 16 ) {
+						__m512 mSrc = bfloat16::loadu_bf16_to_fp32_16( reinterpret_cast<uint16_t *>(pSrc) );
+						_mm512_store_ps( fTmp, mSrc );
+
+						scast( _fFunc( fTmp[0] ), fTmp[0] );
+						scast( _fFunc( fTmp[1] ), fTmp[1] );
+						scast( _fFunc( fTmp[2] ), fTmp[2] );
+						scast( _fFunc( fTmp[3] ), fTmp[3] );
+						scast( _fFunc( fTmp[4] ), fTmp[4] );
+						scast( _fFunc( fTmp[5] ), fTmp[5] );
+						scast( _fFunc( fTmp[6] ), fTmp[6] );
+						scast( _fFunc( fTmp[7] ), fTmp[7] );
+						scast( _fFunc( fTmp[8] ), fTmp[8] );
+						scast( _fFunc( fTmp[9] ), fTmp[9] );
+						scast( _fFunc( fTmp[10] ), fTmp[10] );
+						scast( _fFunc( fTmp[11] ), fTmp[11] );
+						scast( _fFunc( fTmp[12] ), fTmp[12] );
+						scast( _fFunc( fTmp[13] ), fTmp[13] );
+						scast( _fFunc( fTmp[14] ), fTmp[14] );
+						scast( _fFunc( fTmp[15] ), fTmp[15] );
+
+						sSize -= 16;
+						__m512 mDst = _mm512_load_ps( fTmp );
+						bfloat16::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(pSrc), mDst );
+						pSrc += 16;
+					}
+					while ( sSize ) {
+						scast( _fFunc( (*pSrc) ), (*pSrc) );
+						++pSrc;
+						--sSize;
+					}
+					return _vValues;
+				}
+			}
+			if constexpr ( nn9::Types::IsFloat16<ValueType>() ) {
+				if ( Utilities::IsAvx512FSupported() ) {
+					nn9::float16 * pSrc = reinterpret_cast<nn9::float16 *>(&_vValues[0]);
+					size_t sSize = _vValues.size();
+					NN9_ALIGN( 64 )
+					float fTmp[16];
+
+					while ( sSize >= 16 ) {
+						__m512 mVal = nn9::float16::Convert16Float16ToFloat32( pSrc );
+						_mm512_store_ps( fTmp, mVal );
+
+						scast( _fFunc( fTmp[0] ), fTmp[0] );
+						scast( _fFunc( fTmp[1] ), fTmp[1] );
+						scast( _fFunc( fTmp[2] ), fTmp[2] );
+						scast( _fFunc( fTmp[3] ), fTmp[3] );
+						scast( _fFunc( fTmp[4] ), fTmp[4] );
+						scast( _fFunc( fTmp[5] ), fTmp[5] );
+						scast( _fFunc( fTmp[6] ), fTmp[6] );
+						scast( _fFunc( fTmp[7] ), fTmp[7] );
+						scast( _fFunc( fTmp[8] ), fTmp[8] );
+						scast( _fFunc( fTmp[9] ), fTmp[9] );
+						scast( _fFunc( fTmp[10] ), fTmp[10] );
+						scast( _fFunc( fTmp[11] ), fTmp[11] );
+						scast( _fFunc( fTmp[12] ), fTmp[12] );
+						scast( _fFunc( fTmp[13] ), fTmp[13] );
+						scast( _fFunc( fTmp[14] ), fTmp[14] );
+						scast( _fFunc( fTmp[15] ), fTmp[15] );
+
+						__m512 mDst = _mm512_load_ps( fTmp );
+						nn9::float16::Convert16Float32ToFloat16( pSrc, mDst );
+
+						pSrc += 16;
+						sSize -= 16;
+					}
+					while ( sSize ) {
+						scast( _fFunc( (*pSrc) ), (*pSrc) );
+						++pSrc;
+						--sSize;
+					}
+					return _vValues;
+				}
+			}
+#endif	// #ifdef __AVX512F__
+
+#ifdef __AVX2__
+			if constexpr ( nn9::Types::IsBFloat16<ValueType>() ) {
+				if ( Utilities::IsAvx2Supported() ) {
+					// Decode 8 bfloat16_t's at once for super-fast processing.
+					bfloat16_t * pSrc = reinterpret_cast<bfloat16_t *>(&_vValues[0]);
+					size_t sSize = _vValues.size();
+					NN9_ALIGN( 32 )
+					float fTmp[8];
+
+					while ( sSize >= 8 ) {
+						__m256 mSrc = bfloat16::loadu_bf16_to_fp32_8( reinterpret_cast<uint16_t *>(pSrc) );
+						_mm256_store_ps( fTmp, mSrc );
+
+						scast( _fFunc( fTmp[0] ), fTmp[0] );
+						scast( _fFunc( fTmp[1] ), fTmp[1] );
+						scast( _fFunc( fTmp[2] ), fTmp[2] );
+						scast( _fFunc( fTmp[3] ), fTmp[3] );
+						scast( _fFunc( fTmp[4] ), fTmp[4] );
+						scast( _fFunc( fTmp[5] ), fTmp[5] );
+						scast( _fFunc( fTmp[6] ), fTmp[6] );
+						scast( _fFunc( fTmp[7] ), fTmp[7] );
+
+						sSize -= 8;
+						__m256 mDst = _mm256_load_ps( fTmp );
+						bfloat16::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(pSrc), mDst );
+						pSrc += 8;
+					}
+					while ( sSize ) {
+						scast( _fFunc( (*pSrc) ), (*pSrc) );
+						++pSrc;
+						--sSize;
+					}
+					return _vValues;
+				}
+			}
+			if constexpr ( nn9::Types::IsFloat16<ValueType>() ) {
+				if ( Utilities::IsAvx2Supported() ) {
+					nn9::float16 * pSrc = reinterpret_cast<nn9::float16 *>(&_vValues[0]);
+					size_t sSize = _vValues.size();
+					NN9_ALIGN( 32 )
+					float fTmp[8];
+
+					while ( sSize >= 8 ) {
+						__m256 mVal = nn9::float16::Convert8Float16ToFloat32( pSrc );
+						_mm256_store_ps( fTmp, mVal );
+
+						scast( _fFunc( fTmp[0] ), fTmp[0] );
+						scast( _fFunc( fTmp[1] ), fTmp[1] );
+						scast( _fFunc( fTmp[2] ), fTmp[2] );
+						scast( _fFunc( fTmp[3] ), fTmp[3] );
+						scast( _fFunc( fTmp[4] ), fTmp[4] );
+						scast( _fFunc( fTmp[5] ), fTmp[5] );
+						scast( _fFunc( fTmp[6] ), fTmp[6] );
+						scast( _fFunc( fTmp[7] ), fTmp[7] );
+
+						__m256 mDst = _mm256_load_ps( fTmp );
+						nn9::float16::Convert8Float32ToFloat16( pSrc, mDst );
+
+						pSrc += 8;
+						sSize -= 8;
+					}
+					while ( sSize ) {
+						scast( _fFunc( (*pSrc) ), (*pSrc) );
+						++pSrc;
+						--sSize;
+					}
+					return _vValues;
+				}
+			}
+#endif	// #ifdef __AVX2__
+			for ( auto & aThis : _vValues ) {
+				scast( _fFunc( aThis ), aThis );
+			}
+			return _vValues;
+		}
+
+
+		/**
+		 * Applies the given function to each item in the view.
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \tparam _tFunc The function type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \param _fFunc A pointer to the function to call on each item in the view.
+		 * \throw If NN9_SAFETY_CHECK, throws if the views are not the same lengths.
+		 * \return Returns _vOut.
+		 **/
+		template <typename _tTypeIn, typename _tTypeOut, typename _tFunc>
+		static _tTypeOut &											Func( const _tTypeIn &_vIn, _tTypeOut &_vOut, _tFunc _fFunc ) {
+#ifdef NN9_SAFETY_CHECK
+			if ( _vIn.size() != _vOut.size() ) { throw std::runtime_error( "Math::Func: Input and outputs must have the same number of elements." ); }
+#endif	// #ifdef NN9_SAFETY_CHECK
+			using ValueTypeIn = typename _tTypeIn::value_type;
+			using ValueTypeOut = typename _tTypeOut::value_type;
+#ifdef __AVX512F__
+			if constexpr ( nn9::Types::IsBFloat16<ValueTypeIn>() ) {
+				if ( Utilities::IsAvx512FSupported() ) {
+					// Decode 16 bfloat16_t's at once for super-fast processing.
+					const bfloat16_t * pSrc = reinterpret_cast<const bfloat16_t *>(&_vIn[0]);
+					ValueTypeOut * pDst = reinterpret_cast<ValueTypeOut *>(&_vOut[0]);
+					size_t sSize = _vIn.size();
+					NN9_ALIGN( 64 )
+					float fTmp[16];
+
+					while ( sSize >= 16 ) {
+						__m512 mSrc = bfloat16::loadu_bf16_to_fp32_16( pSrc );
+						_mm512_store_ps( fTmp, mSrc );
+
+						if constexpr ( nn9::Types::IsBFloat16<ValueTypeOut>() ) {
+							scast( _fFunc( fTmp[0] ), fTmp[0] );
+							scast( _fFunc( fTmp[1] ), fTmp[1] );
+							scast( _fFunc( fTmp[2] ), fTmp[2] );
+							scast( _fFunc( fTmp[3] ), fTmp[3] );
+							scast( _fFunc( fTmp[4] ), fTmp[4] );
+							scast( _fFunc( fTmp[5] ), fTmp[5] );
+							scast( _fFunc( fTmp[6] ), fTmp[6] );
+							scast( _fFunc( fTmp[7] ), fTmp[7] );
+							scast( _fFunc( fTmp[8] ), fTmp[8] );
+							scast( _fFunc( fTmp[9] ), fTmp[9] );
+							scast( _fFunc( fTmp[10] ), fTmp[10] );
+							scast( _fFunc( fTmp[11] ), fTmp[11] );
+							scast( _fFunc( fTmp[12] ), fTmp[12] );
+							scast( _fFunc( fTmp[13] ), fTmp[13] );
+							scast( _fFunc( fTmp[14] ), fTmp[14] );
+							scast( _fFunc( fTmp[15] ), fTmp[15] );
+
+							__m512 mDst = _mm512_load_ps( fTmp );
+							bfloat16::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(pDst), mDst );
+						}
+						else if constexpr ( nn9::Types::IsFloat16<ValueTypeOut>() ) {
+							scast( _fFunc( fTmp[0] ), fTmp[0] );
+							scast( _fFunc( fTmp[1] ), fTmp[1] );
+							scast( _fFunc( fTmp[2] ), fTmp[2] );
+							scast( _fFunc( fTmp[3] ), fTmp[3] );
+							scast( _fFunc( fTmp[4] ), fTmp[4] );
+							scast( _fFunc( fTmp[5] ), fTmp[5] );
+							scast( _fFunc( fTmp[6] ), fTmp[6] );
+							scast( _fFunc( fTmp[7] ), fTmp[7] );
+							scast( _fFunc( fTmp[8] ), fTmp[8] );
+							scast( _fFunc( fTmp[9] ), fTmp[9] );
+							scast( _fFunc( fTmp[10] ), fTmp[10] );
+							scast( _fFunc( fTmp[11] ), fTmp[11] );
+							scast( _fFunc( fTmp[12] ), fTmp[12] );
+							scast( _fFunc( fTmp[13] ), fTmp[13] );
+							scast( _fFunc( fTmp[14] ), fTmp[14] );
+							scast( _fFunc( fTmp[15] ), fTmp[15] );
+
+							__m512 mDst = _mm512_load_ps( fTmp );
+							nn9::float16::Convert16Float32ToFloat16( reinterpret_cast<nn9::float16 *>(pDst), mDst );
+						}
+						else {
+							scast( _fFunc( fTmp[0] ), pDst[0] );
+							scast( _fFunc( fTmp[1] ), pDst[1] );
+							scast( _fFunc( fTmp[2] ), pDst[2] );
+							scast( _fFunc( fTmp[3] ), pDst[3] );
+							scast( _fFunc( fTmp[4] ), pDst[4] );
+							scast( _fFunc( fTmp[5] ), pDst[5] );
+							scast( _fFunc( fTmp[6] ), pDst[6] );
+							scast( _fFunc( fTmp[7] ), pDst[7] );
+							scast( _fFunc( fTmp[8] ), pDst[8] );
+							scast( _fFunc( fTmp[9] ), pDst[9] );
+							scast( _fFunc( fTmp[10] ), pDst[10] );
+							scast( _fFunc( fTmp[11] ), pDst[11] );
+							scast( _fFunc( fTmp[12] ), pDst[12] );
+							scast( _fFunc( fTmp[13] ), pDst[13] );
+							scast( _fFunc( fTmp[14] ), pDst[14] );
+							scast( _fFunc( fTmp[15] ), pDst[15] );
+						}
+
+						sSize -= 16;
+						pSrc += 16;
+						pDst += 16;
+					}
+					while ( sSize-- ) {
+						scast( _fFunc( (*pSrc++) ), (*pDst++) );
+					}
+					return _vOut;
+				}
+			}
+			if constexpr ( nn9::Types::IsFloat16<ValueTypeIn>() ) {
+				if ( Utilities::IsAvx512FSupported() ) {
+					nn9::float16 * pSrc = reinterpret_cast<nn9::float16 *>(&_vIn[0]);
+					ValueTypeOut * pDst = reinterpret_cast<ValueTypeOut *>(&_vOut[0]);
+					size_t sSize = _vIn.size();
+					NN9_ALIGN( 64 )
+					float fTmp[16];
+
+					while ( sSize >= 16 ) {
+						__m512 mVal = nn9::float16::Convert16Float16ToFloat32( pSrc );
+						_mm512_store_ps( fTmp, mVal );
+
+						if constexpr ( nn9::Types::IsBFloat16<ValueTypeOut>() ) {
+							scast( _fFunc( fTmp[0] ), fTmp[0] );
+							scast( _fFunc( fTmp[1] ), fTmp[1] );
+							scast( _fFunc( fTmp[2] ), fTmp[2] );
+							scast( _fFunc( fTmp[3] ), fTmp[3] );
+							scast( _fFunc( fTmp[4] ), fTmp[4] );
+							scast( _fFunc( fTmp[5] ), fTmp[5] );
+							scast( _fFunc( fTmp[6] ), fTmp[6] );
+							scast( _fFunc( fTmp[7] ), fTmp[7] );
+							scast( _fFunc( fTmp[8] ), fTmp[8] );
+							scast( _fFunc( fTmp[9] ), fTmp[9] );
+							scast( _fFunc( fTmp[10] ), fTmp[10] );
+							scast( _fFunc( fTmp[11] ), fTmp[11] );
+							scast( _fFunc( fTmp[12] ), fTmp[12] );
+							scast( _fFunc( fTmp[13] ), fTmp[13] );
+							scast( _fFunc( fTmp[14] ), fTmp[14] );
+							scast( _fFunc( fTmp[15] ), fTmp[15] );
+
+							__m512 mDst = _mm512_load_ps( fTmp );
+							bfloat16::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(pDst), mDst );
+						}
+						else if constexpr ( nn9::Types::IsFloat16<ValueTypeOut>() ) {
+							scast( _fFunc( fTmp[0] ), fTmp[0] );
+							scast( _fFunc( fTmp[1] ), fTmp[1] );
+							scast( _fFunc( fTmp[2] ), fTmp[2] );
+							scast( _fFunc( fTmp[3] ), fTmp[3] );
+							scast( _fFunc( fTmp[4] ), fTmp[4] );
+							scast( _fFunc( fTmp[5] ), fTmp[5] );
+							scast( _fFunc( fTmp[6] ), fTmp[6] );
+							scast( _fFunc( fTmp[7] ), fTmp[7] );
+							scast( _fFunc( fTmp[8] ), fTmp[8] );
+							scast( _fFunc( fTmp[9] ), fTmp[9] );
+							scast( _fFunc( fTmp[10] ), fTmp[10] );
+							scast( _fFunc( fTmp[11] ), fTmp[11] );
+							scast( _fFunc( fTmp[12] ), fTmp[12] );
+							scast( _fFunc( fTmp[13] ), fTmp[13] );
+							scast( _fFunc( fTmp[14] ), fTmp[14] );
+							scast( _fFunc( fTmp[15] ), fTmp[15] );
+
+							__m512 mDst = _mm512_load_ps( fTmp );
+							nn9::float16::Convert16Float32ToFloat16( reinterpret_cast<nn9::float16 *>(pDst), mDst );
+						}
+						else {
+							scast( _fFunc( fTmp[0] ), pDst[0] );
+							scast( _fFunc( fTmp[1] ), pDst[1] );
+							scast( _fFunc( fTmp[2] ), pDst[2] );
+							scast( _fFunc( fTmp[3] ), pDst[3] );
+							scast( _fFunc( fTmp[4] ), pDst[4] );
+							scast( _fFunc( fTmp[5] ), pDst[5] );
+							scast( _fFunc( fTmp[6] ), pDst[6] );
+							scast( _fFunc( fTmp[7] ), pDst[7] );
+							scast( _fFunc( fTmp[8] ), pDst[8] );
+							scast( _fFunc( fTmp[9] ), pDst[9] );
+							scast( _fFunc( fTmp[10] ), pDst[10] );
+							scast( _fFunc( fTmp[11] ), pDst[11] );
+							scast( _fFunc( fTmp[12] ), pDst[12] );
+							scast( _fFunc( fTmp[13] ), pDst[13] );
+							scast( _fFunc( fTmp[14] ), pDst[14] );
+							scast( _fFunc( fTmp[15] ), pDst[15] );
+						}
+
+						pSrc += 16;
+						sSize -= 16;
+					}
+					while ( sSize-- ) {
+						scast( _fFunc( (*pSrc++) ), (*pDst++) );
+					}
+					return _vOut;
+				}
+			}
+#endif	// #ifdef __AVX512F__
+
+#ifdef __AVX2__
+			if constexpr ( nn9::Types::IsBFloat16<ValueTypeIn>() ) {
+				if ( Utilities::IsAvx2Supported() ) {
+					// Decode 8 bfloat16_t's at once for super-fast processing.
+					const bfloat16_t * pSrc = reinterpret_cast<const bfloat16_t *>(&_vIn[0]);
+					ValueTypeOut * pDst = reinterpret_cast<ValueTypeOut *>(&_vOut[0]);
+					size_t sSize = _vIn.size();
+					NN9_ALIGN( 32 )
+					float fTmp[8];
+
+					while ( sSize >= 8 ) {
+						__m256 mSrc = bfloat16::loadu_bf16_to_fp32_8( pSrc );
+						_mm256_store_ps( fTmp, mSrc );
+
+						if constexpr ( nn9::Types::IsBFloat16<ValueTypeOut>() ) {
+							scast( _fFunc( fTmp[0] ), fTmp[0] );
+							scast( _fFunc( fTmp[1] ), fTmp[1] );
+							scast( _fFunc( fTmp[2] ), fTmp[2] );
+							scast( _fFunc( fTmp[3] ), fTmp[3] );
+							scast( _fFunc( fTmp[4] ), fTmp[4] );
+							scast( _fFunc( fTmp[5] ), fTmp[5] );
+							scast( _fFunc( fTmp[6] ), fTmp[6] );
+							scast( _fFunc( fTmp[7] ), fTmp[7] );
+
+							__m256 mDst = _mm256_load_ps( fTmp );
+							bfloat16::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(pDst), mDst );
+						}
+						else if constexpr ( nn9::Types::IsFloat16<ValueTypeOut>() ) {
+							scast( _fFunc( fTmp[0] ), fTmp[0] );
+							scast( _fFunc( fTmp[1] ), fTmp[1] );
+							scast( _fFunc( fTmp[2] ), fTmp[2] );
+							scast( _fFunc( fTmp[3] ), fTmp[3] );
+							scast( _fFunc( fTmp[4] ), fTmp[4] );
+							scast( _fFunc( fTmp[5] ), fTmp[5] );
+							scast( _fFunc( fTmp[6] ), fTmp[6] );
+							scast( _fFunc( fTmp[7] ), fTmp[7] );
+
+							__m256 mDst = _mm256_load_ps( fTmp );
+							nn9::float16::Convert8Float32ToFloat16( reinterpret_cast<nn9::float16 *>(pDst), mDst );
+						}
+						else {
+							scast( _fFunc( fTmp[0] ), pDst[0] );
+							scast( _fFunc( fTmp[1] ), pDst[1] );
+							scast( _fFunc( fTmp[2] ), pDst[2] );
+							scast( _fFunc( fTmp[3] ), pDst[3] );
+							scast( _fFunc( fTmp[4] ), pDst[4] );
+							scast( _fFunc( fTmp[5] ), pDst[5] );
+							scast( _fFunc( fTmp[6] ), pDst[6] );
+							scast( _fFunc( fTmp[7] ), pDst[7] );
+						}
+
+						sSize -= 8;
+						pSrc += 8;
+						pDst += 8;
+					}
+					while ( sSize-- ) {
+						scast( _fFunc( (*pSrc++) ), (*pDst++) );
+					}
+					return _vOut;
+				}
+			}
+			if constexpr ( nn9::Types::IsFloat16<ValueTypeIn>() ) {
+				if ( Utilities::IsAvx2Supported() ) {
+					nn9::float16 * pSrc = reinterpret_cast<nn9::float16 *>(&_vIn[0]);
+					ValueTypeOut * pDst = reinterpret_cast<ValueTypeOut *>(&_vOut[0]);
+					size_t sSize = _vIn.size();
+					NN9_ALIGN( 32 )
+					float fTmp[8];
+
+					while ( sSize >= 8 ) {
+						__m256 mVal = nn9::float16::Convert8Float16ToFloat32( pSrc );
+						_mm256_store_ps( fTmp, mVal );
+
+						if constexpr ( nn9::Types::IsBFloat16<ValueTypeOut>() ) {
+							scast( _fFunc( fTmp[0] ), fTmp[0] );
+							scast( _fFunc( fTmp[1] ), fTmp[1] );
+							scast( _fFunc( fTmp[2] ), fTmp[2] );
+							scast( _fFunc( fTmp[3] ), fTmp[3] );
+							scast( _fFunc( fTmp[4] ), fTmp[4] );
+							scast( _fFunc( fTmp[5] ), fTmp[5] );
+							scast( _fFunc( fTmp[6] ), fTmp[6] );
+							scast( _fFunc( fTmp[7] ), fTmp[7] );
+
+							__m256 mDst = _mm256_load_ps( fTmp );
+							bfloat16::storeu_fp32_to_bf16( reinterpret_cast<uint16_t *>(pDst), mDst );
+						}
+						else if constexpr ( nn9::Types::IsFloat16<ValueTypeOut>() ) {
+							scast( _fFunc( fTmp[0] ), fTmp[0] );
+							scast( _fFunc( fTmp[1] ), fTmp[1] );
+							scast( _fFunc( fTmp[2] ), fTmp[2] );
+							scast( _fFunc( fTmp[3] ), fTmp[3] );
+							scast( _fFunc( fTmp[4] ), fTmp[4] );
+							scast( _fFunc( fTmp[5] ), fTmp[5] );
+							scast( _fFunc( fTmp[6] ), fTmp[6] );
+							scast( _fFunc( fTmp[7] ), fTmp[7] );
+
+							__m256 mDst = _mm256_load_ps( fTmp );
+							nn9::float16::Convert8Float32ToFloat16( reinterpret_cast<nn9::float16 *>(pDst), mDst );
+						}
+						else {
+							scast( _fFunc( fTmp[0] ), pDst[0] );
+							scast( _fFunc( fTmp[1] ), pDst[1] );
+							scast( _fFunc( fTmp[2] ), pDst[2] );
+							scast( _fFunc( fTmp[3] ), pDst[3] );
+							scast( _fFunc( fTmp[4] ), pDst[4] );
+							scast( _fFunc( fTmp[5] ), pDst[5] );
+							scast( _fFunc( fTmp[6] ), pDst[6] );
+							scast( _fFunc( fTmp[7] ), pDst[7] );
+						}
+
+						pSrc += 8;
+						sSize -= 8;
+					}
+					while ( sSize-- ) {
+						scast( _fFunc( (*pSrc++) ), (*pDst++) );
+					}
+					return _vOut;
+				}
+			}
+#endif	// #ifdef __AVX2__
+
+			for ( size_t i = 0; i < _vIn.size(); ++i ) {
+				scast( _fFunc( _vIn[i] ), _vOut[i] );
+			}
+			return _vOut;
+		}
+
+#ifdef __AVX512F__
+		/**
+		 * Applies the given function to each item in the view using AVX-512.
+		 * 
+		 * \tparam _tType The view/container type.
+		 * \tparam _tAvx512Func The AVX-512 function type.
+		 * \tparam _tFunc The function type.
+		 * \param _vValues The input/output view to modify.
+		 * \param _fAvxFunc A pointer to the function to call on each item in the view.
+		 * \param _fFunc A pointer to the function to call on each item in the view.
+		 * \return Returns _vValues.
+		 **/
+		template <typename _tType, typename _tAvx512Func, typename _tFunc>
+		static _tType &												FuncAvx512( _tType &_vValues, _tAvx512Func _fAvxFunc, _tFunc _fFunc ) {
+			using ValueType = typename _tType::value_type;
+			auto * pvtiIn = &_vValues[0];
+			auto sSize = _vValues.size();
+
+			if constexpr ( nn9::Types::SimdInt<ValueType>() ) {
+				constexpr size_t sRegSize = sizeof( __m512i ) / sizeof( ValueType );
+				while ( sSize >= sRegSize ) {
+					auto mReg = _mm512_loadu_epi64( pvtiIn );
+					mReg = _fAvxFunc( mReg );
+					Intrin::scast<ValueType>( mReg, pvtiIn );
+					sSize -= sRegSize;
+					pvtiIn += sRegSize;
+				}
+			}
+			else if constexpr ( nn9::Types::SimdFloat<ValueType>() ) {
+				constexpr size_t sRegSize = sizeof( __m512 ) / sizeof( ValueType );
+				while ( sSize >= sRegSize ) {
+					auto mReg = _mm512_loadu_ps( pvtiIn );
+					mReg = _fAvxFunc( mReg );
+					Intrin::scast<ValueType>( mReg, pvtiIn );
+					sSize -= sRegSize;
+					pvtiIn += sRegSize;
+				}
+			}
+			else if constexpr ( nn9::Types::SimdDouble<ValueType>() ) {
+				constexpr size_t sRegSize = sizeof( __m512d ) / sizeof( ValueType );
+				while ( sSize >= sRegSize ) {
+					auto mReg = _mm512_loadu_pd( pvtiIn );
+					mReg = _fAvxFunc( mReg );
+					Intrin::scast<ValueType>( mReg, pvtiIn );
+					sSize -= sRegSize;
+					pvtiIn += sRegSize;
+				}
+			}
+
+			while ( sSize-- ) {
+				Intrin::scast( (*pvtiIn), (*pvtiIn) );
+				++pvtiIn;
+			}
+			return _vValues;
+		}
+
+		/**
+		 * Applies the given function to each item in the view.
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \tparam _tAvx512Func The AVX-512 function type.
+		 * \tparam _tFunc The function type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \param _fAvxFunc A pointer to the function to call on each item in the view.
+		 * \param _fFunc A pointer to the function to call on each item in the view.
+		 * \throw If NN9_SAFETY_CHECK, throws if the views are not the same lengths.
+		 * \return Returns _vOut.
+		 **/
+		template <typename _tTypeIn, typename _tTypeOut, typename _tAvx512Func, typename _tFunc>
+		static _tTypeOut &											FuncAvx512( const _tTypeIn &_vIn, _tTypeOut &_vOut, _tAvx512Func _fAvxFunc, _tFunc _fFunc ) {
+			using ValueTypeIn = typename _tTypeIn::value_type;
+			using ValueTypeOut = typename _tTypeOut::value_type;
+#ifdef NN9_SAFETY_CHECK
+			if ( _vIn.size() != _vOut.size() ) { throw std::runtime_error( "Math::FuncAvx512: The source and destination must both have the same number of elements." ); }
+#endif		// #ifdef NN9_SAFETY_CHECK
+
+			const auto * pvtiIn = &_vIn[0];
+			auto * pvtoOut = &_vOut[0];
+			auto sSize = _vIn.size();
+
+			if constexpr ( nn9::Types::SimdInt<ValueTypeIn>() ) {
+				constexpr size_t sRegSize = sizeof( __m512i ) / sizeof( ValueTypeIn );
+				while ( sSize >= sRegSize ) {
+					auto mReg = _mm512_loadu_epi8( pvtiIn );
+					mReg = _fAvxFunc( mReg );
+					Intrin::scast<ValueTypeIn>( mReg, pvtoOut );
+					sSize -= sRegSize;
+					pvtiIn += sRegSize;
+					pvtoOut += sRegSize;
+				}
+			}
+			else if constexpr ( nn9::Types::SimdFloat<ValueTypeIn>() ) {
+				constexpr size_t sRegSize = sizeof( __m512 ) / sizeof( ValueTypeIn );
+				while ( sSize >= sRegSize ) {
+					auto mReg = _mm512_loadu_ps( pvtiIn );
+					mReg = _fAvxFunc( mReg );
+					Intrin::scast<ValueTypeIn>( mReg, pvtoOut );
+					sSize -= sRegSize;
+					pvtiIn += sRegSize;
+					pvtoOut += sRegSize;
+				}
+			}
+			else if constexpr ( nn9::Types::SimdDouble<ValueTypeIn>() ) {
+				constexpr size_t sRegSize = sizeof( __m512d ) / sizeof( ValueTypeIn );
+				while ( sSize >= sRegSize ) {
+					auto mReg = _mm512_loadu_pd( pvtiIn );
+					mReg = _fAvxFunc( mReg );
+					Intrin::scast<ValueTypeIn>( mReg, pvtoOut );
+					sSize -= sRegSize;
+					pvtiIn += sRegSize;
+					pvtoOut += sRegSize;
+				}
+			}
+
+			while ( sSize-- ) {
+				Intrin::scast( (*pvtiIn++), (*pvtoOut++) );
+			}
+			return _vOut;
+		}
+#endif	// #ifdef __AVX512F__
+
+#ifdef __AVX2__
+		/**
+		 * Applies the given function to each item in the view using AVX2.
+		 * 
+		 * \tparam _tType The view/container type.
+		 * \tparam _tAvx2Func The AVX2 function type.
+		 * \tparam _tFunc The function type.
+		 * \param _vValues The input/output view to modify.
+		 * \param _fAvxFunc A pointer to the function to call on each item in the view.
+		 * \param _fFunc A pointer to the function to call on each item in the view.
+		 * \return Returns _vValues.
+		 **/
+		template <typename _tType, typename _tAvx2Func, typename _tFunc>
+		static _tType &												FuncAvx2( _tType &_vValues, _tAvx2Func _fAvxFunc, _tFunc _fFunc ) {
+			using ValueType = typename _tType::value_type;
+			auto * pvtiIn = &_vValues[0];
+			auto sSize = _vValues.size();
+
+			if constexpr ( nn9::Types::SimdInt<ValueType>() ) {
+				constexpr size_t sRegSize = sizeof( __m256i ) / sizeof( ValueType );
+				while ( sSize >= sRegSize ) {
+					auto mReg = _mm256_loadu_epi64( pvtiIn );
+					mReg = _fAvxFunc( mReg );
+					Intrin::scast<ValueType>( mReg, pvtiIn );
+					sSize -= sRegSize;
+					pvtiIn += sRegSize;
+				}
+			}
+			else if constexpr ( nn9::Types::SimdFloat<ValueType>() ) {
+				constexpr size_t sRegSize = sizeof( __m256 ) / sizeof( ValueType );
+				while ( sSize >= sRegSize ) {
+					auto mReg = _mm256_loadu_ps( pvtiIn );
+					mReg = _fAvxFunc( mReg );
+					Intrin::scast<ValueType>( mReg, pvtiIn );
+					sSize -= sRegSize;
+					pvtiIn += sRegSize;
+				}
+			}
+			else if constexpr ( nn9::Types::SimdDouble<ValueType>() ) {
+				constexpr size_t sRegSize = sizeof( __m256d ) / sizeof( ValueType );
+				while ( sSize >= sRegSize ) {
+					auto mReg = _mm256_loadu_pd( pvtiIn );
+					mReg = _fAvxFunc( mReg );
+					Intrin::scast<ValueType>( mReg, pvtiIn );
+					sSize -= sRegSize;
+					pvtiIn += sRegSize;
+				}
+			}
+
+			while ( sSize-- ) {
+				Intrin::scast( (*pvtiIn), (*pvtiIn) );
+				++pvtiIn;
+			}
+			return _vValues;
+		}
+
+		/**
+		 * Applies the given function to each item in the view.
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \tparam _tAvx2Func The AVX-2 function type.
+		 * \tparam _tFunc The function type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \param _fAvxFunc A pointer to the function to call on each item in the view.
+		 * \param _fFunc A pointer to the function to call on each item in the view.
+		 * \throw If NN9_SAFETY_CHECK, throws if the views are not the same lengths.
+		 * \return Returns _vOut.
+		 **/
+		template <typename _tTypeIn, typename _tTypeOut, typename _tAvx2Func, typename _tFunc>
+		static _tTypeOut &											FuncAvx2( const _tTypeIn &_vIn, _tTypeOut &_vOut, _tAvx2Func _fAvxFunc, _tFunc _fFunc ) {
+			using ValueTypeIn = typename _tTypeIn::value_type;
+			using ValueTypeOut = typename _tTypeOut::value_type;
+#ifdef NN9_SAFETY_CHECK
+			if ( _vIn.size() != _vOut.size() ) { throw std::runtime_error( "Math::FuncAvx2: The source and destination must both have the same number of elements." ); }
+#endif		// #ifdef NN9_SAFETY_CHECK
+
+			const auto * pvtiIn = &_vIn[0];
+			auto * pvtoOut = &_vOut[0];
+			auto sSize = _vIn.size();
+
+			if constexpr ( nn9::Types::SimdInt<ValueTypeIn>() ) {
+				constexpr size_t sRegSize = sizeof( __m256i ) / sizeof( ValueTypeIn );
+				while ( sSize >= sRegSize ) {
+					auto mReg = _mm256_loadu_epi8( pvtiIn );
+					mReg = _fAvxFunc( mReg );
+					Intrin::scast<ValueTypeIn>( mReg, pvtoOut );
+					sSize -= sRegSize;
+					pvtiIn += sRegSize;
+					pvtoOut += sRegSize;
+				}
+			}
+			else if constexpr ( nn9::Types::SimdFloat<ValueTypeIn>() ) {
+				constexpr size_t sRegSize = sizeof( __m256 ) / sizeof( ValueTypeIn );
+				while ( sSize >= sRegSize ) {
+					auto mReg = _mm256_loadu_ps( pvtiIn );
+					mReg = _fAvxFunc( mReg );
+					Intrin::scast<ValueTypeIn>( mReg, pvtoOut );
+					sSize -= sRegSize;
+					pvtiIn += sRegSize;
+					pvtoOut += sRegSize;
+				}
+			}
+			else if constexpr ( nn9::Types::SimdDouble<ValueTypeIn>() ) {
+				constexpr size_t sRegSize = sizeof( __m256d ) / sizeof( ValueTypeIn );
+				while ( sSize >= sRegSize ) {
+					auto mReg = _mm256_loadu_pd( pvtiIn );
+					mReg = _fAvxFunc( mReg );
+					Intrin::scast<ValueTypeIn>( mReg, pvtoOut );
+					sSize -= sRegSize;
+					pvtiIn += sRegSize;
+					pvtoOut += sRegSize;
+				}
+			}
+
+			while ( sSize-- ) {
+				Intrin::scast( (*pvtiIn++), (*pvtoOut++) );
+			}
+			return _vOut;
+		}
+#endif	// #ifdef __AVX2__
+
+		// ===============================
+		// Trigonometric Functions
+		// ===============================
+#if 0
 		/**
 		 * Applies the given function to each item in the view.
 		 * 
@@ -6362,6 +7103,8 @@ namespace nn9 {
 		// Element-wise Algebra
 		// ===============================
 
+
+#endif	// #if 0
 	};
 
 }	// namespace nn9
