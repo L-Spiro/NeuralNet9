@@ -1872,6 +1872,10 @@ namespace nn9 {
 		 */
 		template <typename _tType>
 		static _tType &												Square( _tType &_vValues ) {
+			if constexpr ( Types::IsBool<_tType>() ) {
+				//return Func<_tType>( _vValues, [](auto x) { return x; } );
+				return _vValues;	// Assuming well formed bool values, no changes will be made via x*x.
+			}
 #ifdef __AVX512F__
 			if ( Utilities::IsAvx512FSupported() ) {
 				if constexpr ( Types::IsInt8<_tType>() ) {
@@ -1887,18 +1891,71 @@ namespace nn9 {
 					return FuncAvx512<_tType>( _vValues, [](auto x) { return SquareUint16( x ); }, [](auto x) { return uin32_t( x ) * x; } );
 				}
 				if constexpr ( Types::IsInt32<_tType>() ) {
-					return FuncAvx512<_tType>( _vValues, [](auto x) { return SquareInt32( x ); }, [](auto x) { return in32_t( x ) * x; } );
+					return FuncAvx512<_tType>( _vValues, [](auto x) { return SquareInt32( x ); }, [](auto x) { return in64_t( x ) * x; } );
 				}
 				if constexpr ( Types::IsUint32<_tType>() ) {
-					return FuncAvx512<_tType>( _vValues, [](auto x) { return SquareUint32( x ); }, [](auto x) { return uin32_t( x ) * x; } );
+					return FuncAvx512<_tType>( _vValues, [](auto x) { return SquareUint32( x ); }, [](auto x) { return uin64_t( x ) * x; } );
+				}
+				if constexpr ( Types::IsFloat16<_tType>() || Types::IsBFloat16<_tType>() || Types::Is32BitFloat<_tType>() ) {
+					return FuncAvx512<_tType>( _vValues, [](auto x) { return _mm512_mul_ps( x, x ); }, [](auto x) { return x * x; } );
+				}
+				if constexpr ( Types::Is64BitFloat<_tType>() ) {
+					return FuncAvx512<_tType>( _vValues, [](auto x) { return _mm512_mul_pd( x, x ); }, [](auto x) { return x * x; } );
 				}
 			}
 #endif	// #ifdef __AVX512F__
-			if constexpr ( Types::IsBool<_tType>() ) {
-				//return Func<_tType>( _vValues, [](auto x) { return x; } );
-				return _vValues;	// Assuming well formed bool values, no changes will be made via x*x.
+
+#ifdef __AVX2__
+			if ( Utilities::IsAvx2Supported() ) {
+				if constexpr ( Types::IsInt8<_tType>() ) {
+					return FuncAvx2<_tType>( _vValues, [](auto x) { return SquareInt8( x ); }, [](auto x) { return in32_t( x ) * x; } );
+				}
+				if constexpr ( Types::IsUint8<_tType>() ) {
+					return FuncAvx2<_tType>( _vValues, [](auto x) { return SquareUint8( x ); }, [](auto x) { return uin32_t( x ) * x; } );
+				}
+				if constexpr ( Types::IsInt16<_tType>() ) {
+					return FuncAvx2<_tType>( _vValues, [](auto x) { return SquareInt16( x ); }, [](auto x) { return in32_t( x ) * x; } );
+				}
+				if constexpr ( Types::IsUint16<_tType>() ) {
+					return FuncAvx2<_tType>( _vValues, [](auto x) { return SquareUint16( x ); }, [](auto x) { return uin32_t( x ) * x; } );
+				}
+				if constexpr ( Types::IsInt32<_tType>() ) {
+					return FuncAvx2<_tType>( _vValues, [](auto x) { return SquareInt32( x ); }, [](auto x) { return in64_t( x ) * x; } );
+				}
+				if constexpr ( Types::IsUint32<_tType>() ) {
+					return FuncAvx2<_tType>( _vValues, [](auto x) { return SquareUint32( x ); }, [](auto x) { return uin64_t( x ) * x; } );
+				}
+				if constexpr ( Types::IsFloat16<_tType>() || Types::IsBFloat16<_tType>() || Types::Is32BitFloat<_tType>() ) {
+					return FuncAvx2<_tType>( _vValues, [](auto x) { return _mm256_mul_ps( x, x ); }, [](auto x) { return x * x; } );
+				}
+				if constexpr ( Types::Is64BitFloat<_tType>() ) {
+					return FuncAvx2<_tType>( _vValues, [](auto x) { return _mm256_mul_pd( x, x ); }, [](auto x) { return x * x; } );
+				}
+			}
+#endif	// #ifdef __AVX2__
+			if constexpr ( Types::IsInt8<_tType>() || Types::IsUint8<_tType>() ) {
+				return Func<_tType>( _vValues, [](auto x) { return in32_t( x ) * x; } );
+			}
+			if constexpr ( Types::IsInt16<_tType>() ) {
+				return Func<_tType>( _vValues, [](auto x) { return in32_t( x ) * x; } );
+			}
+			if constexpr ( Types::IsUint16<_tType>() ) {
+				return Func<_tType>( _vValues, [](auto x) { return uin32_t( x ) * x; } );
 			}
 			return Func<_tType>( _vValues, [](auto x) { return x * x; } );
+		}
+
+		/**
+		 * Applies Square() to an array of inputs.
+		 * 
+		 * \param _tType The view/container type.
+		 * \param _vValues The input/output view to modify.
+		 * \return Returns _vValues.
+		 **/
+		template <typename _tType>
+		static std::vector<_tType> &								Square( std::vector<_tType> &_vValues ) {
+			for ( auto & aThis : _vValues ) { Square( aThis ); }
+			return _vValues;
 		}
 #if 0
 		/**

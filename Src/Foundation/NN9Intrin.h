@@ -3012,15 +3012,15 @@ namespace nn9 {
 
 			__m512i mInt32 = _mm512_cvtps_epi32( fClamped );
 
-			__m256i low32 = _mm512_extracti32x8_epi32( mInt32, 0 );
-			__m256i high32 = _mm512_extracti32x8_epi32( mInt32, 1 );
+			__m256i mLow32 = _mm512_extracti32x8_epi32( mInt32, 0 );
+			__m256i mHigh32 = _mm512_extracti32x8_epi32( mInt32, 1 );
 
-			__m128i low16 = _mm_packs_epi32( _mm256_castsi256_si128( low32 ), _mm256_extracti128_si256( low32, 1 ) );
-			__m128i high16 = _mm_packs_epi32( _mm256_castsi256_si128( high32 ), _mm256_extracti128_si256( high32, 1 ) );
+			__m128i mLo16 = _mm_packs_epi32( _mm256_castsi256_si128( mLow32 ), _mm256_extracti128_si256( mLow32, 1 ) );
+			__m128i mHi16 = _mm_packs_epi32( _mm256_castsi256_si128( mHigh32 ), _mm256_extracti128_si256( mHigh32, 1 ) );
 
-			__m128i i8_16 = _mm_packs_epi16( low16, high16 );
+			__m128i mI8_16 = _mm_packs_epi16( mLo16, mHi16 );
 
-			_mm_storeu_si128( reinterpret_cast<__m128i *>(_pi8Dst), i8_16 );
+			_mm_storeu_si128( reinterpret_cast<__m128i *>(_pi8Dst), mI8_16 );
 		}
 
 		/**
@@ -3036,15 +3036,15 @@ namespace nn9 {
 
 			__m512i mInt32 = _mm512_cvtps_epi32( fClamped );
 
-			__m256i low32 = _mm512_extracti32x8_epi32( mInt32, 0 );
-			__m256i high32 = _mm512_extracti32x8_epi32( mInt32, 1 );
+			__m256i mLow32 = _mm512_extracti32x8_epi32( mInt32, 0 );
+			__m256i mHigh32 = _mm512_extracti32x8_epi32( mInt32, 1 );
 
-			__m128i low16 = _mm_packus_epi32( _mm256_castsi256_si128( low32 ), _mm256_extracti128_si256( low32, 1 ) );
-			__m128i high16 = _mm_packus_epi32( _mm256_castsi256_si128( high32 ), _mm256_extracti128_si256( high32, 1 ) );
+			__m128i mLo16 = _mm_packus_epi32( _mm256_castsi256_si128( mLow32 ), _mm256_extracti128_si256( mLow32, 1 ) );
+			__m128i mHi16 = _mm_packus_epi32( _mm256_castsi256_si128( mHigh32 ), _mm256_extracti128_si256( mHigh32, 1 ) );
 
-			__m128i u8_16 = _mm_packus_epi16( low16, high16 );
+			__m128i mU8_16 = _mm_packus_epi16( mLo16, mHi16 );
 
-			_mm_storeu_si128( reinterpret_cast<__m128i *>(_pu8Dst), u8_16 );
+			_mm_storeu_si128( reinterpret_cast<__m128i *>(_pu8Dst), mU8_16 );
 		}
 
 		/**
@@ -3069,11 +3069,11 @@ namespace nn9 {
 		 * \param _pu16Dst Output array of 16 uint16_t's.
 		 */
 		static inline void										float32x16_to_uint16x16( __m512 _mFloat, uint16_t * _pu16Dst ) {
-			__m512 zero = _mm512_setzero_ps();
-			__m512 maxVal = _mm512_set1_ps( 65535.0f );
-			__m512 clamped = _mm512_min_ps( _mm512_max_ps( _mFloat, zero ), maxVal );
+			__m512 mZero = _mm512_setzero_ps();
+			__m512 mMaxVal = _mm512_set1_ps( 65535.0f );
+			__m512 mClamped = _mm512_min_ps( _mm512_max_ps( _mFloat, mZero ), mMaxVal );
 
-			__m512i mInt32 = _mm512_cvtps_epi32( clamped );
+			__m512i mInt32 = _mm512_cvtps_epi32( mClamped );
 
 			int32x16_to_uint16x16_saturated( mInt32, _pu16Dst );
 		}
@@ -3101,10 +3101,10 @@ namespace nn9 {
 		 */
 		static inline void										float32x16_to_uint32x16( __m512 _mFloat, uint32_t * _pu32Dst ) {
 			__m512 zero = _mm512_setzero_ps();
-			__m512 maxVal = _mm512_set1_ps( static_cast<float>(UINT32_MAX) );
-			__m512 clamped = _mm512_min_ps( _mm512_max_ps( _mFloat, zero ), maxVal );
+			__m512 mMaxVal = _mm512_set1_ps( static_cast<float>(UINT32_MAX) );
+			__m512 mClamped = _mm512_min_ps( _mm512_max_ps( _mFloat, zero ), mMaxVal );
 
-			__m512i mInt32 = _mm512_cvtps_epu32( clamped );
+			__m512i mInt32 = _mm512_cvtps_epu32( mClamped );
 			_mm512_storeu_si512( reinterpret_cast<__m512i *>(_pu32Dst), mInt32 );
 		}
 
@@ -5485,8 +5485,8 @@ namespace nn9 {
 		/**
 		 * Multiplies each of the 64 int8 elements in a __m512i by itself.
 		 * 
-		 * @param _pm512Val the input vector.
-		 * @return a __m512i containing the products.
+		 * \param _pm512Val the input vector.
+		 * \return a __m512i containing the products.
 		 */
 		static inline __m512i									SquareInt8( __m512i _pm512Val ) {
 			__m256i m256Low = _mm512_extracti64x4_epi64( _pm512Val, 0 );
@@ -5508,167 +5508,279 @@ namespace nn9 {
 		/**
 		 * Multiplies each of the 64 uint8 elements in a __m512i by itself.
 		 * 
-		 * @param _pm512Val the input vector.
-		 * @return a __m512i containing the products as uint8 (with saturation).
+		 * \param _pm512Val the input vector.
+		 * \return a __m512i containing the products as uint8 (with saturation).
 		 */
 		static inline __m512i									SquareUint8( __m512i _pm512Val ) {
 			__m256i m256Low = _mm512_extracti64x4_epi64( _pm512Val, 0 );
 			__m256i m256High = _mm512_extracti64x4_epi64( _pm512Val, 1 );
-			__m512i m512Low16 = _mm512_cvtepu8_epi16( m256Low );
-			__m512i m512High16 = _mm512_cvtepu8_epi16( m256High );
-			__m512i m512MulLow = _mm512_mullo_epi16( m512Low16, m512Low16 );
-			__m512i m512MulHigh = _mm512_mullo_epi16( m512High16, m512High16 );
-			__m256i m256MulLow0 = _mm512_extracti64x4_epi64( m512MulLow, 0 );
-			__m256i m256MulLow1 = _mm512_extracti64x4_epi64( m512MulLow, 1 );
-			__m256i m256MulHigh0 = _mm512_extracti64x4_epi64( m512MulHigh, 0 );
-			__m256i m256MulHigh1 = _mm512_extracti64x4_epi64( m512MulHigh, 1 );
-			__m256i m256LowPacked = _mm256_packus_epi16( m256MulLow0, m256MulLow1 );
-			__m256i m256HighPacked = _mm256_packus_epi16( m256MulHigh0, m256MulHigh1 );
-			__m512i m512Result = _mm512_inserti64x4( _mm512_castsi256_si512( m256LowPacked ), m256HighPacked, 1 );
-			return m512Result;
+
+			__m512i m512Lo16 = _mm512_cvtepu8_epi16( m256Low );
+			__m512i m512Hi16 = _mm512_cvtepu8_epi16( m256High );
+
+			__m512i m512MulLo = _mm512_mullo_epi16( m512Lo16, m512Lo16 );
+			__m512i m512MulHi = _mm512_mullo_epi16( m512Hi16, m512Hi16 );
+
+			__m512i m512Clamp = _mm512_set1_epi16( 255 );
+			m512MulLo = _mm512_min_epu16( m512MulLo, m512Clamp );
+			m512MulHi = _mm512_min_epu16( m512MulHi, m512Clamp );
+
+			__m256i m256MulLo0 = _mm512_extracti64x4_epi64( m512MulLo, 0 );
+			__m256i m256MulLo1 = _mm512_extracti64x4_epi64( m512MulLo, 1 );
+			__m256i m256MulHi0 = _mm512_extracti64x4_epi64( m512MulHi, 0 );
+			__m256i m256MulHi1 = _mm512_extracti64x4_epi64( m512MulHi, 1 );
+
+			__m256i m256LowPacked  = _mm256_packus_epi16( m256MulLo0, m256MulLo1 );
+			__m256i m256HighPacked = _mm256_packus_epi16( m256MulHi0, m256MulHi1 );
+
+			return _mm512_inserti64x4( _mm512_castsi256_si512( m256LowPacked ), m256HighPacked, 1 );
 		}
 
 		/**
 		 * Multiplies each of the 32 int16 elements in a __m512i by itself with saturation.
-		 * @param _pm512Val the input vector (int16)
-		 * @return a __m512i containing the products saturated to int16
+		 * 
+		 * \param _pm512Val the input vector (int16)
+		 * \return a __m512i containing the products saturated to int16
 		 */
 		static inline __m512i									SquareInt16( __m512i _pm512Val ) {
-			__m256i m256Low = _mm512_extracti64x4_epi64(_pm512Val, 0);
-			__m256i m256High = _mm512_extracti64x4_epi64(_pm512Val, 1);
+			__m256i m256Low = _mm512_extracti64x4_epi64( _pm512Val, 0 );
+			__m256i m256High = _mm512_extracti64x4_epi64( _pm512Val, 1 );
 
-			__m128i m128Low0 = _mm256_castsi256_si128(m256Low);
-			__m128i m128Low1 = _mm256_extracti128_si256(m256Low, 1);
-			__m128i m128High0 = _mm256_castsi256_si128(m256High);
-			__m128i m128High1 = _mm256_extracti128_si256(m256High, 1);
+			__m128i m128Low0 = _mm256_castsi256_si128( m256Low );
+			__m128i m128Low1 = _mm256_extracti128_si256( m256Low, 1 );
+			__m128i m128High0 = _mm256_castsi256_si128( m256High );
+			__m128i m128High1 = _mm256_extracti128_si256( m256High, 1 );
 
-			__m256i m256ValLo0 = _mm256_cvtepi16_epi32(m128Low0);
-			__m256i m256ValLo1 = _mm256_cvtepi16_epi32(m128Low1);
-			__m256i m256ValHi0 = _mm256_cvtepi16_epi32(m128High0);
-			__m256i m256ValHi1 = _mm256_cvtepi16_epi32(m128High1);
+			__m256i m256ValLo0 = _mm256_cvtepi16_epi32( m128Low0 );
+			__m256i m256ValLo1 = _mm256_cvtepi16_epi32( m128Low1 );
+			__m256i m256ValHi0 = _mm256_cvtepi16_epi32( m128High0 );
+			__m256i m256ValHi1 = _mm256_cvtepi16_epi32( m128High1 );
 
-			__m256i m256MulLo0 = _mm256_mullo_epi32(m256ValLo0, m256ValLo0);
-			__m256i m256MulLo1 = _mm256_mullo_epi32(m256ValLo1, m256ValLo1);
-			__m256i m256MulHi0 = _mm256_mullo_epi32(m256ValHi0, m256ValHi0);
-			__m256i m256MulHi1 = _mm256_mullo_epi32(m256ValHi1, m256ValHi1);
+			__m256i m256MulLo0 = _mm256_mullo_epi32( m256ValLo0, m256ValLo0 );
+			__m256i m256MulLo1 = _mm256_mullo_epi32( m256ValLo1, m256ValLo1 );
+			__m256i m256MulHi0 = _mm256_mullo_epi32( m256ValHi0, m256ValHi0 );
+			__m256i m256MulHi1 = _mm256_mullo_epi32( m256ValHi1, m256ValHi1 );
 
-			__m128i m128Lo0_0 = _mm256_castsi256_si128(m256MulLo0);
-			__m128i m128Lo0_1 = _mm256_extracti128_si256(m256MulLo0, 1);
-			__m128i m128Lo1_0 = _mm256_castsi256_si128(m256MulLo1);
-			__m128i m128Lo1_1 = _mm256_extracti128_si256(m256MulLo1, 1);
-			__m128i m128Hi0_0 = _mm256_castsi256_si128(m256MulHi0);
-			__m128i m128Hi0_1 = _mm256_extracti128_si256(m256MulHi0, 1);
-			__m128i m128Hi1_0 = _mm256_castsi256_si128(m256MulHi1);
-			__m128i m128Hi1_1 = _mm256_extracti128_si256(m256MulHi1, 1);
+			__m128i m128Lo0_0 = _mm256_castsi256_si128( m256MulLo0 );
+			__m128i m128Lo0_1 = _mm256_extracti128_si256( m256MulLo0, 1 );
+			__m128i m128Lo1_0 = _mm256_castsi256_si128( m256MulLo1 );
+			__m128i m128Lo1_1 = _mm256_extracti128_si256( m256MulLo1, 1 );
+			__m128i m128Hi0_0 = _mm256_castsi256_si128( m256MulHi0 );
+			__m128i m128Hi0_1 = _mm256_extracti128_si256( m256MulHi0, 1 );
+			__m128i m128Hi1_0 = _mm256_castsi256_si128( m256MulHi1 );
+			__m128i m128Hi1_1 = _mm256_extracti128_si256( m256MulHi1, 1 );
 
-			__m128i m128ResLoLow = _mm_packs_epi32(m128Lo0_0, m128Lo0_1);
-			__m128i m128ResLoHigh = _mm_packs_epi32(m128Lo1_0, m128Lo1_1);
-			__m128i m128ResHiLow = _mm_packs_epi32(m128Hi0_0, m128Hi0_1);
-			__m128i m128ResHiHigh = _mm_packs_epi32(m128Hi1_0, m128Hi1_1);
+			__m128i m128ResLoLow = _mm_packs_epi32( m128Lo0_0, m128Lo0_1 );
+			__m128i m128ResLoHigh = _mm_packs_epi32( m128Lo1_0, m128Lo1_1 );
+			__m128i m128ResHiLow = _mm_packs_epi32( m128Hi0_0, m128Hi0_1 );
+			__m128i m128ResHiHigh = _mm_packs_epi32( m128Hi1_0, m128Hi1_1 );
 
-			__m256i m256PackedLow = _mm256_setr_m128i(m128ResLoLow, m128ResLoHigh);
-			__m256i m256PackedHigh = _mm256_setr_m128i(m128ResHiLow, m128ResHiHigh);
-			return _mm512_inserti64x4(_mm512_castsi256_si512(m256PackedLow), m256PackedHigh, 1);
+			__m256i m256PackedLow = _mm256_setr_m128i( m128ResLoLow, m128ResLoHigh );
+			__m256i m256PackedHigh = _mm256_setr_m128i( m128ResHiLow, m128ResHiHigh );
+			return _mm512_inserti64x4( _mm512_castsi256_si512( m256PackedLow ), m256PackedHigh, 1 );
 		}
 
 		/**
 		 * Multiplies each of the 32 uint16 elements in a __m512i by itself with saturation.
-		 * @param _pm512Val the input vector (uint16)
-		 * @return a __m512i containing the products saturated to uint16
+		 * 
+		 * \param _pm512Val the input vector (uint16)
+		 * \return a __m512i containing the products saturated to uint16
 		 */
 		static inline __m512i									SquareUint16( __m512i _pm512Val ) {
-			__m256i m256Low = _mm512_extracti64x4_epi64(_pm512Val, 0);
-			__m256i m256High = _mm512_extracti64x4_epi64(_pm512Val, 1);
+			__m256i m256Low = _mm512_extracti64x4_epi64( _pm512Val, 0 );
+			__m256i m256High = _mm512_extracti64x4_epi64( _pm512Val, 1 );
 
-			__m128i m128Low0 = _mm256_castsi256_si128(m256Low);
-			__m128i m128Low1 = _mm256_extracti128_si256(m256Low, 1);
-			__m128i m128High0 = _mm256_castsi256_si128(m256High);
-			__m128i m128High1 = _mm256_extracti128_si256(m256High, 1);
+			__m128i m128Low0 = _mm256_castsi256_si128( m256Low );
+			__m128i m128Low1 = _mm256_extracti128_si256( m256Low, 1 );
+			__m128i m128High0 = _mm256_castsi256_si128( m256High );
+			__m128i m128High1 = _mm256_extracti128_si256( m256High, 1 );
 
-			__m256i m256ValLo0 = _mm256_cvtepu16_epi32(m128Low0);
-			__m256i m256ValLo1 = _mm256_cvtepu16_epi32(m128Low1);
-			__m256i m256ValHi0 = _mm256_cvtepu16_epi32(m128High0);
-			__m256i m256ValHi1 = _mm256_cvtepu16_epi32(m128High1);
+			__m256i m256ValLo0 = _mm256_cvtepu16_epi32( m128Low0 );
+			__m256i m256ValLo1 = _mm256_cvtepu16_epi32( m128Low1 );
+			__m256i m256ValHi0 = _mm256_cvtepu16_epi32( m128High0 );
+			__m256i m256ValHi1 = _mm256_cvtepu16_epi32( m128High1 );
 
-			__m256i m256MulLo0 = _mm256_mullo_epi32(m256ValLo0, m256ValLo0);
-			__m256i m256MulLo1 = _mm256_mullo_epi32(m256ValLo1, m256ValLo1);
-			__m256i m256MulHi0 = _mm256_mullo_epi32(m256ValHi0, m256ValHi0);
-			__m256i m256MulHi1 = _mm256_mullo_epi32(m256ValHi1, m256ValHi1);
+			__m256i m256MulLo0 = _mm256_mullo_epi32( m256ValLo0, m256ValLo0 );
+			__m256i m256MulLo1 = _mm256_mullo_epi32( m256ValLo1, m256ValLo1 );
+			__m256i m256MulHi0 = _mm256_mullo_epi32( m256ValHi0, m256ValHi0 );
+			__m256i m256MulHi1 = _mm256_mullo_epi32( m256ValHi1, m256ValHi1 );
 
-			__m128i m128Lo0_0 = _mm256_castsi256_si128(m256MulLo0);
-			__m128i m128Lo0_1 = _mm256_extracti128_si256(m256MulLo0, 1);
-			__m128i m128Lo1_0 = _mm256_castsi256_si128(m256MulLo1);
-			__m128i m128Lo1_1 = _mm256_extracti128_si256(m256MulLo1, 1);
-			__m128i m128Hi0_0 = _mm256_castsi256_si128(m256MulHi0);
-			__m128i m128Hi0_1 = _mm256_extracti128_si256(m256MulHi0, 1);
-			__m128i m128Hi1_0 = _mm256_castsi256_si128(m256MulHi1);
-			__m128i m128Hi1_1 = _mm256_extracti128_si256(m256MulHi1, 1);
+			__m256i m256Max16 = _mm256_set1_epi32( 65535 );
+			m256MulLo0 = _mm256_min_epu32( m256MulLo0, m256Max16 );
+			m256MulLo1 = _mm256_min_epu32( m256MulLo1, m256Max16 );
+			m256MulHi0 = _mm256_min_epu32( m256MulHi0, m256Max16 );
+			m256MulHi1 = _mm256_min_epu32( m256MulHi1, m256Max16 );
 
-			__m128i m128ResLoLow = _mm_packus_epi32(m128Lo0_0, m128Lo0_1);
-			__m128i m128ResLoHigh = _mm_packus_epi32(m128Lo1_0, m128Lo1_1);
-			__m128i m128ResHighLow = _mm_packus_epi32(m128Hi0_0, m128Hi0_1);
-			__m128i m128ResHighHigh = _mm_packus_epi32(m128Hi1_0, m128Hi1_1);
+			__m128i m128Lo0_0 = _mm256_castsi256_si128( m256MulLo0 );
+			__m128i m128Lo0_1 = _mm256_extracti128_si256( m256MulLo0, 1 );
+			__m128i m128Lo1_0 = _mm256_castsi256_si128( m256MulLo1 );
+			__m128i m128Lo1_1 = _mm256_extracti128_si256( m256MulLo1, 1 );
+			__m128i m128Hi0_0 = _mm256_castsi256_si128( m256MulHi0 );
+			__m128i m128Hi0_1 = _mm256_extracti128_si256( m256MulHi0, 1 );
+			__m128i m128Hi1_0 = _mm256_castsi256_si128( m256MulHi1 );
+			__m128i m128Hi1_1 = _mm256_extracti128_si256( m256MulHi1, 1 );
 
-			__m256i m256PackedLow = _mm256_setr_m128i(m128ResLoLow, m128ResLoHigh);
-			__m256i m256PackedHigh = _mm256_setr_m128i(m128ResHighLow, m128ResHighHigh);
-			return _mm512_inserti64x4(_mm512_castsi256_si512(m256PackedLow), m256PackedHigh, 1);
+			__m128i m128ResLoLow = _mm_packus_epi32( m128Lo0_0, m128Lo0_1 );
+			__m128i m128ResLoHigh = _mm_packus_epi32( m128Lo1_0, m128Lo1_1 );
+			__m128i m128ResHighLow = _mm_packus_epi32( m128Hi0_0, m128Hi0_1 );
+			__m128i m128ResHighHigh = _mm_packus_epi32( m128Hi1_0, m128Hi1_1 );
+
+			__m256i m256PackedLow = _mm256_setr_m128i( m128ResLoLow, m128ResLoHigh );
+			__m256i m256PackedHigh = _mm256_setr_m128i( m128ResHighLow, m128ResHighHigh );
+
+			return _mm512_inserti64x4( _mm512_castsi256_si512( m256PackedLow ), m256PackedHigh, 1 );
 		}
 
 		/**
 		 * Squares each int32 in a __m512i with saturation.
 		 * Any input whose absolute value is greater than 46340 will overflow, so clamp to INT32_MAX.
 		 * 
-		 * @param _pm512Val input vector (__m512i of int32).
-		 * @return __m512i with saturated squares.
+		 * \param _pm512Val input vector (__m512i of int32).
+		 * \return __m512i with saturated squares.
 		 */
 		static inline __m512i									SquareInt32( __m512i _pm512Val ) {
-			__m256i m256Low = _mm512_extracti64x4_epi64(_pm512Val, 0);
-			__m256i m256High = _mm512_extracti64x4_epi64(_pm512Val, 1);
-
-			__m256i m256AbsLow = _mm256_abs_epi32(m256Low);
-			__m256i m256AbsHigh = _mm256_abs_epi32(m256High);
-			__m256i m256Threshold = _mm256_set1_epi32(46340);
-			__m256i m256OverflowMaskLow = _mm256_cmpgt_epi32(m256AbsLow, m256Threshold);
-			__m256i m256OverflowMaskHigh = _mm256_cmpgt_epi32(m256AbsHigh, m256Threshold);
-			__m256i m256MulLow = _mm256_mullo_epi32(m256Low, m256Low);
-			__m256i m256MulHigh = _mm256_mullo_epi32(m256High, m256High);
-			__m256i m256Max = _mm256_set1_epi32(0x7FFFFFFF);
-			m256MulLow = _mm256_blendv_epi8(m256MulLow, m256Max, m256OverflowMaskLow);
-			m256MulHigh = _mm256_blendv_epi8(m256MulHigh, m256Max, m256OverflowMaskHigh);
-
-			return _mm512_inserti64x4(_mm512_castsi256_si512(m256MulLow), m256MulHigh, 1);
+			__m256i m256Low = _mm512_extracti64x4_epi64( _pm512Val, 0 );
+			__m256i m256High = _mm512_extracti64x4_epi64( _pm512Val, 1 );
+    
+			__m256i m256Threshold = _mm256_set1_epi32( 46340 );
+			__m256i m256AbsLow = _mm256_abs_epi32( m256Low );
+			__m256i m256AbsHigh = _mm256_abs_epi32( m256High );
+			__m256i m256Min = _mm256_set1_epi32( INT32_MIN );
+			__m256i m256IsMinLow = _mm256_cmpeq_epi32( m256Low, m256Min );
+			__m256i m256IsMinHigh = _mm256_cmpeq_epi32( m256High, m256Min );
+			__m256i m256OverflowMaskLow = _mm256_or_si256( _mm256_cmpgt_epi32( m256AbsLow, m256Threshold ), m256IsMinLow );
+			__m256i m256OverflowMaskHigh = _mm256_or_si256( _mm256_cmpgt_epi32( m256AbsHigh, m256Threshold ), m256IsMinHigh );
+			__m256i m256MulLow = _mm256_mullo_epi32( m256Low, m256Low );
+			__m256i m256MulHigh = _mm256_mullo_epi32( m256High, m256High );
+			__m256i m256Max = _mm256_set1_epi32( INT32_MAX );
+			m256MulLow = _mm256_blendv_epi8( m256MulLow, m256Max, m256OverflowMaskLow );
+			m256MulHigh = _mm256_blendv_epi8( m256MulHigh, m256Max, m256OverflowMaskHigh );
+    
+			return _mm512_inserti64x4( _mm512_castsi256_si512( m256MulLow ), m256MulHigh, 1 );
 		}
 
 		/**
 		 * Squares each uint32 in a __m512i with saturation.
 		 * Any input greater than 65535 will overflow, so clamp to UINT32_MAX.
 		 * 
-		 * @param _pm512Val input vector (__m512i of uint32).
-		 * @return __m512i with saturated squares.
+		 * \param _pm512Val input vector (__m512i of uint32).
+		 * \return __m512i with saturated squares.
 		 */
 		static inline __m512i									SquareUint32( __m512i _pm512Val ) {
-			__m256i m256Low = _mm512_extracti64x4_epi64(_pm512Val, 0);
-			__m256i m256High = _mm512_extracti64x4_epi64(_pm512Val, 1);
-
-			__m256i m256Threshold = _mm256_set1_epi32(65535);
-			__m256i m256OverflowMaskLow = _mm256_cmpgt_epi32(m256Low, m256Threshold);
-			__m256i m256OverflowMaskHigh = _mm256_cmpgt_epi32(m256High, m256Threshold);
-			__m256i m256MulLow = _mm256_mullo_epi32(m256Low, m256Low);
-			__m256i m256MulHigh = _mm256_mullo_epi32(m256High, m256High);
-			__m256i m256Max = _mm256_set1_epi32(-1); /* UINT32_MAX */
-			m256MulLow = _mm256_blendv_epi8(m256MulLow, m256Max, m256OverflowMaskLow);
-			m256MulHigh = _mm256_blendv_epi8(m256MulHigh, m256Max, m256OverflowMaskHigh);
-
-			return _mm512_inserti64x4(_mm512_castsi256_si512(m256MulLow), m256MulHigh, 1);
+			__m256i m256Low = _mm512_extracti64x4_epi64( _pm512Val, 0 );
+			__m256i m256High = _mm512_extracti64x4_epi64( _pm512Val, 1 );
+    
+			__m256i m256Threshold = _mm256_set1_epi32( 65535 );
+			__m256i m256OverflowMaskLow = _mm256_or_si256(
+				_mm256_cmpgt_epi32( m256Low, m256Threshold ),
+				_mm256_cmpgt_epi32( _mm256_setzero_si256(), m256Low )
+			);
+			__m256i m256OverflowMaskHigh = _mm256_or_si256(
+				_mm256_cmpgt_epi32( m256High, m256Threshold ),
+				_mm256_cmpgt_epi32( _mm256_setzero_si256(), m256High )
+			);
+			__m256i m256MulLow = _mm256_mullo_epi32( m256Low, m256Low );
+			__m256i m256MulHigh = _mm256_mullo_epi32( m256High, m256High );
+			__m256i m256Max = _mm256_set1_epi32( -1 );
+			m256MulLow = _mm256_blendv_epi8( m256MulLow, m256Max, m256OverflowMaskLow );
+			m256MulHigh = _mm256_blendv_epi8( m256MulHigh, m256Max, m256OverflowMaskHigh );
+    
+			return _mm512_inserti64x4( _mm512_castsi256_si512( m256MulLow ), m256MulHigh, 1 );
 		}
+
+		/**
+		 * Squares each int64 in a __m512i with saturation using only AVX2.
+		 * Any value whose absolute value exceeds 3037000499 is mClamped to INT64_MAX.
+		 * 
+		 * \param _pm512Val input vector (__m512i of int64)
+		 * \return __m512i with saturated squares
+		 */
+		static inline __m512i									SquareInt64( __m512i _pm512Val ) {
+			__m256i m256Lo = _mm512_extracti64x4_epi64( _pm512Val, 0 );
+			__m256i m256Hi = _mm512_extracti64x4_epi64( _pm512Val, 1 );
+
+			__m256i mZero = _mm256_setzero_si256();
+			__m256i mNegMaskLo = _mm256_cmpgt_epi64( mZero, m256Lo );
+			__m256i mNegMaskHi = _mm256_cmpgt_epi64( mZero, m256Hi );
+			__m256i mAbsLo = _mm256_sub_epi64( _mm256_xor_si256( m256Lo, mNegMaskLo ), mNegMaskLo );
+			__m256i mAbsHi = _mm256_sub_epi64( _mm256_xor_si256( m256Hi, mNegMaskHi ), mNegMaskHi );
+
+			__m256i mThresh = _mm256_set1_epi64x( 3037000499LL );
+			__m256i mOverLo = _mm256_cmpgt_epi64( mAbsLo, mThresh );
+			__m256i mOverHi = _mm256_cmpgt_epi64( mAbsHi, mThresh );
+
+			__m256i mMask32 = _mm256_set1_epi64x( 0xFFFFFFFFULL );
+			__m256i mLo32Lo = _mm256_and_si256( mAbsLo, mMask32 );
+			__m256i mLo32Hi = _mm256_and_si256( mAbsHi, mMask32 );
+
+			__m128i mLoLo = _mm256_castsi256_si128( mLo32Lo );
+			__m128i mLoHi = _mm256_extracti128_si256( mLo32Lo, 1 );
+			__m128i mHiLo = _mm256_castsi256_si128( mLo32Hi );
+			__m128i mHiHi = _mm256_extracti128_si256( mLo32Hi, 1 );
+
+			__m128i mMulLoLo = _mm_mul_epu32( mLoLo, mLoLo );
+			__m128i mMulLoHi = _mm_mul_epu32( mLoHi, mLoHi );
+			__m128i mMulHiLo = _mm_mul_epu32( mHiLo, mHiLo );
+			__m128i mMulHiHi = _mm_mul_epu32( mHiHi, mHiHi );
+
+			__m256i mMulLo = _mm256_setr_m128i( mMulLoLo, mMulLoHi );
+			__m256i mMulHi_ = _mm256_setr_m128i( mMulHiLo, mMulHiHi );
+
+			__m256i mMax64 = _mm256_set1_epi64x( 0x7FFFFFFFFFFFFFFFLL );
+			mMulLo = _mm256_blendv_epi8( mMulLo, mMax64, mOverLo );
+			mMulHi_ = _mm256_blendv_epi8( mMulHi_, mMax64, mOverHi );
+
+			return _mm512_inserti64x4( _mm512_castsi256_si512( mMulLo ), mMulHi_, 1 );
+		}
+
+		/**
+		 * Squares each uint64 in a __m512i with saturation using only AVX2.
+		 * Any input above 0xFFFFFFFF is mClamped to UINT64_MAX.
+		 * 
+		 * \param _pm512Val input vector (__m512i of uint64)
+		 * \return __m512i with saturated squares
+		 */
+		static inline __m512i										SquareUint64( __m512i _pm512Val ) {
+			__m256i m256Lo = _mm512_extracti64x4_epi64( _pm512Val, 0 );
+			__m256i m256Hi = _mm512_extracti64x4_epi64( _pm512Val, 1 );
+
+			__m256i mMask32 = _mm256_set1_epi64x( 0xFFFFFFFFULL );
+			__m256i mLo32Lo = _mm256_and_si256( m256Lo, mMask32 );
+			__m256i mLo32Hi = _mm256_and_si256( m256Hi, mMask32 );
+
+			__m256i mTopLo = _mm256_srli_epi64( m256Lo, 32 );
+			__m256i mTopHi = _mm256_srli_epi64( m256Hi, 32 );
+			__m256i mOverLo = _mm256_cmpgt_epi64( mTopLo, _mm256_setzero_si256() );
+			__m256i mOverHi = _mm256_cmpgt_epi64( mTopHi, _mm256_setzero_si256() );
+
+			__m128i mLoLo = _mm256_castsi256_si128( mLo32Lo );
+			__m128i mLoHi = _mm256_extracti128_si256( mLo32Lo, 1 );
+			__m128i mHiLo = _mm256_castsi256_si128( mLo32Hi );
+			__m128i mHiHi = _mm256_extracti128_si256( mLo32Hi, 1 );
+
+			__m128i mMulLoLo = _mm_mul_epu32( mLoLo, mLoLo );
+			__m128i mMulLoHi = _mm_mul_epu32( mLoHi, mLoHi );
+			__m128i mMulHiLo = _mm_mul_epu32( mHiLo, mHiLo );
+			__m128i mMulHiHi = _mm_mul_epu32( mHiHi, mHiHi );
+
+			__m256i mMulLo_ = _mm256_setr_m128i( mMulLoLo, mMulLoHi );
+			__m256i mMulHi_ = _mm256_setr_m128i( mMulHiLo, mMulHiHi );
+
+			__m256i mMaxVal = _mm256_set1_epi64x( 0xFFFFFFFFFFFFFFFFULL );
+			mMulLo_ = _mm256_blendv_epi8( mMulLo_, mMaxVal, mOverLo );
+			mMulHi_ = _mm256_blendv_epi8( mMulHi_, mMaxVal, mOverHi );
+
+			return _mm512_inserti64x4( _mm512_castsi256_si512( mMulLo_ ), mMulHi_, 1 );
+		}
+
 #endif	// #ifdef __AVX512F__
 
 #ifdef __AVX2__
 		/**
 		 * Multiplies each of the 32 int8 elements in a __m256i by itself.
 		 * 
-		 * @param _pm256Val the input vector.
-		 * @return a __m256i containing the products.
+		 * \param _pm256Val the input vector.
+		 * \return a __m256i containing the products.
 		 */
 		static inline __m256i									SquareInt8( __m256i _pm256Val ) {
 			__m128i m128Low = _mm256_castsi256_si128( _pm256Val );
@@ -5690,8 +5802,8 @@ namespace nn9 {
 		/**
 		 * Multiplies each of the 32 uint8 elements in a __m256i by itself.
 		 * 
-		 * @param _pm256Val the input vector.
-		 * @return a __m256i containing the products as uint8 (with saturation).
+		 * \param _pm256Val the input vector.
+		 * \return a __m256i containing the products as uint8 (with saturation).
 		 */
 		static inline __m256i									SquareUint8( __m256i _pm256Val ) {
 			__m128i m128Low = _mm256_castsi256_si128( _pm256Val );
@@ -5700,6 +5812,9 @@ namespace nn9 {
 			__m256i m256High16 = _mm256_cvtepu8_epi16( m128High );
 			__m256i m256MulLow = _mm256_mullo_epi16( m256Low16, m256Low16 );
 			__m256i m256MulHigh = _mm256_mullo_epi16( m256High16, m256High16 );
+			__m256i m256Clamp = _mm256_set1_epi16( 255 );
+			m256MulLow = _mm256_min_epu16( m256MulLow, m256Clamp );
+			m256MulHigh = _mm256_min_epu16( m256MulHigh, m256Clamp );
 			__m128i m128MulLow0 = _mm256_castsi256_si128( m256MulLow );
 			__m128i m128MulLow1 = _mm256_extracti128_si256( m256MulLow, 1 );
 			__m128i m128MulHigh0 = _mm256_castsi256_si128( m256MulHigh );
@@ -5712,8 +5827,8 @@ namespace nn9 {
 		/**
 		 * Multiplies each of the 16 int16 elements in a __m256i by itself.
 		 * 
-		 * @param _pm256Val the input vector.
-		 * @return a __m256i containing the products as int16.
+		 * \param _pm256Val the input vector.
+		 * \return a __m256i containing the products as int16.
 		 */
 		static inline __m256i									SquareInt16( __m256i _pm256Val ) {
 			__m128i m128Low = _mm256_castsi256_si128( _pm256Val );
@@ -5739,108 +5854,124 @@ namespace nn9 {
 		/**
 		 * Multiplies each of the 16 uint16 elements in a __m256i by itself with saturation.
 		 * 
-		 * @param _pm256Val the input vector (uint16).
-		 * @return a __m256i containing the products saturated to uint16.
+		 * \param _pm256Val the input vector (uint16).
+		 * \return a __m256i containing the products saturated to uint16.
 		 */
 		static inline __m256i									SquareUint16( __m256i _pm256Val ) {
-			__m128i m128Low = _mm256_castsi256_si128(_pm256Val);
-			__m128i m128High = _mm256_extracti128_si256(_pm256Val, 1);
+			__m128i m128Low = _mm256_castsi256_si128( _pm256Val );
+			__m128i m128High = _mm256_extracti128_si256( _pm256Val, 1 );
 
-			__m256i m256ValLo32 = _mm256_cvtepu16_epi32(m128Low);
-			__m256i m256ValHi32 = _mm256_cvtepu16_epi32(m128High);
+			__m256i m256ValLo32 = _mm256_cvtepu16_epi32( m128Low );
+			__m256i m256ValHi32 = _mm256_cvtepu16_epi32( m128High );
 
-			__m256i m256MulLo32 = _mm256_mullo_epi32(m256ValLo32, m256ValLo32);
-			__m256i m256MulHi32 = _mm256_mullo_epi32(m256ValHi32, m256ValHi32);
+			__m256i m256MulLo32 = _mm256_mullo_epi32( m256ValLo32, m256ValLo32 );
+			__m256i m256MulHi32 = _mm256_mullo_epi32( m256ValHi32, m256ValHi32 );
 
-			__m128i m128LoLo = _mm256_castsi256_si128(m256MulLo32);
-			__m128i m128LoHi = _mm256_extracti128_si256(m256MulLo32, 1);
-			__m128i m128HiLo = _mm256_castsi256_si128(m256MulHi32);
-			__m128i m128HiHi = _mm256_extracti128_si256(m256MulHi32, 1);
+			__m256i m256Max16 = _mm256_set1_epi32( 65535 );
+			m256MulLo32 = _mm256_min_epu32( m256MulLo32, m256Max16 );
+			m256MulHi32 = _mm256_min_epu32( m256MulHi32, m256Max16 );
 
-			__m128i m128ResLo = _mm_packus_epi32(m128LoLo, m128LoHi);
-			__m128i m128ResHi = _mm_packus_epi32(m128HiLo, m128HiHi);
+			__m128i m128LoLo = _mm256_castsi256_si128( m256MulLo32 );
+			__m128i m128LoHi = _mm256_extracti128_si256( m256MulLo32, 1 );
+			__m128i m128HiLo = _mm256_castsi256_si128( m256MulHi32 );
+			__m128i m128HiHi = _mm256_extracti128_si256( m256MulHi32, 1 );
 
-			return _mm256_setr_m128i(m128ResLo, m128ResHi);
+			__m128i m128ResLo = _mm_packus_epi32( m128LoLo, m128LoHi );
+			__m128i m128ResHi = _mm_packus_epi32( m128HiLo, m128HiHi );
+
+			return _mm256_setr_m128i( m128ResLo, m128ResHi );
 		}
 
 		/**
 		 * Multiplies each of the 8 int32 elements in a __m256i by itself with saturation using packing.
-		 * @param _pm256Val the input vector (int32)
-		 * @return a __m256i containing the products saturated to int32
+		 * \param _pm256Val the input vector (int32)
+		 * \return a __m256i containing the products saturated to int32
 		 */
 		static inline __m256i									SquareInt32( __m256i _pm256Val ) {
-			__m256i m256Abs = _mm256_abs_epi32( _pm256Val );
 			__m256i m256Threshold = _mm256_set1_epi32( 46340 );
-			__m256i m256OverflowMask = _mm256_cmpgt_epi32( m256Abs, m256Threshold );
+			__m256i m256Abs = _mm256_abs_epi32( _pm256Val );
+			__m256i m256Min = _mm256_set1_epi32( INT32_MIN );
+			__m256i m256IsMin = _mm256_cmpeq_epi32( _pm256Val , m256Min );
+			__m256i m256OverflowMask = _mm256_or_si256( _mm256_cmpgt_epi32( m256Abs, m256Threshold ), m256IsMin );
 			__m256i m256Mul = _mm256_mullo_epi32( _pm256Val, _pm256Val );
-			__m256i m256Max = _mm256_set1_epi32( 0x7FFFFFFF );
+			__m256i m256Max = _mm256_set1_epi32( INT32_MAX );
 			return _mm256_blendv_epi8( m256Mul, m256Max, m256OverflowMask );
+
 		}
 
 		/**
 		 * Multiplies each of the 8 uint32 elements in a __m256i by itself with saturation using clamping.
 		 * 
-		 * @param _pm256Val the input vector (uint32).
-		 * @return a __m256i containing the products saturated to uint32.
+		 * \param _pm256Val the input vector (uint32).
+		 * \return a __m256i containing the products saturated to uint32.
 		 */
 		static inline __m256i									SquareUint32( __m256i _pm256Val ) {
 			__m256i m256Threshold = _mm256_set1_epi32( 65535 );
-			__m256i m256OverflowMask = _mm256_cmpgt_epi32( _pm256Val, m256Threshold );
+			__m256i m256OverflowMask = _mm256_or_si256(
+				_mm256_cmpgt_epi32( _pm256Val, m256Threshold ),
+				_mm256_cmpgt_epi32( _mm256_setzero_si256(), _pm256Val )
+			);
 			__m256i m256Mul = _mm256_mullo_epi32( _pm256Val, _pm256Val );
-			__m256i m256Max = _mm256_set1_epi32( -1 ); /* UINT32_MAX */
+			__m256i m256Max = _mm256_set1_epi32( -1 );
 			return _mm256_blendv_epi8( m256Mul, m256Max, m256OverflowMask );
 		}
 
 		/**
 		 * Squares each int64 in a __m256i with saturation using only AVX2.
 		 * Any input whose absolute value is greater than 3037000499 will overflow.
-		 * Those results are clamped to INT64_MAX.
+		 * Those results are mClamped to INT64_MAX.
 		 * 
-		 * @param pm256Val input vector (__m256i of int64)
-		 * @return __m256i with saturated squares
+		 * \param _pm256Val input vector (__m256i of int64)
+		 * \return __m256i with saturated squares
 		 */
-		static inline __m256i									SquareInt64( __m256i pm256Val ) {
-			__m256i zero = _mm256_setzero_si256();
-			__m256i negMask = _mm256_cmpgt_epi64(zero, pm256Val);
-			__m256i absVal = _mm256_sub_epi64(_mm256_xor_si256(pm256Val, negMask), negMask);
-			__m256i threshold = _mm256_set1_epi64x(3037000499LL);
-			__m256i overflowMask = _mm256_cmpgt_epi64(absVal, threshold);
-			__m256i maxVal = _mm256_set1_epi64x(0x7FFFFFFFFFFFFFFFLL);
+		static inline __m256i									SquareInt64( __m256i _pm256Val ) {
+			__m256i mZero = _mm256_setzero_si256();
+			__m256i mNegMask = _mm256_cmpgt_epi64( mZero, _pm256Val );
+			__m256i mAbsVal = _mm256_sub_epi64( _mm256_xor_si256( _pm256Val, mNegMask ), mNegMask );
+			__m256i mThresh = _mm256_set1_epi64x( 3037000499LL );
+			__m256i mOverflowMask = _mm256_cmpgt_epi64( mAbsVal, mThresh );
+			__m256i mMaxVal = _mm256_set1_epi64x( 0x7FFFFFFFFFFFFFFFLL );
 
-			// If not overflow, absVal fits in 32 bits, so we can mask and multiply as 32-bit
-			__m256i mask32 = _mm256_set1_epi64x(0xFFFFFFFFULL);
-			__m256i absVal32 = _mm256_and_si256(absVal, mask32);
+			__m256i mMask32 = _mm256_set1_epi64x( 0xFFFFFFFFULL );
+			__m256i mAbsVal32 = _mm256_and_si256( mAbsVal, mMask32 );
 
-			// _mm_mul_epu32 takes lower 32 bits of each 64-bit element and produces a full 64-bit product in that element
-			__m128i lo_half = _mm256_castsi256_si128(absVal32);
-			__m128i hi_half = _mm256_extracti128_si256(absVal32, 1);
-			__m128i mul_lo = _mm_mul_epu32(lo_half, lo_half);
-			__m128i mul_hi = _mm_mul_epu32(hi_half, hi_half);
-			__m256i mulResult = _mm256_setr_m128i(mul_lo, mul_hi);
+			__m128i mLoHalf = _mm256_castsi256_si128( mAbsVal32 );
+			__m128i mHiHalf = _mm256_extracti128_si256( mAbsVal32, 1 );
+			__m128i mMulLo = _mm_mul_epu32( mLoHalf, mLoHalf );
+			__m128i mMulHi = _mm_mul_epu32( mHiHalf, mHiHalf );
+			__m256i mMulRes = _mm256_setr_m128i( mMulLo, mMulHi );
 
-			return _mm256_blendv_epi8(mulResult, maxVal, overflowMask);
+			return _mm256_blendv_epi8( mMulRes, mMaxVal, mOverflowMask );
 		}
 
 		/**
 		 * Squares each uint64 in a __m256i with saturation using only AVX2.
 		 * Any input greater than 4294967295 will overflow.
-		 * Those results are clamped to UINT64_MAX.
+		 * Those results are mClamped to UINT64_MAX.
 		 * 
-		 * @param pm256Val input vector (__m256i of uint64)
-		 * @return __m256i with saturated squares
+		 * \param _pm256Val input vector (__m256i of uint64)
+		 * \return __m256i with saturated squares
 		 */
-		static inline __m256i									SquareUint64( __m256i pm256Val ) {
-			__m256i m256Threshold = _mm256_set1_epi64x(4294967295ULL);
-			__m256i m256OverflowMask = _mm256_cmpgt_epi64(pm256Val, m256Threshold);
-			__m256i m256Max = _mm256_set1_epi64x(0xFFFFFFFFFFFFFFFFULL);
-			__m256i v_mask = _mm256_set1_epi64x(0xFFFFFFFFULL);
-			__m256i v_low = _mm256_and_si256(pm256Val, v_mask);
-			__m128i lo_half = _mm256_castsi256_si128(v_low);
-			__m128i hi_half = _mm256_extracti128_si256(v_low, 1);
-			__m128i mul_lo = _mm_mul_epu32(lo_half, lo_half);
-			__m128i mul_hi = _mm_mul_epu32(hi_half, hi_half);
-			__m256i m256Mul = _mm256_setr_m128i(mul_lo, mul_hi);
-			return _mm256_blendv_epi8(m256Mul, m256Max, m256OverflowMask);
+		static inline __m256i									SquareUint64( __m256i _pm256Val ) {
+			__m256i zero = _mm256_setzero_si256();
+			__m256i top32 = _mm256_srli_epi64(_pm256Val, 32);                 // Check if any part exceeds 32 bits
+			__m256i overflowMask = _mm256_cmpgt_epi64(top32, zero);         // If top32 != 0, then input > 0xFFFFFFFF
+			__m256i mMaxVal = _mm256_set1_epi64x(0xFFFFFFFFFFFFFFFFULL);     // UINT64_MAX
+
+			// Extract the lower 32 bits for multiplication
+			__m256i mMask32 = _mm256_set1_epi64x(0xFFFFFFFFULL);
+			__m256i lo32 = _mm256_and_si256(_pm256Val, mMask32);
+
+			// Each 64-bit lane: multiply the 32-bit parts (lo32 * lo32), result fits in 64 bits
+			__m128i lo_128 = _mm256_castsi256_si128(lo32);
+			__m128i hi_128 = _mm256_extracti128_si256(lo32, 1);
+			__m128i mul_lo = _mm_mul_epu32(lo_128, lo_128);
+			__m128i mul_hi = _mm_mul_epu32(hi_128, hi_128);
+			__m256i mulResult = _mm256_setr_m128i(mul_lo, mul_hi);
+
+			// Blend in UINT64_MAX for those lanes that exceeded 0xFFFFFFFF
+			// (meaning they should saturate to UINT64_MAX instead of a partial product).
+			return _mm256_blendv_epi8(mulResult, mMaxVal, overflowMask);
 		}
 #endif	// #ifdef __AVX2__
 
