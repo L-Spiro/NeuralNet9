@@ -2045,7 +2045,7 @@ namespace nn9 {
 		}
 
 		/**
-		 * Computes element-wise log2().
+		 * Computes element-wise x*x().
 		 * 
 		 * \tparam _tTypeIn The input view/container type.
 		 * \tparam _tTypeOut The output view/container type.
