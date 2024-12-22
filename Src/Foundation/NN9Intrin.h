@@ -3188,6 +3188,210 @@ namespace nn9 {
 			xint32x16_to_boolx16( mInt32, _pbDst );
 		}
 
+		/**
+		 * \brief Converts 64 floats held in four __m512 vectors to a single __m512i of 64 int8_t's with saturation using AVX-512BW.
+		 * 
+		 * This function clamps each float to the range [-128, 127], converts them to uint8_t with saturation,
+		 * and packs all results into a single __m512i register without using store/load operations.
+		 * 
+		 * \param _mFloat0 The first __m512 input vector.
+		 * \param _mFloat1 The second __m512 input vector.
+		 * \param _mFloat2 The third __m512 input vector.
+		 * \param _mFloat3 The fourth __m512 input vector.
+		 * \return A __m512i vector containing 64 saturated int8_t results.
+		 */
+		static inline __m512i									float32x64_to_int8x64_saturated( __m512 _mFloat0, __m512 _mFloat1, __m512 _mFloat2, __m512 _mFloat3 ) {
+			__m512 fMin = _mm512_set1_ps( static_cast<float>(INT8_MIN) );
+			__m512 fMax = _mm512_set1_ps( static_cast<float>(INT8_MAX) );
+
+			__m512 mClamped0 = _mm512_min_ps( _mm512_max_ps( _mFloat0, fMin ), fMax );
+			__m512 mClamped1 = _mm512_min_ps( _mm512_max_ps( _mFloat1, fMin ), fMax );
+			__m512 mClamped2 = _mm512_min_ps( _mm512_max_ps( _mFloat2, fMin ), fMax );
+			__m512 mClamped3 = _mm512_min_ps( _mm512_max_ps( _mFloat3, fMin ), fMax );
+
+			__m512i m0 = _mm512_cvttps_epi32( mClamped0 );
+			__m512i m1 = _mm512_cvttps_epi32( mClamped1 );
+			__m512i m2 = _mm512_cvttps_epi32( mClamped2 );
+			__m512i m3 = _mm512_cvttps_epi32( mClamped3 );
+
+			__m512i mPacked160 = _mm512_packs_epi32( m0, m1 );
+			__m512i mPacked161 = _mm512_packs_epi32( m2, m3 );
+
+			return _mm512_packs_epi16( mPacked160, mPacked161 );
+		}
+
+		/**
+		 * \brief Converts 64 floats held in four __m512 vectors to a single __m512i of 64 uint8_t's with saturation using AVX-512BW.
+		 * 
+		 * This function clamps each float to the range [0, 255], converts them to uint8_t with saturation,
+		 * and packs all results into a single __m512i register without using store/load operations.
+		 * 
+		 * \param _mFloat0 The first __m512 input vector.
+		 * \param _mFloat1 The second __m512 input vector.
+		 * \param _mFloat2 The third __m512 input vector.
+		 * \param _mFloat3 The fourth __m512 input vector.
+		 * \return A __m512i vector containing 64 saturated uint8_t results.
+		 */
+		static inline __m512i									float32x64_to_uint8x64_saturated( __m512 _mFloat0, __m512 _mFloat1, __m512 _mFloat2, __m512 _mFloat3 ) {
+			__m512 fMin = _mm512_setzero_ps();
+			__m512 fMax = _mm512_set1_ps( static_cast<float>(UINT8_MAX) );
+
+			__m512 mClamped0 = _mm512_min_ps( _mm512_max_ps( _mFloat0, fMin ), fMax );
+			__m512 mClamped1 = _mm512_min_ps( _mm512_max_ps( _mFloat1, fMin ), fMax );
+			__m512 mClamped2 = _mm512_min_ps( _mm512_max_ps( _mFloat2, fMin ), fMax );
+			__m512 mClamped3 = _mm512_min_ps( _mm512_max_ps( _mFloat3, fMin ), fMax );
+
+			__m512i m0 = _mm512_cvttps_epu32( mClamped0 );
+			__m512i m1 = _mm512_cvttps_epu32( mClamped1 );
+			__m512i m2 = _mm512_cvttps_epu32( mClamped2 );
+			__m512i m3 = _mm512_cvttps_epu32( mClamped3 );
+
+			__m512i mPacked160 = _mm512_packus_epi32( m0, m1 );
+			__m512i mPacked161 = _mm512_packus_epi32( m2, m3 );
+
+			return _mm512_packus_epi16( mPacked160, mPacked161 );
+		}
+
+		/**
+		 * \brief Converts 64 floats held in four __m512 vectors to a single __m512i of 64 int8_t's with saturation using AVX-512BW.
+		 * 
+		 * \param _mFloat0 The first __m512 input vector.
+		 * \param _mFloat1 The second __m512 input vector.
+		 * \param _mFloat2 The third __m512 input vector.
+		 * \param _mFloat3 The fourth __m512 input vector.
+		 * \return A __m512i vector containing 64 saturated int8_t results.
+		 */
+		static inline __m512i									float32x64_to_int8x64( __m512 _mFloat0, __m512 _mFloat1, __m512 _mFloat2, __m512 _mFloat3 ) {
+			__m512i m0 = _mm512_cvttps_epi32( _mFloat0 );
+			__m512i m1 = _mm512_cvttps_epi32( _mFloat1 );
+			__m512i m2 = _mm512_cvttps_epi32( _mFloat2 );
+			__m512i m3 = _mm512_cvttps_epi32( _mFloat3 );
+
+			__m512i mPacked160 = _mm512_packs_epi32( m0, m1 );
+			__m512i mPacked161 = _mm512_packs_epi32( m2, m3 );
+
+			return _mm512_packs_epi16( mPacked160, mPacked161 );
+		}
+
+		/**
+		 * \brief Converts 64 floats held in four __m512 vectors to a single __m512i of 64 uint8_t's with saturation using AVX-512BW.
+		 * 
+		 * \param _mFloat0 The first __m512 input vector.
+		 * \param _mFloat1 The second __m512 input vector.
+		 * \param _mFloat2 The third __m512 input vector.
+		 * \param _mFloat3 The fourth __m512 input vector.
+		 * \return A __m512i vector containing 64 saturated uint8_t results.
+		 */
+		static inline __m512i									float32x64_to_uint8x64( __m512 _mFloat0, __m512 _mFloat1, __m512 _mFloat2, __m512 _mFloat3 ) {
+			__m512i m0 = _mm512_cvttps_epu32( _mFloat0 );
+			__m512i m1 = _mm512_cvttps_epu32( _mFloat1 );
+			__m512i m2 = _mm512_cvttps_epu32( _mFloat2 );
+			__m512i m3 = _mm512_cvttps_epu32( _mFloat3 );
+
+			__m512i mPacked160 = _mm512_packus_epi32( m0, m1 );
+			__m512i mPacked161 = _mm512_packus_epi32( m2, m3 );
+
+			return _mm512_packus_epi16( mPacked160, mPacked161 );
+		}
+
+		/**
+		 * \brief Converts 32 floats held in two __m512 vectors to a single __m512i of 32 int16_t's with saturation using AVX-512BW.
+		 * 
+		 * \param _mFloat0 The first __m512 input vector.
+		 * \param _mFloat1 The second __m512 input vector.
+		 * \param _mInt16Dst Pointer to the destination __m512i vector containing 32 int16_t's.
+		 */
+		static inline __m512i									float32x32_to_int16x32_saturated( __m512 _mFloat0, __m512 _mFloat1 ) {
+			__m512 mClamped0 = _mm512_min_ps( _mm512_max_ps( _mFloat0, _mm512_set1_ps( -32768.0f ) ), _mm512_set1_ps( 32767.0f ) );
+			__m512 mClamped1 = _mm512_min_ps( _mm512_max_ps( _mFloat1, _mm512_set1_ps( -32768.0f ) ), _mm512_set1_ps( 32767.0f ) );
+			__m512i mConv0 = _mm512_cvttps_epi32( mClamped0 );
+			__m512i mConv1 = _mm512_cvttps_epi32( mClamped1 );
+			return _mm512_packs_epi16( mConv0, mConv1 );
+		}
+
+		/**
+		 * \brief Converts 32 floats held in two __m512 vectors to a single __m512i of 32 uint16_t's with saturation using AVX-512BW.
+		 * 
+		 * \param _mFloat0 The first __m512 input vector.
+		 * \param _mFloat1 The second __m512 input vector.
+		 * \param _mUint16Dst Pointer to the destination __m512i vector containing 32 uint16_t's.
+		 */
+		static inline __m512i									float32x32_to_uint16x32_saturated( __m512 _mFloat0, __m512 _mFloat1 ) {
+			__m512 mClamped0 = _mm512_min_ps( _mm512_max_ps( _mFloat0, _mm512_setzero_ps() ), _mm512_set1_ps( 65535.0f ) );
+			__m512 mClamped1 = _mm512_min_ps( _mm512_max_ps( _mFloat1, _mm512_setzero_ps() ), _mm512_set1_ps( 65535.0f ) );
+			__m512i m0 = _mm512_cvttps_epu32( mClamped0 );
+			__m512i m1 = _mm512_cvttps_epu32( mClamped1 );
+			return _mm512_packus_epi32( m0, m1 );
+		}
+
+		/**
+		 * \brief Converts 32 floats held in two __m512 vectors to a single __m512i of 32 int16_t's with saturation using AVX-512BW.
+		 * 
+		 * \param _mFloat0 The first __m512 input vector.
+		 * \param _mFloat1 The second __m512 input vector.
+		 * \return Returns a vector containing 32 int16_t's.
+		 */
+		static inline __m512i									float32x32_to_int16x32( __m512 _mFloat0, __m512 _mFloat1 ) {
+			__m512i mConv0 = _mm512_cvttps_epi32( _mFloat0 );
+			__m512i mConv1 = _mm512_cvttps_epi32( _mFloat1 );
+			return _mm512_packs_epi16( mConv0, mConv1 );
+		}
+
+		/**
+		 * \brief Converts 32 floats held in two __m512 vectors to a single __m512i of 32 uint16_t's with saturation using AVX-512BW.
+		 * 
+		 * \param _mFloat0 The first __m512 input vector.
+		 * \param _mFloat1 The second __m512 input vector.
+		 * \return Returns a vector containing 32 uint16_t's.
+		 */
+		static inline __m512i									float32x32_to_uint16x32( __m512 _mFloat0, __m512 _mFloat1 ) {
+			__m512i m0 = _mm512_cvttps_epu32( _mFloat0 );
+			__m512i m1 = _mm512_cvttps_epu32( _mFloat1 );
+			return _mm512_packus_epi32( m0, m1 );
+		}
+
+		/**
+		 * \brief Converts 16 floats held in a __m512 vector to a single __m512i of 16 int32_t's with saturation using AVX-512.
+		 * 
+		 * \param _mFloat The __m512 input vector.
+		 * \return Returns a vector containing 16 int32_t's.
+		 */
+		static inline __m512i									float32x16_to_int32x16_saturated( __m512 _mFloat ) {
+			__m512 mClamped = _mm512_min_ps( _mm512_max_ps( _mFloat, _mm512_set1_ps( -2147483648.0f ) ), _mm512_set1_ps( 2147483520.0f ) );
+			return _mm512_cvttps_epi32( mClamped );
+		}
+
+		/**
+		 * \brief Converts 16 floats held in a __m512 vector to a single __m512i of 16 uint32_t's with saturation using AVX-512BW.
+		 * 
+		 * \param _mFloat The __m512 input vector.
+		 * \return Returns a vector containing 16 uint32_t's.
+		 */
+		static inline __m512i									float32x16_to_uint32x16_saturated( __m512 _mFloat ) {
+			__m512 mClamped = _mm512_min_ps( _mm512_max_ps( _mFloat, _mm512_setzero_ps() ), _mm512_set1_ps( static_cast<float>(UINT32_MAX) ) );
+			return _mm512_cvttps_epu32( mClamped );
+		}
+
+		/**
+		 * \brief Converts 16 floats held in a __m512 vector to a single __m512i of 16 int32_t's with saturation using AVX-512.
+		 * 
+		 * \param _mFloat The __m512 input vector.
+		 * \return Returns a vector containing 16 int32_t's.
+		 */
+		static inline __m512i									float32x16_to_int32x16( __m512 _mFloat ) {
+			return _mm512_cvttps_epi32( _mFloat );
+		}
+
+		/**
+		 * \brief Converts 16 floats held in a __m512 vector to a single __m512i of 16 uint32_t's with saturation using AVX-512BW.
+		 * 
+		 * \param _mFloat The __m512 input vector.
+		 * \return Returns a vector containing 16 uint32_t's.
+		 */
+		static inline __m512i									float32x16_to_uint32x16( __m512 _mFloat ) {
+			return _mm512_cvttps_epu32( _mFloat );
+		}
+
 #endif	// #ifdef __AVX512F__
 
 #ifdef __AVX2__
@@ -3352,6 +3556,167 @@ namespace nn9 {
 			__m256i mInt32 = _mm256_cvtps_epi32( fClamped );
 			xint32x8_to_boolx8( mInt32, _pbDst );
 		}
+
+		/**
+		 * \brief Converts 32 floats held in four __m256 vectors to a single __m256i of 32 int8_t's with saturation using AVX2.
+		 * 
+		 * \param _mFloat0 The first __m256 input vector.
+		 * \param _mFloat1 The second __m256 input vector.
+		 * \param _mFloat2 The third __m256 input vector.
+		 * \param _mFloat3 The fourth __m256 input vector.
+		 * \return Returns a __m256i vector containing 32 int8_t's.
+		 */
+		static inline __m256i									float32x32_to_int8x32_saturated( __m256 _mFloat0, __m256 _mFloat1, __m256 _mFloat2, __m256 _mFloat3 ) {
+			__m256 fMin = _mm256_set1_ps( static_cast<float>(INT8_MIN) );
+			__m256 fMax = _mm256_set1_ps( static_cast<float>(INT8_MAX) );
+
+			__m256 mClamped0 = _mm256_min_ps( _mm256_max_ps( _mFloat0, fMin ), fMax );
+			__m256 mClamped1 = _mm256_min_ps( _mm256_max_ps( _mFloat1, fMin ), fMax );
+			__m256 mClamped2 = _mm256_min_ps( _mm256_max_ps( _mFloat2, fMin ), fMax );
+			__m256 mClamped3 = _mm256_min_ps( _mm256_max_ps( _mFloat3, fMin ), fMax );
+
+			__m256i m0 = _mm256_cvttps_epi32( mClamped0 );
+			__m256i m1 = _mm256_cvttps_epi32( mClamped1 );
+			__m256i m2 = _mm256_cvttps_epi32( mClamped2 );
+			__m256i m3 = _mm256_cvttps_epi32( mClamped3 );
+
+			__m256i mPacked0 = _mm256_packs_epi32( m0, m1 );
+			__m256i mPacked1 = _mm256_packs_epi32( m2, m3 );
+
+			return _mm256_packs_epi16( mPacked0, mPacked1 );
+		}
+
+		/**
+		 * \brief Converts 32 floats held in four __m256 vectors to a single __m256i of 32 uint8_t's with saturation using AVX2.
+		 * 
+		 * \param _mFloat0 The first __m256 input vector.
+		 * \param _mFloat1 The second __m256 input vector.
+		 * \param _mFloat2 The third __m256 input vector.
+		 * \param _mFloat3 The fourth __m256 input vector.
+		 * \return Returns a __m256i vector containing 32 uint8_t's.
+		 */
+		static inline __m256i									float32x32_to_uint8x32_saturated( __m256 _mFloat0, __m256 _mFloat1, __m256 _mFloat2, __m256 _mFloat3 ) {
+			__m256 fMin = _mm256_setzero_ps();
+			__m256 fMax = _mm256_set1_ps( static_cast<float>(UINT8_MAX) );
+
+			__m256 mClamped0 = _mm256_min_ps( _mm256_max_ps( _mFloat0, fMin ), fMax );
+			__m256 mClamped1 = _mm256_min_ps( _mm256_max_ps( _mFloat1, fMin ), fMax );
+			__m256 mClamped2 = _mm256_min_ps( _mm256_max_ps( _mFloat2, fMin ), fMax );
+			__m256 mClamped3 = _mm256_min_ps( _mm256_max_ps( _mFloat3, fMin ), fMax );
+
+			__m256i m0 = _mm256_cvttps_epu32( mClamped0 );
+			__m256i m1 = _mm256_cvttps_epu32( mClamped1 );
+			__m256i m2 = _mm256_cvttps_epu32( mClamped2 );
+			__m256i m3 = _mm256_cvttps_epu32( mClamped3 );
+
+			__m256i mPacked0 = _mm256_packus_epi32( m0, m1 );
+			__m256i mPacked1 = _mm256_packus_epi32( m2, m3 );
+
+			return _mm256_packus_epi16( mPacked0, mPacked1 );
+		}
+
+		/**
+		 * \brief Converts 32 floats held in four __m256 vectors to a single __m256i of 32 int8_t's with saturation using AVX2.
+		 * 
+		 * \param _mFloat0 The first __m256 input vector.
+		 * \param _mFloat1 The second __m256 input vector.
+		 * \param _mFloat2 The third __m256 input vector.
+		 * \param _mFloat3 The fourth __m256 input vector.
+		 * \return Returns a __m256i vector containing 32 int8_t's.
+		 */
+		static inline __m256i									float32x32_to_int8x32( __m256 _mFloat0, __m256 _mFloat1, __m256 _mFloat2, __m256 _mFloat3 ) {
+			__m256i m0 = _mm256_cvttps_epi32( _mFloat0 );
+			__m256i m1 = _mm256_cvttps_epi32( _mFloat1 );
+			__m256i m2 = _mm256_cvttps_epi32( _mFloat2 );
+			__m256i m3 = _mm256_cvttps_epi32( _mFloat3 );
+
+			__m256i mPacked0 = _mm256_packs_epi32( m0, m1 );
+			__m256i mPacked1 = _mm256_packs_epi32( m2, m3 );
+
+			return _mm256_packs_epi16( mPacked0, mPacked1 );
+		}
+
+		/**
+		 * \brief Converts 32 floats held in four __m256 vectors to a single __m256i of 32 uint8_t's using AVX2.
+		 * 
+		 * \param _mFloat0 The first __m256 input vector.
+		 * \param _mFloat1 The second __m256 input vector.
+		 * \param _mFloat2 The third __m256 input vector.
+		 * \param _mFloat3 The fourth __m256 input vector.
+		 * \return Returns a __m256i vector containing 32 uint8_t's.
+		 */
+		static inline __m256i									float32x32_to_uint8x32( __m256 _mFloat0, __m256 _mFloat1, __m256 _mFloat2, __m256 _mFloat3 ) {
+			__m256i m0 = _mm256_cvttps_epu32( _mFloat0 );
+			__m256i m1 = _mm256_cvttps_epu32( _mFloat1 );
+			__m256i m2 = _mm256_cvttps_epu32( _mFloat2 );
+			__m256i m3 = _mm256_cvttps_epu32( _mFloat3 );
+
+			__m256i mPacked0 = _mm256_packus_epi32( m0, m1 );
+			__m256i mPacked1 = _mm256_packus_epi32( m2, m3 );
+
+			return _mm256_packus_epi16( mPacked0, mPacked1 );
+		}
+
+		/**
+		 * \brief Converts 16 floats held in two __m256 vectors to a single __m256i of 16 int16_t's with saturation using AVX2.
+		 * 
+		 * \param _mFloat0 The first __m256 input vector.
+		 * \param _mFloat1 The second __m256 input vector.
+		 * \return Returns a __m256i vector containing 16 int16_t's.
+		 */
+		static inline __m256i									float32x16_to_int16x16_saturated( __m256 _mFloat0, __m256 _mFloat1 ) {
+			__m256 fMin = _mm256_set1_ps( -32768.0f );
+			__m256 fMax = _mm256_set1_ps( 32767.0f );
+			__m256 mClamped0 = _mm256_min_ps( _mm256_max_ps( _mFloat0, fMin ), fMax );
+			__m256 mClamped1 = _mm256_min_ps( _mm256_max_ps( _mFloat1, fMin ), fMax );
+			__m256i m0 = _mm256_cvttps_epi32( mClamped0 );
+			__m256i m1 = _mm256_cvttps_epi32( mClamped1 );
+			return _mm256_packs_epi32( m0, m1 );
+		}
+
+		/**
+		 * \brief Converts 16 floats held in two __m256 vectors to a single __m256i of 16 uint16_t's with saturation using AVX2.
+		 * 
+		 * \param _mFloat0 The first __m256 input vector.
+		 * \param _mFloat1 The second __m256 input vector.
+		 * \return Returns a __m256i vector containing 16 uint16_t's.
+		 */
+		static inline __m256i									float32x16_to_uint16x16_saturated( __m256 _mFloat0, __m256 _mFloat1 ) {
+			__m256 fMin = _mm256_setzero_ps();
+			__m256 fMax = _mm256_set1_ps( 65535.0f );
+			__m256 mClamped0 = _mm256_min_ps( _mm256_max_ps( _mFloat0, fMin ), fMax );
+			__m256 mClamped1 = _mm256_min_ps( _mm256_max_ps( _mFloat1, fMin ), fMax );
+			__m256i m0 = _mm256_cvttps_epu32( mClamped0 );
+			__m256i m1 = _mm256_cvttps_epu32( mClamped1 );
+			return _mm256_packus_epi32( m0, m1 );
+		}
+
+		/**
+		 * \brief Converts 16 floats held in two __m256 vectors to a single __m256i of 16 int16_t's with saturation using AVX2.
+		 * 
+		 * \param _mFloat0 The first __m256 input vector.
+		 * \param _mFloat1 The second __m256 input vector.
+		 * \return Returns a __m256i vector containing 16 int16_t's.
+		 */
+		static inline __m256i									float32x16_to_int16x16( __m256 _mFloat0, __m256 _mFloat1 ) {
+			__m256i m0 = _mm256_cvttps_epi32( _mFloat0 );
+			__m256i m1 = _mm256_cvttps_epi32( _mFloat1 );
+			return _mm256_packs_epi32( m0, m1 );
+		}
+
+		/**
+		 * \brief Converts 16 floats held in two __m256 vectors to a single __m256i of 16 uint16_t's with saturation using AVX2.
+		 * 
+		 * \param _mFloat0 The first __m256 input vector.
+		 * \param _mFloat1 The second __m256 input vector.
+		 * \return Returns a __m256i vector containing 16 uint16_t's.
+		 */
+		static inline __m256i									float32x16_to_uint16x16( __m256 _mFloat0, __m256 _mFloat1 ) {
+			__m256i m0 = _mm256_cvttps_epu32( _mFloat0 );
+			__m256i m1 = _mm256_cvttps_epu32( _mFloat1 );
+			return _mm256_packus_epi32( m0, m1 );
+		}
+
 #endif	// #ifdef __AVX2__
 
 

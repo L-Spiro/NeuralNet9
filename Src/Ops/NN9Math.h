@@ -820,7 +820,8 @@ namespace nn9 {
 		 */
 		template <typename _tType>
 		static _tType &												Cos( _tType &_vValues ) {
-			if constexpr ( Types::IsBool<_tType>() ) {
+			using Type = typename _tType::value_type;
+			if constexpr ( Types::IsBool<Type>() ) {
 				// cos( 1 ) = 0.5403023058681397650.
 				// cos( 0 ) = 1.
 				return Func<_tType>( _vValues, [](auto x) { return true; } );
@@ -887,7 +888,8 @@ namespace nn9 {
 		 */
 		template <typename _tType>
 		static _tType &												Sin( _tType &_vValues ) {
-			if constexpr ( Types::IsBool<_tType>() ) {
+			using Type = typename _tType::value_type;
+			if constexpr ( Types::IsBool<Type>() ) {
 				// sin( 1 ) = 1.
 				// sin( 0 ) = 0.
 				//return Func<_tType>( _vValues, [](auto x) { return x; } );
@@ -955,7 +957,8 @@ namespace nn9 {
 		 */
 		template <typename _tType>
 		static _tType &												Tan( _tType &_vValues ) {
-			if constexpr ( Types::IsBool<_tType>() ) {
+			using Type = typename _tType::value_type;
+			if constexpr ( Types::IsBool<Type>() ) {
 				// tan( 1 ) = 1.5574077246549.
 				// tan( 0 ) = 0.
 				//return Func<_tType>( _vValues, [](auto x) { return x; } );
@@ -1023,7 +1026,8 @@ namespace nn9 {
 		 */
 		template <typename _tType>
 		static _tType &												Acos( _tType &_vValues ) {
-			if constexpr ( Types::IsBool<_tType>() ) {
+			using Type = typename _tType::value_type;
+			if constexpr ( Types::IsBool<Type>() ) {
 				// acos( 1 ) = 0.
 				// acos( 0 ) = 1.57079632679.
 				return Func<_tType>( _vValues, [](auto x) { return !x; } );
@@ -1090,7 +1094,8 @@ namespace nn9 {
 		 */
 		template <typename _tType>
 		static _tType &												Asin( _tType &_vValues ) {
-			if constexpr ( Types::IsBool<_tType>() ) {
+			using Type = typename _tType::value_type;
+			if constexpr ( Types::IsBool<Type>() ) {
 				// asin( 1 ) = 1.57079632679.
 				// asin( 0 ) = 0.
 				//return Func<_tType>( _vValues, [](auto x) { return x; } );
@@ -1158,7 +1163,8 @@ namespace nn9 {
 		 */
 		template <typename _tType>
 		static _tType &												Atan( _tType &_vValues ) {
-			if constexpr ( Types::IsBool<_tType>() ) {
+			using Type = typename _tType::value_type;
+			if constexpr ( Types::IsBool<Type>() ) {
 				// atan( 1 ) = 0.7853981633974.
 				// atan( 0 ) = 0.
 				//return Func<_tType>( _vValues, [](auto x) { return x; } );
@@ -1230,7 +1236,8 @@ namespace nn9 {
 		 */
 		template <typename _tType>
 		static _tType &												Cosh( _tType &_vValues ) {
-			if constexpr ( Types::IsBool<_tType>() ) {
+			using Type = typename _tType::value_type;
+			if constexpr ( Types::IsBool<Type>() ) {
 				// cosh( 1 ) = 1.54308063481524.
 				// cosh( 0 ) = 1.
 				return Func<_tType>( _vValues, [](auto x) { return true; } );
@@ -1297,7 +1304,8 @@ namespace nn9 {
 		 */
 		template <typename _tType>
 		static _tType &												Sinh( _tType &_vValues ) {
-			if constexpr ( Types::IsBool<_tType>() ) {
+			using Type = typename _tType::value_type;
+			if constexpr ( Types::IsBool<Type>() ) {
 				// sinh( 1 ) = 1.1752011936438.
 				// sinh( 0 ) = 0.
 				//return Func<_tType>( _vValues, [](auto x) { return x; } );
@@ -1365,7 +1373,8 @@ namespace nn9 {
 		 */
 		template <typename _tType>
 		static _tType &												Tanh( _tType &_vValues ) {
-			if constexpr ( Types::IsBool<_tType>() ) {
+			using Type = typename _tType::value_type;
+			if constexpr ( Types::IsBool<Type>() ) {
 				// tanh( 1 ) = 0.76159415595576.
 				// tanh( 0 ) = 0.
 				//return Func<_tType>( _vValues, [](auto x) { return x; } );
@@ -1433,7 +1442,8 @@ namespace nn9 {
 		 */
 		template <typename _tType>
 		static _tType &												Acosh( _tType &_vValues ) {
-			if constexpr ( Types::IsBool<_tType>() ) {
+			using Type = typename _tType::value_type;
+			if constexpr ( Types::IsBool<Type>() ) {
 				// acosh( 1 ) = 0.
 				// acosh( 0 ) = NaN.
 				return Func<_tType>( _vValues, [](auto x) { return false; } );
@@ -1500,7 +1510,8 @@ namespace nn9 {
 		 */
 		template <typename _tType>
 		static _tType &												Asinh( _tType &_vValues ) {
-			if constexpr ( Types::IsBool<_tType>() ) {
+			using Type = typename _tType::value_type;
+			if constexpr ( Types::IsBool<Type>() ) {
 				// asinh( 1 ) = 0.881373587019543.
 				// asinh( 0 ) = 0.
 				//return Func<_tType>( _vValues, [](auto x) { return x; } );
@@ -1568,7 +1579,8 @@ namespace nn9 {
 		 */
 		template <typename _tType>
 		static _tType &												Atanh( _tType &_vValues ) {
-			if constexpr ( Types::IsBool<_tType>() ) {
+			using Type = typename _tType::value_type;
+			if constexpr ( Types::IsBool<Type>() ) {
 				// atanh( 1 ) = inf.
 				// atanh( 0 ) = 0.
 				//return Func<_tType>( _vValues, [](auto x) { return x; } );
@@ -1640,7 +1652,8 @@ namespace nn9 {
 		 */
 		template <typename _tType>
 		static _tType &												Exp( _tType &_vValues ) {
-			if constexpr ( Types::IsBool<_tType>() ) {
+			using Type = typename _tType::value_type;
+			if constexpr ( Types::IsBool<Type>() ) {
 				// exp( 1 ) = 2.718281828459.
 				// exp( 0 ) = 1.
 				return Func<_tType>( _vValues, [](auto x) { return true; } );
@@ -1707,7 +1720,8 @@ namespace nn9 {
 		 */
 		template <typename _tType>
 		static _tType &												Log( _tType &_vValues ) {
-			if constexpr ( Types::IsBool<_tType>() ) {
+			using Type = typename _tType::value_type;
+			if constexpr ( Types::IsBool<Type>() ) {
 				// log( 1 ) = 0.
 				// log( 0 ) = -inf.
 				return Func<_tType>( _vValues, [](auto x) { return !x; } );
@@ -1774,7 +1788,8 @@ namespace nn9 {
 		 */
 		template <typename _tType>
 		static _tType &												Log10( _tType &_vValues ) {
-			if constexpr ( Types::IsBool<_tType>() ) {
+			using Type = typename _tType::value_type;
+			if constexpr ( Types::IsBool<Type>() ) {
 				// log10( 1 ) = 0.
 				// log10( 0 ) = -inf.
 				return Func<_tType>( _vValues, [](auto x) { return !x; } );
@@ -1841,7 +1856,8 @@ namespace nn9 {
 		 */
 		template <typename _tType>
 		static _tType &												Log2( _tType &_vValues ) {
-			if constexpr ( Types::IsBool<_tType>() ) {
+			using Type = typename _tType::value_type;
+			if constexpr ( Types::IsBool<Type>() ) {
 				// log2( 1 ) = 0.
 				// log2( 0 ) = -inf.
 				return Func<_tType>( _vValues, [](auto x) { return !x; } );
@@ -1909,7 +1925,7 @@ namespace nn9 {
 		template <typename _tType>
 		static _tType &												Square( _tType &_vValues ) {
 			using Type = typename _tType::value_type;
-			if constexpr ( Types::IsBool<_tType>() ) {
+			if constexpr ( Types::IsBool<Type>() ) {
 				//return Func<_tType>( _vValues, [](auto x) { return x; } );
 				return _vValues;	// Assuming well formed bool values, no changes will be made via x*x.
 			}
@@ -2045,7 +2061,7 @@ namespace nn9 {
 		}
 
 		/**
-		 * Computes element-wise x*x().
+		 * Computes element-wise x*x.
 		 * 
 		 * \tparam _tTypeIn The input view/container type.
 		 * \tparam _tTypeOut The output view/container type.
@@ -2192,6 +2208,272 @@ namespace nn9 {
 #endif	// #ifdef NN9_SAFETY_CHECK
 
 			for ( size_t i = 0; i < _vIn.size(); ++i ) { Square( _vIn[i], _vOut[i] ); }
+			return _vOut;
+		}
+
+		/**
+		 * Computes element-wise sqrt().
+		 * 
+		 * \tparam _tType The view/container type.
+		 * \param _vValues The input/output view.
+		 * \return Returns _vValues.
+		 */
+		template <typename _tType>
+		static _tType &												Sqrt( _tType &_vValues ) {
+			using Type = typename _tType::value_type;
+			if constexpr ( Types::IsBool<Type>() ) {
+				//return Func<_tType>( _vValues, [](auto x) { return x; } );
+				return _vValues;	// Assuming well formed bool values, no changes will be made via sqrt().
+			}
+#ifdef __AVX512F__
+			if ( Utilities::IsAvx512FSupported() ) {
+				if constexpr ( Types::IsInt8<Type>() ) {
+					return FuncAvx512<_tType>( _vValues, [](auto x) {
+							__m512 m0, m1, m2, m3;
+							Intrin::int8x64_to_float32x64( x, m0, m1, m2, m3 );
+							m0 = _mm512_sqrt_ps( m0 ); m1 = _mm512_sqrt_ps( m1 ); m2 = _mm512_sqrt_ps( m2 ); m3 = _mm512_sqrt_ps( m3 );
+							return Intrin::float32x64_to_int8x64( m0, m1, m2, m3 );
+						}, [](auto x) { return std::sqrt<Type>( x ); } );
+				}
+				if constexpr ( Types::IsUint8<Type>() ) {
+					return FuncAvx512<_tType>( _vValues, [](auto x) {
+							__m512 m0, m1, m2, m3;
+							Intrin::uint8x64_to_float32x64( x, m0, m1, m2, m3 );
+							m0 = _mm512_sqrt_ps( m0 ); m1 = _mm512_sqrt_ps( m1 ); m2 = _mm512_sqrt_ps( m2 ); m3 = _mm512_sqrt_ps( m3 );
+							return Intrin::float32x64_to_uint8x64( m0, m1, m2, m3 );
+						}, [](auto x) { return std::sqrt<Type>( x ); } );
+				}
+				if constexpr ( Types::IsInt16<Type>() ) {
+					return FuncAvx512<_tType>( _vValues, [](auto x) { return Intrin::SquareInt16( x ); }, [](auto x) { return std::sqrt<Type>( x ); } );
+				}
+				if constexpr ( Types::IsUint16<Type>() ) {
+					return FuncAvx512<_tType>( _vValues, [](auto x) { return Intrin::SquareUint16( x ); }, [](auto x) { return std::sqrt<Type>( x ); } );
+				}
+				if constexpr ( Types::IsInt32<Type>() ) {
+					return FuncAvx512<_tType>( _vValues, [](auto x) { return Intrin::SquareInt32( x ); }, [](auto x) { return std::sqrt<Type>( x ); } );
+				}
+				if constexpr ( Types::IsUint32<Type>() ) {
+					return FuncAvx512<_tType>( _vValues, [](auto x) { return Intrin::SquareUint32( x ); }, [](auto x) { return std::sqrt<Type>( x ); } );
+				}
+
+				if constexpr ( Types::IsFloat16<Type>() || Types::IsBFloat16<Type>() || Types::Is32BitFloat<Type>() ) {
+					return FuncAvx512<_tType>( _vValues, [](auto x) { return _mm512_sqrt_ps( x ); }, [](auto x) { return static_cast<Type>(std::sqrt( static_cast<float>(x) )); } );
+				}
+				if constexpr ( Types::Is64BitFloat<Type>() ) {
+					return FuncAvx512<_tType>( _vValues, [](auto x) { return _mm512_sqrt_pd( x ); }, [](auto x) { return static_cast<Type>(std::sqrt( x )); } );
+				}
+			}
+#endif	// #ifdef __AVX512F__
+
+#ifdef __AVX2__
+			if ( Utilities::IsAvx2Supported() ) {
+				if constexpr ( Types::IsInt8<Type>() ) {
+					return FuncAvx2<_tType>( _vValues, [](auto x) {
+							__m256 m0, m1, m2, m3;
+							Intrin::int8x32_to_float32x32( x, m0, m1, m2, m3 );
+							m0 = _mm256_sqrt_ps( m0 ); m1 = _mm256_sqrt_ps( m1 ); m2 = _mm256_sqrt_ps( m2 ); m3 = _mm256_sqrt_ps( m3 );
+							return Intrin::float32x32_to_int8x32( m0, m1, m2, m3 );
+						}, [](auto x) { return std::sqrt<Type>( x ); } );
+				}
+				if constexpr ( Types::IsUint8<Type>() ) {
+					return FuncAvx2<_tType>( _vValues, [](auto x) {
+							__m256 m0, m1, m2, m3;
+							Intrin::uint8x32_to_float32x32( x, m0, m1, m2, m3 );
+							m0 = _mm256_sqrt_ps( m0 ); m1 = _mm256_sqrt_ps( m1 ); m2 = _mm256_sqrt_ps( m2 ); m3 = _mm256_sqrt_ps( m3 );
+							return Intrin::float32x32_to_uint8x32( m0, m1, m2, m3 );
+						}, [](auto x) { return std::sqrt<Type>( x ); } );
+				}
+				if constexpr ( Types::IsInt16<Type>() ) {
+					return FuncAvx2<_tType>( _vValues, [](auto x) { return Intrin::SquareInt16( x ); }, [](auto x) { return std::sqrt<Type>( x ); } );
+				}
+				if constexpr ( Types::IsUint16<Type>() ) {
+					return FuncAvx2<_tType>( _vValues, [](auto x) { return Intrin::SquareUint16( x ); }, [](auto x) { return std::sqrt<Type>( x ); } );
+				}
+				if constexpr ( Types::IsInt32<Type>() ) {
+					return FuncAvx2<_tType>( _vValues, [](auto x) { return Intrin::SquareInt32( x ); }, [](auto x) { return std::sqrt<Type>( x ); } );
+				}
+				if constexpr ( Types::IsUint32<Type>() ) {
+					return FuncAvx2<_tType>( _vValues, [](auto x) { return Intrin::SquareUint32( x ); }, [](auto x) { return std::sqrt<Type>( x ); } );
+				}
+
+				if constexpr ( Types::IsFloat16<Type>() || Types::IsBFloat16<Type>() || Types::Is32BitFloat<Type>() ) {
+					return FuncAvx2<_tType>( _vValues, [](auto x) { return _mm256_sqrt_ps( x ); }, [](auto x) { return static_cast<Type>(std::sqrt( static_cast<float>(x) )); } );
+				}
+				if constexpr ( Types::Is64BitFloat<Type>() ) {
+					return FuncAvx2<_tType>( _vValues, [](auto x) { return _mm256_sqrt_pd( x ); }, [](auto x) { return static_cast<Type>(std::sqrt( x )); } );
+				}
+			}
+#endif	// #ifdef __AVX2__
+			if constexpr ( Types::IsInt<Type>() ) {
+				return Func<_tType>( _vValues, [](auto x) { return std::sqrt<Type>( x ); } );
+			}
+			if constexpr ( Types::Is64BitFloat<Type>() ) {
+				return Func<_tType>( _vValues, [](auto x) { return std::sqrt( x ); } );
+			}
+			return Func<_tType>( _vValues, [](auto x) { return static_cast<Type>(std::sqrt( static_cast<float>(x) )); } );
+		}
+
+		/**
+		 * Applies Sqrt() to an array of inputs.
+		 * 
+		 * \param _tType The view/container type.
+		 * \param _vValues The input/output view to modify.
+		 * \return Returns _vValues.
+		 **/
+		template <typename _tType>
+		static std::vector<_tType> &								Sqrt( std::vector<_tType> &_vValues ) {
+			for ( auto & aThis : _vValues ) { Sqrt( aThis ); }
+			return _vValues;
+		}
+
+		/**
+		 * Computes element-wise sqrt().
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut>
+		static _tTypeOut &											Sqrt( const _tTypeIn &_vIn, _tTypeOut &_vOut ) {
+			using TypeIn = typename _tTypeIn::value_type;
+#ifdef __AVX512F__
+			if ( Utilities::IsAvx512FSupported() ) {
+				if constexpr ( Types::IsInt8<TypeIn>() ) {
+					return FuncAvx512<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return Intrin::SquareInt8( x ); }, [](auto x) { return int32_t( x ) * x; } );
+				}
+				if constexpr ( Types::IsUint8<TypeIn>() ) {
+					return FuncAvx512<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return Intrin::SquareUint8( x ); }, [](auto x) { return uint32_t( x ) * x; } );
+				}
+				if constexpr ( Types::IsInt16<TypeIn>() ) {
+					return FuncAvx512<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return Intrin::SquareInt16( x ); }, [](auto x) { return int32_t( x ) * x; } );
+				}
+				if constexpr ( Types::IsUint16<TypeIn>() ) {
+					return FuncAvx512<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return Intrin::SquareUint16( x ); }, [](auto x) { return uint32_t( x ) * x; } );
+				}
+				if constexpr ( Types::IsInt32<TypeIn>() ) {
+					return FuncAvx512<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return Intrin::SquareInt32( x ); }, [](auto x) { return int64_t( x ) * x; } );
+				}
+				if constexpr ( Types::IsUint32<TypeIn>() ) {
+					return FuncAvx512<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return Intrin::SquareUint32( x ); }, [](auto x) { return uint64_t( x ) * x; } );
+				}
+
+				if constexpr ( Types::IsInt64<TypeIn>() ) {
+					return FuncAvx2<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return Intrin::SquareInt64( x ); }, [](auto x) {
+							constexpr int64_t i64Max = 3037000499ULL;
+							int64_t i64Abs = std::abs<int64_t>( x );
+							return (x * x * (i64Abs <= i64Max)) | ((i64Abs > i64Max) * INT64_MAX);
+						} );
+				}
+				if constexpr ( Types::IsUint64<TypeIn>() ) {
+					return FuncAvx2<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return Intrin::SquareUint64( x ); }, [](auto x) {
+							constexpr uint64_t ui64Max = 4294967295ULL;
+							return (x * x * (x <= ui64Max)) | ((x > ui64Max) * UINT64_MAX);
+						} );
+				}
+
+				if constexpr ( Types::IsFloat16<TypeIn>() || Types::IsBFloat16<TypeIn>() || Types::Is32BitFloat<TypeIn>() ) {
+					return FuncAvx512<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return _mm512_mul_ps( x, x ); }, [](auto x) { return x * x; } );
+				}
+				if constexpr ( Types::Is64BitFloat<TypeIn>() ) {
+					return FuncAvx512<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return _mm512_mul_pd( x, x ); }, [](auto x) { return x * x; } );
+				}
+			}
+#endif	// #ifdef __AVX512F__
+
+#ifdef __AVX2__
+			if ( Utilities::IsAvx2Supported() ) {
+				if constexpr ( Types::IsInt8<TypeIn>() ) {
+					return FuncAvx2<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return Intrin::SquareInt8( x ); }, [](auto x) { return int32_t( x ) * x; } );
+				}
+				if constexpr ( Types::IsUint8<TypeIn>() ) {
+					return FuncAvx2<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return Intrin::SquareUint8( x ); }, [](auto x) { return uint32_t( x ) * x; } );
+				}
+				if constexpr ( Types::IsInt16<TypeIn>() ) {
+					return FuncAvx2<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return Intrin::SquareInt16( x ); }, [](auto x) { return int32_t( x ) * x; } );
+				}
+				if constexpr ( Types::IsUint16<TypeIn>() ) {
+					return FuncAvx2<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return Intrin::SquareUint16( x ); }, [](auto x) { return uint32_t( x ) * x; } );
+				}
+				if constexpr ( Types::IsInt32<TypeIn>() ) {
+					return FuncAvx2<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return Intrin::SquareInt32( x ); }, [](auto x) { return int64_t( x ) * x; } );
+				}
+				if constexpr ( Types::IsUint32<TypeIn>() ) {
+					return FuncAvx2<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return Intrin::SquareUint32( x ); }, [](auto x) { return uint64_t( x ) * x; } );
+				}
+
+				if constexpr ( Types::IsInt64<TypeIn>() ) {
+					return FuncAvx2<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return Intrin::SquareInt64( x ); }, [](auto x) {
+							constexpr int64_t i64Max = 3037000499ULL;
+							int64_t i64Abs = std::abs<int64_t>( x );
+							return (x * x * (i64Abs <= i64Max)) | ((i64Abs > i64Max) * INT64_MAX);
+						} );
+				}
+				if constexpr ( Types::IsUint64<TypeIn>() ) {
+					return FuncAvx2<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return Intrin::SquareUint64( x ); }, [](auto x) {
+							constexpr uint64_t ui64Max = 4294967295ULL;
+							return (x * x * (x <= ui64Max)) | ((x > ui64Max) * UINT64_MAX);
+						} );
+				}
+
+				if constexpr ( Types::IsFloat16<TypeIn>() || Types::IsBFloat16<TypeIn>() || Types::Is32BitFloat<TypeIn>() ) {
+					return FuncAvx2<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return _mm256_mul_ps( x, x ); }, [](auto x) { return x * x; } );
+				}
+				if constexpr ( Types::Is64BitFloat<TypeIn>() ) {
+					return FuncAvx2<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return _mm256_mul_pd( x, x ); }, [](auto x) { return x * x; } );
+				}
+			}
+#endif	// #ifdef __AVX2__
+			if constexpr ( Types::IsInt8<TypeIn>() || Types::IsUint8<TypeIn>() ) {
+				return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return int32_t( x ) * x; } );
+			}
+			if constexpr ( Types::IsInt16<TypeIn>() ) {
+				return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return int32_t( x ) * x; } );
+			}
+			if constexpr ( Types::IsUint16<TypeIn>() ) {
+				return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return uint32_t( x ) * x; } );
+			}
+			if constexpr ( Types::IsInt32<TypeIn>() ) {
+				return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return int64_t( x ) * x; } );
+			}
+			if constexpr ( Types::IsUint32<TypeIn>() ) {
+				return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return uint64_t( x ) * x; } );
+			}
+
+			if constexpr ( Types::IsInt64<TypeIn>() ) {
+				return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) {
+						constexpr int64_t i64Max = 3037000499ULL;
+						int64_t i64Abs = std::abs<int64_t>( x );
+						return (x * x * (i64Abs <= i64Max)) | ((i64Abs > i64Max) * INT64_MAX);
+					} );
+			}
+			if constexpr ( Types::IsUint64<TypeIn>() ) {
+				return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) {
+						constexpr uint64_t ui64Max = 4294967295ULL;
+						return (x * x * (x <= ui64Max)) | ((x > ui64Max) * UINT64_MAX);
+					} );
+			}
+			return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return x * x; } );
+		}
+
+		/**
+		 * Applies Sqrt() to an array of inputs and outputs.
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \throw If NN9_SAFETY_CHECK, throws if _vIn and _vOut are not the same lengths.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut>
+		static std::vector<_tTypeOut> &								Sqrt( const std::vector<_tTypeIn> &_vIn, std::vector<_tTypeOut> &_vOut ) {
+#ifdef NN9_SAFETY_CHECK
+			if ( _vIn.size() != _vOut.size() ) { throw std::runtime_error( "Math::Sqrt: Input and outputs must have the same number of elements." ); }
+#endif	// #ifdef NN9_SAFETY_CHECK
+
+			for ( size_t i = 0; i < _vIn.size(); ++i ) { Sqrt( _vIn[i], _vOut[i] ); }
 			return _vOut;
 		}
 #if 0
