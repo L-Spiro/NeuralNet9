@@ -3717,6 +3717,51 @@ namespace nn9 {
 			return _mm256_packus_epi32( m0, m1 );
 		}
 
+		/**
+		 * \brief Converts 8 floats held in a __m256 vector to a single __m256i of 8 int32_t's with saturation using AVX2.
+		 * 
+		 * \param _mFloat The __m256 input vector.
+		 * \return Returns a __m256i vector containing 8 int32_t's.
+		 */
+		static inline __m256i									float32x8_to_int32x8_saturated( __m256 _mFloat ) {
+			__m256 fMin = _mm256_set1_ps( -2147483648.0f );
+			__m256 fMax = _mm256_set1_ps( 2147483520.0f );
+			__m256 mClamped = _mm256_min_ps( _mm256_max_ps( _mFloat, fMin ), fMax );
+			return _mm256_cvttps_epi32( mClamped );
+		}
+
+		/**
+		 * \brief Converts 8 floats held in a __m256 vector to a single __m256i of 8 uint32_t's with saturation using AVX2.
+		 * 
+		 * \param _mFloat The __m256 input vector.
+		 * \return Returns a __m256i vector containing 8 uint32_t's.
+		 */
+		static inline __m256i									float32x8_to_uint32x8_saturated( __m256 _mFloat ) {
+			__m256 fMin = _mm256_setzero_ps();
+			__m256 fMax = _mm256_set1_ps( static_cast<float>(UINT32_MAX) );
+			__m256 mClamped = _mm256_min_ps( _mm256_max_ps( _mFloat, fMin ), fMax );
+			return _mm256_cvttps_epu32( mClamped );
+		}
+
+		/**
+		 * \brief Converts 8 floats held in a __m256 vector to a single __m256i of 8 int32_t's with saturation using AVX2.
+		 * 
+		 * \param _mFloat The __m256 input vector.
+		 * \return Returns a __m256i vector containing 8 int32_t's.
+		 */
+		static inline __m256i									float32x8_to_int32x8( __m256 _mFloat ) {
+			return _mm256_cvttps_epi32( _mFloat );
+		}
+
+		/**
+		 * \brief Converts 8 floats held in a __m256 vector to a single __m256i of 8 uint32_t's with saturation using AVX2.
+		 * 
+		 * \param _mFloat The __m256 input vector.
+		 * \return Returns a __m256i vector containing 8 uint32_t's.
+		 */
+		static inline __m256i									float32x8_to_uint32x8( __m256 _mFloat ) {
+			return _mm256_cvttps_epu32( _mFloat );
+		}
 #endif	// #ifdef __AVX2__
 
 
