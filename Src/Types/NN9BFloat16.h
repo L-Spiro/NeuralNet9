@@ -378,7 +378,7 @@ namespace nn9 {
 		 * \param _pBF16 Pointer to the memory containing 16 bfloat16 values.
 		 * \return A __m512 vector containing the converted single-precision floating-point values.
 		 **/
-		static inline __m512					loadu_bf16_to_fp32_16( const bfloat16 * _pBF16 ) { return loadu_bf16_to_fp32_16( reinterpret_cast<const bfloat16 *>(_pBF16) ); }
+		static inline __m512					loadu_bf16_to_fp32_16( const bfloat16 * _pBF16 ) { return loadu_bf16_to_fp32_16( reinterpret_cast<const uint16_t *>(_pBF16) ); }
 
 		/**
 		 * Load 16 bfloat16 values from memory and convert them into a __m512 (16 floats).
@@ -386,7 +386,7 @@ namespace nn9 {
 		 * \param _pBF16 Pointer to the memory containing 16 bfloat16 values.
 		 * \return A __m512 vector containing the converted single-precision floating-point values.
 		 **/
-		static inline __m512					load_bf16_to_fp32_16( const bfloat16 * _pBF16 ) { return load_bf16_to_fp32_16( reinterpret_cast<const bfloat16 *>(_pBF16) ); }
+		static inline __m512					load_bf16_to_fp32_16( const bfloat16 * _pBF16 ) { return load_bf16_to_fp32_16( reinterpret_cast<const uint16_t *>(_pBF16) ); }
 
 		/**
 		 * Load 32 bfloat16 values from memory into a __m512bh vector.
@@ -394,7 +394,7 @@ namespace nn9 {
 		 * \param _pBF16 Pointer to the memory containing 32 bfloat16 values.
 		 * \return A __m512bh vector containing the loaded bfloat16 values.
 		 **/
-		static	inline __m512bh					loadu_bf16_to_m512bh( const bfloat16 * _pBF16 ) { return loadu_bf16_to_m512bh( reinterpret_cast<const bfloat16 *>(_pBF16) ); }
+		static	inline __m512bh					loadu_bf16_to_m512bh( const bfloat16 * _pBF16 ) { return loadu_bf16_to_m512bh( reinterpret_cast<const uint16_t *>(_pBF16) ); }
 
 		/**
 		 * Load 32 bfloat16 values from memory into a __m512bh vector.
@@ -402,7 +402,7 @@ namespace nn9 {
 		 * \param _pBF16 Pointer to the memory containing 32 bfloat16 values.
 		 * \return A __m512bh vector containing the loaded bfloat16 values.
 		 **/
-		static	inline __m512bh					load_bf16_to_m512bh( const bfloat16 * _pBF16 ) { return load_bf16_to_m512bh( reinterpret_cast<const bfloat16 *>(_pBF16) ); }
+		static	inline __m512bh					load_bf16_to_m512bh( const bfloat16 * _pBF16 ) { return load_bf16_to_m512bh( reinterpret_cast<const uint16_t *>(_pBF16) ); }
 
 		/**
 		 * Store 16 floats from a __m512 vector to memory as 16 bfloat16 values.
@@ -547,7 +547,7 @@ namespace nn9 {
 		 * \param _pBF16 Pointer to memory containing 8 bfloat16 values.
 		 * \return A __m256 vector containing 8 floats converted from bfloat16.
 		 **/
-		static inline __m256					loadu_bf16_to_fp32_8( const bfloat16 * _pBF16 ) { return loadu_bf16_to_fp32_8( reinterpret_cast<const bfloat16 *>(_pBF16) ); }
+		static inline __m256					loadu_bf16_to_fp32_8( const bfloat16 * _pBF16 ) { return loadu_bf16_to_fp32_8( reinterpret_cast<const uint16_t *>(_pBF16) ); }
 
 		/**
 		 * \brief Load 8 bfloat16 values from memory and convert them into a __m256 (8 floats) using AVX2.
@@ -562,7 +562,7 @@ namespace nn9 {
 		 * \param _pBF16 Pointer to memory containing 8 bfloat16 values.
 		 * \return A __m256 vector containing 8 floats converted from bfloat16.
 		 **/
-		static inline __m256					load_bf16_to_fp32_8( const bfloat16 * _pBF16 ) { return load_bf16_to_fp32_8( reinterpret_cast<const bfloat16 *>(_pBF16) ); }
+		static inline __m256					load_bf16_to_fp32_8( const bfloat16 * _pBF16 ) { return load_bf16_to_fp32_8( reinterpret_cast<const uint16_t *>(_pBF16) ); }
 
 		/**
 	     * \brief Load 8 bfloat16 values from memory into a __m128i vector using AVX2.
@@ -574,7 +574,7 @@ namespace nn9 {
 	     * \param _pBF16 Pointer to the memory containing 8 bfloat16 values.
 	     * \return A __m128i vector containing the loaded bfloat16 values.
 	     */
-		static inline __m128i					loadu_bf16_to_m128i( const bfloat16 * _pBF16 ) { return loadu_bf16_to_m128i( reinterpret_cast<const bfloat16 *>(_pBF16) ); }
+		static inline __m128i					loadu_bf16_to_m128i( const bfloat16 * _pBF16 ) { return loadu_bf16_to_m128i( reinterpret_cast<const uint16_t *>(_pBF16) ); }
 
 		/**
 	     * \brief Load 8 bfloat16 values from memory into a __m128i vector using AVX2.
@@ -586,7 +586,7 @@ namespace nn9 {
 	     * \param _pBF16 Pointer to the memory containing 8 bfloat16 values.
 	     * \return A __m128i vector containing the loaded bfloat16 values.
 	     */
-		static inline __m128i					load_bf16_to_m128i( const bfloat16 * _pBF16 ) { return load_bf16_to_m128i( reinterpret_cast<const bfloat16 *>(_pBF16) ); }
+		static inline __m128i					load_bf16_to_m128i( const bfloat16 * _pBF16 ) { return load_bf16_to_m128i( reinterpret_cast<const uint16_t *>(_pBF16) ); }
 
 		/**
 		 * \brief Store 8 floats from a __m256 vector to memory as 8 bfloat16 values using AVX2.

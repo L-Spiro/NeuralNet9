@@ -338,7 +338,16 @@ namespace nn9 {
 				else if constexpr ( nn9::Types::SimdFloat<ValueTypeIn>() ) {
 					constexpr size_t sRegSize = sizeof( __m512 ) / sizeof( ValueTypeIn );
 					while ( sSize >= sRegSize ) {
-						auto mReg = _mm512_loadu_ps( pvtiIn );
+						__m512 mReg;
+						if constexpr ( nn9::Types::IsFloat16<ValueTypeIn>() ) {
+							mReg = nn9::float16::Convert16Float16ToFloat32( pvtiIn );
+						}
+						else if constexpr ( nn9::Types::IsBFloat16<ValueTypeIn>() ) {
+							mReg = nn9::bfloat16::loadu_bf16_to_fp32_16( pvtiIn );
+						}
+						else if constexpr ( nn9::Types::Is32BitFloat<ValueTypeIn>() ) {
+							mReg = _mm512_loadu_ps( reinterpret_cast<const float *>(pvtiIn) );
+						}
 						Intrin::scast<ValueTypeIn>( mReg, pvtoOut );
 						sSize -= sRegSize;
 						pvtiIn += sRegSize;
@@ -371,9 +380,18 @@ namespace nn9 {
 					}
 				}
 				else if constexpr ( nn9::Types::SimdFloat<ValueTypeIn>() ) {
-					constexpr size_t sRegSize = sizeof( __m256 ) / sizeof( ValueTypeIn );
+					constexpr size_t sRegSize = sizeof( __m256 ) / sizeof( float );
 					while ( sSize >= sRegSize ) {
-						auto mReg = _mm256_loadu_ps( reinterpret_cast<float const *>(pvtiIn) );
+						__m256 mReg;
+						if constexpr ( nn9::Types::IsFloat16<ValueTypeIn>() ) {
+							mReg = nn9::float16::Convert8Float16ToFloat32( pvtiIn );
+						}
+						else if constexpr ( nn9::Types::IsBFloat16<ValueTypeIn>() ) {
+							mReg = nn9::bfloat16::loadu_bf16_to_fp32_8( pvtiIn );
+						}
+						else if constexpr ( nn9::Types::Is32BitFloat<ValueTypeIn>() ) {
+							mReg = _mm256_loadu_ps( reinterpret_cast<const float *>(pvtiIn) );
+						}
 						Intrin::scast<ValueTypeIn>( mReg, pvtoOut );
 						sSize -= sRegSize;
 						pvtiIn += sRegSize;

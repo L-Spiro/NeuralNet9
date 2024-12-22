@@ -2127,13 +2127,22 @@ namespace nn9 {
 		}
 
 		/**
-		 * Casts 8 int32_t's to 8 float's.
+		 * Casts 8 uint32_t's to 8 float's.
 		 * 
 		 * \param _mUint32 The values to cast.
 		 * \param _m0 The first 8 return values.
 		 **/
 		static inline void										uint32x8_to_float32x8( __m256i _mUint32, __m256 &_m0 ) {
-			_m0 = _mm256_cvtepu32_ps( _mUint32 );
+			//_m0 = _mm256_cvtepu32_ps( _mUint32 );
+			__m256 mFMax = _mm256_set1_ps( static_cast<float>(UINT32_MAX) );
+			__m256 mFClamp = _mm256_min_ps( _mm256_max_ps( _mm256_castsi256_ps( _mUint32 ), _mm256_setzero_ps() ), mFMax );
+
+			__m256 mMask = _mm256_cmp_ps( mFClamp, _mm256_set1_ps( 2147483648.0f ), _CMP_GE_OS );
+			__m256i mi32 = _mm256_cvttps_epi32( mFClamp );
+			__m256i mMaskI = _mm256_castps_si256( mMask );
+			__m256i mOffset = _mm256_set1_epi32( 2147483648u );
+			__m256i mu32 = _mm256_or_si256( mi32, _mm256_and_si256( mMaskI, mOffset ) );
+			_m0 = _mm256_cvtepi32_ps( mu32 );
 		}
 
 		/**
@@ -3204,9 +3213,9 @@ namespace nn9 {
 		 */
 		static inline void										float32x8_to_uint8x8( __m256 _mFloat, uint8_t * _pu8Dst ) {
 			__m256 fMax = _mm256_set1_ps( static_cast<float>(UINT8_MAX) );
-			__m256 mClamped = _mm256_min_ps(_mm256_max_ps( _mFloat, _mm256_setzero_ps() ), fMax );
+			__m256 mClamped = _mm256_min_ps( _mm256_max_ps( _mFloat, _mm256_setzero_ps() ), fMax );
 
-			int32x8_to_uint8x8_saturated( _mm256_cvtps_epu32( mClamped ), _pu8Dst );
+			int32x8_to_uint8x8_saturated( _mm256_cvttps_epi32( mClamped ), _pu8Dst );
 		}
 
 		/**
@@ -3231,9 +3240,9 @@ namespace nn9 {
 		 */
 		static inline void										float32x8_to_uint16x8( __m256 _mFloat, uint16_t * _pu16Dst ) {
 			__m256 fMax = _mm256_set1_ps( static_cast<float>(UINT16_MAX) );
-			__m256 mClamped = _mm256_min_ps(_mm256_max_ps( _mFloat, _mm256_setzero_ps() ), fMax );
+			__m256 mClamped = _mm256_min_ps( _mm256_max_ps( _mFloat, _mm256_setzero_ps() ), fMax );
 
-			int32x8_to_uint16x8_saturated( _mm256_cvtps_epu32( mClamped ), _pu16Dst );
+			int32x8_to_uint16x8_saturated( _mm256_cvtps_epi32( mClamped ), _pu16Dst );
 		}
 
 		/**
@@ -3257,10 +3266,20 @@ namespace nn9 {
 		 * \param _pu32Dst Output array of 8 uint32_t's.
 		 */
 		static inline void										float32x8_to_uint32x8( __m256 _mFloat, uint32_t * _pu32Dst ) {
-			__m256 fMax = _mm256_set1_ps( static_cast<float>(UINT32_MAX) );
-			__m256 mClamped = _mm256_min_ps(_mm256_max_ps( _mFloat, _mm256_setzero_ps() ), fMax );
+			/*__m256 fMax = _mm256_set1_ps( static_cast<float>(UINT32_MAX) );
+			__m256 mClamped = _mm256_min_ps( _mm256_max_ps( _mFloat, _mm256_setzero_ps() ), fMax );
 
-			_mm256_storeu_si256( reinterpret_cast<__m256i *>(_pu32Dst), _mm256_cvtps_epu32( mClamped ) );
+			_mm256_storeu_si256( reinterpret_cast<__m256i *>(_pu32Dst), _mm256_cvtps_epu32( mClamped ) );*/
+			__m256 mFMax = _mm256_set1_ps( static_cast<float>(UINT32_MAX) );
+			__m256 mFClamp = _mm256_min_ps( _mm256_max_ps( _mFloat, _mm256_setzero_ps() ), mFMax );
+			__m256 mMaskFloat = _mm256_cmp_ps( mFClamp, _mm256_set1_ps( 2147483648.0f ), _CMP_GE_OS );
+			__m256 mAdjusted = _mm256_sub_ps( mFClamp, _mm256_and_ps( mMaskFloat, _mm256_set1_ps( 2147483648.0f ) ) );
+			__m256i mI32 = _mm256_cvttps_epi32( mAdjusted );
+			__m256i mMask = _mm256_castps_si256( mMaskFloat );
+			__m256i mOffset = _mm256_set1_epi32( 2147483648u );
+			__m256i mU32 = _mm256_or_si256( mI32, _mm256_and_si256( mMask, mOffset ) );
+			_mm256_storeu_si256( reinterpret_cast<__m256i *>(_pu32Dst), mU32 );
+
 		}
 
 		/**
