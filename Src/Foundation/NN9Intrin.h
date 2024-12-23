@@ -18,6 +18,22 @@
 #include <immintrin.h>
 
 
+#ifndef _mm512_rsqrt_ps
+#define _mm512_rsqrt_ps( a )									_mm512_div_ps( _mm512_set1_ps( 1.0f ), _mm512_sqrt_ps( a ) )
+#endif	// #ifndef _mm512_rsqrt_ps
+
+#ifndef _mm512_rsqrt_pd
+#define _mm512_rsqrt_pd( a )									_mm512_div_pd( _mm512_set1_pd( 1.0 ), _mm512_sqrt_pd( a ) )
+#endif	// #ifndef _mm512_rsqrt_pd
+
+#ifndef _mm256_rsqrt_ps
+#define _mm256_rsqrt_ps( a )									_mm256_div_ps( _mm256_set1_ps( 1.0f ), _mm256_sqrt_ps( a ) )
+#endif	// #ifndef _mm256_rsqrt_ps
+
+#ifndef _mm256_rsqrt_pd
+#define _mm256_rsqrt_pd( a )									_mm256_div_pd( _mm256_set1_pd( 1.0 ), _mm256_sqrt_pd( a ) )
+#endif	// #ifndef _mm256_rsqrt_pd
+
 namespace nn9 {
 
 	/**
