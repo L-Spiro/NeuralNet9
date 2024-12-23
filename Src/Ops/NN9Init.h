@@ -336,7 +336,7 @@ namespace nn9 {
 					}
 				}
 				else if constexpr ( nn9::Types::SimdFloat<ValueTypeIn>() ) {
-					constexpr size_t sRegSize = sizeof( __m512 ) / sizeof( ValueTypeIn );
+					constexpr size_t sRegSize = sizeof( __m512 ) / sizeof( float );
 					while ( sSize >= sRegSize ) {
 						__m512 mReg;
 						if constexpr ( nn9::Types::IsFloat16<ValueTypeIn>() ) {
