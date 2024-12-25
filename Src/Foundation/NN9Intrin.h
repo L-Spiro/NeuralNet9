@@ -17,7 +17,7 @@
 #include <cstdint>
 #include <immintrin.h>
 
-
+#ifdef __AVX512F__
 #ifndef _mm512_rsqrt_ps
 #define _mm512_rsqrt_ps( a )									_mm512_div_ps( _mm512_set1_ps( 1.0f ), _mm512_sqrt_ps( a ) )
 #endif	// #ifndef _mm512_rsqrt_ps
@@ -25,7 +25,9 @@
 #ifndef _mm512_rsqrt_pd
 #define _mm512_rsqrt_pd( a )									_mm512_div_pd( _mm512_set1_pd( 1.0 ), _mm512_sqrt_pd( a ) )
 #endif	// #ifndef _mm512_rsqrt_pd
+#endif	// #ifdef __AVX512F__
 
+#ifdef __AVX2__
 #ifndef _mm256_rsqrt_ps
 #define _mm256_rsqrt_ps( a )									_mm256_div_ps( _mm256_set1_ps( 1.0f ), _mm256_sqrt_ps( a ) )
 #endif	// #ifndef _mm256_rsqrt_ps
@@ -33,6 +35,7 @@
 #ifndef _mm256_rsqrt_pd
 #define _mm256_rsqrt_pd( a )									_mm256_div_pd( _mm256_set1_pd( 1.0 ), _mm256_sqrt_pd( a ) )
 #endif	// #ifndef _mm256_rsqrt_pd
+#endif	// #ifdef __AVX2__
 
 namespace nn9 {
 
@@ -6185,7 +6188,7 @@ namespace nn9 {
 		 * \param _pm512Val input vector (__m512i of uint64)
 		 * \return __m512i with saturated squares
 		 */
-		static inline __m512i										SquareUint64( __m512i _pm512Val ) {
+		static inline __m512i									SquareUint64( __m512i _pm512Val ) {
 			__m256i m256Lo = _mm512_extracti64x4_epi64( _pm512Val, 0 );
 			__m256i m256Hi = _mm512_extracti64x4_epi64( _pm512Val, 1 );
 
@@ -6420,6 +6423,200 @@ namespace nn9 {
 		}
 #endif	// #ifdef __AVX2__
 
+
+#ifdef __AVX512F__
+		/**
+		 * \brief Performs saturated addition for signed 32-bit integers using AVX-512.
+		 * 
+		 * \param _mA First operand.
+		 * \param _mB Second operand.
+		 * \return __m256i The saturated addition result.
+		 */
+		static inline __m512i									_mm512_adds_epi32( __m512i _mA, __m512i _mB ) {
+			__m512i mSum = _mm512_add_epi32( _mA, _mB );
+			__m512i mOpsDiffSign = _mm512_xor_si512( _mA, _mB );
+			__m512i mSumDiffSign  = _mm512_xor_si512( _mA, mSum );
+			__m512i mOverflow =
+				_mm512_srai_epi32( _mm512_andnot_si512( mOpsDiffSign, mSumDiffSign ), 31 );
+			__m512i mSatSum =
+				_mm512_xor_si512( _mm512_srai_epi32( _mA, 31 ), _mm512_set1_epi32( std::numeric_limits<int32_t>::max() ) );
+			return _mm512_or_si512( _mm512_andnot_si512( mOverflow, mSum ),
+				_mm512_and_si512( mOverflow, mSatSum ) );
+		}
+
+		/**
+		 * \brief Performs saturated addition for unsigned 32-bit integers using AVX-512.
+		 * 
+		 * \param _mA First operand.
+		 * \param _mB Second operand.
+		 * \return __m256i The saturated addition result.
+		 */
+		static inline __m512i									_mm512_adds_epu32( __m512i _mA, __m512i _mB ) {
+			__m512i mSum = _mm512_add_epi32( _mA, _mB );
+
+			__m512i mShift = _mm512_set1_epi32(0x80000000);
+			__m512i mShiftedA = _mm512_xor_si512(_mA, mShift);
+			__m512i mShiftedB = _mm512_xor_si512(_mB, mShift);
+			__m512i mShiftedSum = _mm512_xor_si512(mSum, mShift);
+
+			__mmask16 mCmpSumA = _mm512_cmpgt_epi32_mask(mShiftedA, mShiftedSum);
+
+			__mmask16 mCmpSumB = _mm512_cmpgt_epi32_mask(mShiftedB, mShiftedSum);
+
+			__mmask16 mOverflowMask = mCmpSumA | mCmpSumB;
+
+			__m512i mSatMax = _mm512_set1_epi32(std::numeric_limits<uint32_t>::max());
+
+			return _mm512_mask_blend_epi32(mOverflowMask, mSum, mSatMax);
+		}
+
+		/**
+		 * \brief Performs saturated subtraction for signed 32-bit integers using AVX-512.
+		 * 
+		 * \param _mA First operand.
+		 * \param _mB Second operand.
+		 * \return __m512i The saturated subtraction result.
+		 */
+		static inline __m512i									_mm512_subs_epi32( __m512i _mA, __m512i _mB ) {
+			__m512i mDifference = _mm512_sub_epi32( _mA, _mB );
+			__m512i mOpsDiffSign = _mm512_xor_si512( _mA, _mB );
+			__m512i mDifDiffSign = _mm512_xor_si512( _mA, mDifference );
+
+			__m512i mOverflowMask =
+				_mm512_srai_epi32( _mm512_and_si512( mOpsDiffSign, mDifDiffSign ), 31 );
+			__m512i mSatDiff =
+				_mm512_xor_si512( _mm512_srai_epi32( _mA, 31 ), _mm512_set1_epi32( std::numeric_limits<int32_t>::max() ) );
+
+			return _mm512_or_si512( _mm512_andnot_si512( mOverflowMask, mDifference ),
+				_mm512_and_si512( mOverflowMask, mSatDiff )
+			);
+		}
+
+		/**
+		 * \brief Performs saturated subtraction for unsigned 32-bit integers using AVX-512.
+		 * 
+		 * This function subtracts two vectors of unsigned 32-bit integers with saturation. If the
+		 * subtraction of two elements results in a value less than 0, the result is saturated to 0.
+		 * 
+		 * \param _mA First operand (__m512i containing uint32_t elements).
+		 * \param _mB Second operand (__m512i containing uint32_t elements).
+		 * \return __m512i The saturated subtraction result.
+		 */
+		static inline __m512i									_mm512_subs_epu32( __m512i _mA, __m512i _mB ) {
+			__m512i mDifference = _mm512_sub_epi32(_mA, _mB);
+
+			__m512i mShift = _mm512_set1_epi32( 0x80000000 );
+			__m512i mShiftedA = _mm512_xor_si512( _mA, mShift );
+			__m512i mShiftedB = _mm512_xor_si512( _mB, mShift );
+			__m512i mDiffShifted = _mm512_xor_si512( mDifference, mShift );
+
+			__mmask16 mCmpAB = _mm512_cmpgt_epi32_mask( _mB, _mA );
+
+			__m512i mSatMin = _mm512_setzero_si512();
+
+			return _mm512_mask_blend_epi32( mCmpAB, mDifference, mSatMin );
+		}
+
+#endif	// #ifdef __AVX512F__
+
+#ifdef __AVX2__
+		/**
+		 * \brief Performs saturated addition for signed 32-bit integers using AVX2.
+		 * 
+		 * \param _mA First operand.
+		 * \param _mB Second operand.
+		 * \return __m256i The saturated addition result.
+		 */
+		static inline __m256i									_mm256_adds_epi32( __m256i _mA, __m256i _mB ) {
+			__m256i mSum = _mm256_add_epi32( _mA, _mB );
+			__m256i mOpsDiffSign = _mm256_xor_si256( _mA, _mB );
+			__m256i mSumDiffSign  = _mm256_xor_si256( _mA, mSum );
+			__m256i mOverflow =
+				_mm256_srai_epi32( _mm256_andnot_si256( mOpsDiffSign, mSumDiffSign ), 31 );
+			__m256i mSatSum =
+				_mm256_xor_si256( _mm256_srai_epi32( _mA, 31 ), _mm256_set1_epi32( std::numeric_limits<int32_t>::max() ) );
+
+			return _mm256_or_si256( _mm256_andnot_si256( mOverflow, mSum ),
+				_mm256_and_si256( mOverflow, mSatSum ) );
+		}
+
+		/**
+		 * \brief Performs saturated addition for unsigned 32-bit integers using AVX2.
+		 * 
+		 * \param _mA First operand.
+		 * \param _mB Second operand.
+		 * \return __m256i The saturated addition result.
+		 */
+		static inline __m256i									_mm256_adds_epu32( __m256i _mA, __m256i _mB ) {
+			__m256i mSum = _mm256_add_epi32( _mA, _mB );
+
+			__m256i mShift = _mm256_set1_epi32( 0x80000000 );
+			__m256i mShiftedA = _mm256_xor_si256( _mA, mShift );
+			__m256i mShiftedB = _mm256_xor_si256( _mB, mShift );
+			__m256i mShiftedSum = _mm256_xor_si256( mSum, mShift );
+
+			__m256i mCmpSumA = _mm256_cmpgt_epi32( mShiftedA, mShiftedSum );
+
+			__m256i mCmpSumB = _mm256_cmpgt_epi32( mShiftedB, mShiftedSum );
+
+			__m256i mOverflowMask = _mm256_or_si256( mCmpSumA, mCmpSumB );
+
+			__m256 mMask = _mm256_castsi256_ps( mOverflowMask );
+
+			__m256i mSatMax = _mm256_set1_epi32( std::numeric_limits<uint32_t>::max() );
+
+			return _mm256_blendv_epi8( mSum, mSatMax, _mm256_castps_si256( mMask ) );
+		}
+
+		/**
+		 * \brief Performs saturated subtraction for signed 32-bit integers using AVX2.
+		 * 
+		 * \param _mA First operand.
+		 * \param _mB Second operand.
+		 * \return __m256i The saturated subtraction result.
+		 */
+		static inline __m256i									_mm256_subs_epi32( __m256i _mA, __m256i _mB ) {
+			__m256i mDifference = _mm256_sub_epi32( _mA, _mB );
+			__m256i mOpsDiffSign = _mm256_xor_si256( _mA, _mB );
+			__m256i mSumDiffSign = _mm256_xor_si256( _mA, mDifference );
+
+			__m256i mOverflow =
+				_mm256_srai_epi32( _mm256_and_si256( mOpsDiffSign, mSumDiffSign ), 31 );
+			__m256i mSatSum =
+				_mm256_xor_si256( _mm256_srai_epi32( _mA, 31 ), _mm256_set1_epi32( std::numeric_limits<int32_t>::max() ) );
+
+			return _mm256_or_si256( _mm256_andnot_si256( mOverflow, mDifference ),
+				_mm256_and_si256( mOverflow, mSatSum )
+			);
+		}
+
+		 /**
+		 * \brief Performs saturated subtraction for unsigned 32-bit integers using AVX2.
+		 * 
+		 * This function subtracts two vectors of unsigned 32-bit integers with saturation. If the
+		 * subtraction of two elements results in a value less than 0, the result is saturated to 0.
+		 * 
+		 * \param _mA First operand (__m256i containing uint32_t elements).
+		 * \param _mB Second operand (__m256i containing uint32_t elements).
+		 * \return __m256i The saturated subtraction result.
+		 */
+		static inline __m256i									_mm256_subs_epu32( __m256i _mA, __m256i _mB ) {
+			__m256i mDifference = _mm256_sub_epi32( _mA, _mB );
+
+			__m256i mShift = _mm256_set1_epi32( 0x80000000 );
+			__m256i mShiftedA = _mm256_xor_si256( _mA, mShift );
+			__m256i mShiftedB = _mm256_xor_si256( _mB, mShift );
+			__m256i mDiffShifted = _mm256_xor_si256( mDifference, mShift );
+
+			__m256i mCmpBA = _mm256_cmpgt_epi32( mShiftedB, mShiftedA );
+
+			__m256 mMask = _mm256_castsi256_ps( mCmpBA );
+
+			__m256i mSatMin = _mm256_setzero_si256();
+
+			return _mm256_blendv_epi8( mDifference, mSatMin, _mm256_castps_si256( mMask ) );
+		}
+#endif	// #ifdef __AVX2__
 	};
 
 }	// namespace nn9
