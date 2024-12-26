@@ -544,6 +544,10 @@ namespace nn9 {
 			auto sSize = _vValues.size();
 
 			if constexpr ( nn9::Types::SimdInt<ValueType>() ) {
+				if constexpr ( nn9::Types::IsInt8<ValueType>() || nn9::Types::IsUint8<ValueType>() ||
+					nn9::Types::IsInt16<ValueType>() || nn9::Types::IsUint16<ValueType>() ) {
+					if ( !Utilities::IsAvx512BWSupported() ) { goto End; }
+				}
 				constexpr size_t sRegSize = sizeof( __m512i ) / sizeof( ValueType );
 				while ( sSize >= sRegSize ) {
 					auto mReg = _mm512_loadu_epi64( pvtiIn );
@@ -552,6 +556,7 @@ namespace nn9 {
 					sSize -= sRegSize;
 					pvtiIn += sRegSize;
 				}
+				goto End;	// To remove "unused label" warning.
 			}
 			else if constexpr ( nn9::Types::SimdFloat<ValueType>() ) {
 				constexpr size_t sRegSize = sizeof( __m512 ) / sizeof( float );
@@ -571,6 +576,7 @@ namespace nn9 {
 					sSize -= sRegSize;
 					pvtiIn += sRegSize;
 				}
+				goto End;	// To remove "unused label" warning.
 			}
 			else if constexpr ( nn9::Types::SimdDouble<ValueType>() ) {
 				constexpr size_t sRegSize = sizeof( __m512d ) / sizeof( ValueType );
@@ -581,8 +587,10 @@ namespace nn9 {
 					sSize -= sRegSize;
 					pvtiIn += sRegSize;
 				}
+				goto End;	// To remove "unused label" warning.
 			}
 
+		End :
 			while ( sSize-- ) {
 				Intrin::scast( (*pvtiIn), (*pvtiIn) );
 				++pvtiIn;
@@ -617,6 +625,10 @@ namespace nn9 {
 			auto sSize = _vIn.size();
 
 			if constexpr ( nn9::Types::SimdInt<ValueTypeIn>() ) {
+				if constexpr ( nn9::Types::IsInt8<ValueTypeIn>() || nn9::Types::IsUint8<ValueTypeIn>() ||
+					nn9::Types::IsInt16<ValueTypeIn>() || nn9::Types::IsUint16<ValueTypeIn>() ) {
+					if ( !Utilities::IsAvx512BWSupported() ) { goto End; }
+				}
 				constexpr size_t sRegSize = sizeof( __m512i ) / sizeof( ValueTypeIn );
 				while ( sSize >= sRegSize ) {
 					auto mReg = _mm512_loadu_epi8( pvtiIn );
@@ -626,6 +638,7 @@ namespace nn9 {
 					pvtiIn += sRegSize;
 					pvtoOut += sRegSize;
 				}
+				goto End;	// To remove "unused label" warning.
 			}
 			else if constexpr ( nn9::Types::SimdFloat<ValueTypeIn>() ) {
 				constexpr size_t sRegSize = sizeof( __m512 ) / sizeof( float );
@@ -646,6 +659,7 @@ namespace nn9 {
 					pvtiIn += sRegSize;
 					pvtoOut += sRegSize;
 				}
+				goto End;	// To remove "unused label" warning.
 			}
 			else if constexpr ( nn9::Types::SimdDouble<ValueTypeIn>() ) {
 				constexpr size_t sRegSize = sizeof( __m512d ) / sizeof( ValueTypeIn );
@@ -657,8 +671,10 @@ namespace nn9 {
 					pvtiIn += sRegSize;
 					pvtoOut += sRegSize;
 				}
+				goto End;	// To remove "unused label" warning.
 			}
 
+		End :
 			while ( sSize-- ) {
 				Intrin::scast( (*pvtiIn++), (*pvtoOut++) );
 			}
@@ -3545,32 +3561,32 @@ namespace nn9 {
 				if constexpr ( Types::IsInt8<Type>() ) {
 					return FuncAvx512<_tType>( _vValues, [](auto x) {
 							return _mm512_adds_epi8( x, _mm512_set1_epi8( static_cast<Type>(_stScalar) ) );
-						}, [](auto x) { return static_cast<int32_t>(x) + x; } );
+						}, [](auto x) { return static_cast<int32_t>(x) + static_cast<Type>(_stScalar); } );
 				}
 				if constexpr ( Types::IsUint8<Type>() ) {
 					return FuncAvx512<_tType>( _vValues, [](auto x) {
 							return _mm512_adds_epu8( x, _mm512_set1_epi8( static_cast<Type>(_stScalar) ) );
-						}, [](auto x) { return static_cast<uint32_t>(x) + x; } );
+						}, [](auto x) { return static_cast<uint32_t>(x) + static_cast<Type>(_stScalar); } );
 				}
 				if constexpr ( Types::IsInt16<Type>() ) {
 					return FuncAvx512<_tType>( _vValues, [](auto x) {
 							return _mm512_adds_epi16( x, _mm512_set1_epi16( static_cast<Type>(_stScalar) ) );
-						}, [](auto x) { return static_cast<int32_t>(x) + x; } );
+						}, [](auto x) { return static_cast<int32_t>(x) + static_cast<Type>(_stScalar); } );
 				}
 				if constexpr ( Types::IsUint16<Type>() ) {
 					return FuncAvx512<_tType>( _vValues, [](auto x) {
 							return _mm512_adds_epi16( x, _mm512_set1_epi16( static_cast<Type>(_stScalar) ) );
-						}, [](auto x) { return static_cast<uint32_t>(x) + x; } );
+						}, [](auto x) { return static_cast<uint32_t>(x) + static_cast<Type>(_stScalar); } );
 				}
 				if constexpr ( Types::IsInt32<Type>() ) {
 					return FuncAvx512<_tType>( _vValues, [](auto x) {
 							return Intrin::_mm512_adds_epi32( x, _mm512_set1_epi32( static_cast<Type>(_stScalar) ) );
-						}, [](auto x) { return static_cast<int64_t>(x) + x; } );
+						}, [](auto x) { return static_cast<int64_t>(x) + static_cast<Type>(_stScalar); } );
 				}
 				if constexpr ( Types::IsUint32<Type>() ) {
 					return FuncAvx512<_tType>( _vValues, [](auto x) {
 							return Intrin::_mm512_adds_epu32( x, _mm512_set1_epi32( static_cast<Type>(_stScalar) ) );
-						}, [](auto x) { return static_cast<uint64_t>(x) + x; } );
+						}, [](auto x) { return static_cast<uint64_t>(x) + static_cast<Type>(_stScalar); } );
 				}
 
 				if constexpr ( Types::IsFloat16<Type>() || Types::IsBFloat16<Type>() || Types::Is32BitFloat<Type>() ) {
@@ -3587,32 +3603,32 @@ namespace nn9 {
 				if constexpr ( Types::IsInt8<Type>() ) {
 					return FuncAvx2<_tType>( _vValues, [](auto x) {
 							return _mm256_adds_epi8( x, _mm256_set1_epi8( static_cast<Type>(_stScalar) ) );
-						}, [](auto x) { return static_cast<int32_t>(x) + x; } );
+						}, [](auto x) { return static_cast<int32_t>(x) + static_cast<Type>(_stScalar); } );
 				}
 				if constexpr ( Types::IsUint8<Type>() ) {
 					return FuncAvx2<_tType>( _vValues, [](auto x) {
 							return _mm256_adds_epu8( x, _mm256_set1_epi8( static_cast<Type>(_stScalar) ) );
-						}, [](auto x) { return static_cast<uint32_t>(x) + x; } );
+						}, [](auto x) { return static_cast<uint32_t>(x) + static_cast<Type>(_stScalar); } );
 				}
 				if constexpr ( Types::IsInt16<Type>() ) {
 					return FuncAvx2<_tType>( _vValues, [](auto x) {
 							return _mm256_adds_epi16( x, _mm256_set1_epi16( static_cast<Type>(_stScalar) ) );
-						}, [](auto x) { return static_cast<int32_t>(x) + x; } );
+						}, [](auto x) { return static_cast<int32_t>(x) + static_cast<Type>(_stScalar); } );
 				}
 				if constexpr ( Types::IsUint16<Type>() ) {
 					return FuncAvx2<_tType>( _vValues, [](auto x) {
 							return _mm256_adds_epi16( x, _mm256_set1_epi16( static_cast<Type>(_stScalar) ) );
-						}, [](auto x) { return static_cast<uint32_t>(x) + x; } );
+						}, [](auto x) { return static_cast<uint32_t>(x) + static_cast<Type>(_stScalar); } );
 				}
 				if constexpr ( Types::IsInt32<Type>() ) {
 					return FuncAvx2<_tType>( _vValues, [](auto x) {
 							return Intrin::_mm256_adds_epi32( x, _mm256_set1_epi32( static_cast<Type>(_stScalar) ) );
-						}, [](auto x) { return static_cast<int64_t>(x) + x; } );
+						}, [](auto x) { return static_cast<int64_t>(x) + static_cast<Type>(_stScalar); } );
 				}
 				if constexpr ( Types::IsUint32<Type>() ) {
 					return FuncAvx2<_tType>( _vValues, [](auto x) {
 							return Intrin::_mm256_adds_epu32( x, _mm256_set1_epi32( static_cast<Type>(_stScalar) ) );
-						}, [](auto x) { return static_cast<uint64_t>(x) + x; } );
+						}, [](auto x) { return static_cast<uint64_t>(x) + static_cast<Type>(_stScalar); } );
 				}
 
 				if constexpr ( Types::IsFloat16<Type>() || Types::IsBFloat16<Type>() || Types::Is32BitFloat<Type>() ) {
@@ -3626,8 +3642,11 @@ namespace nn9 {
 			if constexpr ( Types::IsBool<Type>() ) {
 				return Func<_tType>( _vValues, [](auto x) { return static_cast<int16_t>( x ) + static_cast<int16_t>(_stScalar); } );
 			}
-			if constexpr ( Types::IsUint64<Type>() || Types::IsInt64<Type>() ) {
-				return Func<_tType>( _vValues, [](auto x) { return x + static_cast<Type>(_stScalar); } );
+			if constexpr ( Types::IsUint64<Type>() ) {
+				return Func<_tType>( _vValues, [](auto x) { return adds( x, static_cast<Type>(_stScalar) ); } );
+			}
+			if constexpr ( Types::IsInt64<Type>() ) {
+				return Func<_tType>( _vValues, [](auto x) { return adds( x, static_cast<Type>(_stScalar) ); } );
 			}
 			if constexpr ( Types::IsInt<Type>() ) {
 				return Func<_tType>( _vValues, [](auto x) { return static_cast<int64_t>( x ) + static_cast<int64_t>(_stScalar); } );
@@ -3668,32 +3687,32 @@ namespace nn9 {
 				if constexpr ( Types::IsInt8<TypeIn>() ) {
 					return FuncAvx512<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) {
 							return _mm512_adds_epi8( x, _mm512_set1_epi8( static_cast<TypeIn>(_stScalar) ) );
-						}, [](auto x) { return static_cast<int32_t>(x) + x; } );
+						}, [](auto x) { return static_cast<int32_t>(x) + static_cast<TypeIn>(_stScalar); } );
 				}
 				if constexpr ( Types::IsUint8<TypeIn>() ) {
 					return FuncAvx512<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) {
 							return _mm512_adds_epu8( x, _mm512_set1_epi8( static_cast<TypeIn>(_stScalar) ) );
-						}, [](auto x) { return static_cast<uint32_t>(x) + x; } );
+						}, [](auto x) { return static_cast<uint32_t>(x) + static_cast<TypeIn>(_stScalar); } );
 				}
 				if constexpr ( Types::IsInt16<TypeIn>() ) {
 					return FuncAvx512<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) {
 							return _mm512_adds_epi16( x, _mm512_set1_epi16( static_cast<TypeIn>(_stScalar) ) );
-						}, [](auto x) { return static_cast<int32_t>(x) + x; } );
+						}, [](auto x) { return static_cast<int32_t>(x) + static_cast<TypeIn>(_stScalar); } );
 				}
 				if constexpr ( Types::IsUint16<TypeIn>() ) {
 					return FuncAvx512<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) {
 							return _mm512_adds_epi16( x, _mm512_set1_epi16( static_cast<TypeIn>(_stScalar) ) );
-						}, [](auto x) { return static_cast<uint32_t>(x) + x; } );
+						}, [](auto x) { return static_cast<uint32_t>(x) + static_cast<TypeIn>(_stScalar); } );
 				}
 				if constexpr ( Types::IsInt32<TypeIn>() ) {
 					return FuncAvx512<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) {
 							return Intrin::_mm512_adds_epi32( x, _mm512_set1_epi32( static_cast<TypeIn>(_stScalar) ) );
-						}, [](auto x) { return static_cast<int64_t>(x) + x; } );
+						}, [](auto x) { return static_cast<int64_t>(x) + static_cast<TypeIn>(_stScalar); } );
 				}
 				if constexpr ( Types::IsUint32<TypeIn>() ) {
 					return FuncAvx512<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) {
 							return Intrin::_mm512_adds_epu32( x, _mm512_set1_epi32( static_cast<TypeIn>(_stScalar) ) );
-						}, [](auto x) { return static_cast<uint64_t>(x) + x; } );
+						}, [](auto x) { return static_cast<uint64_t>(x) + static_cast<TypeIn>(_stScalar); } );
 				}
 
 				if constexpr ( Types::IsFloat16<TypeIn>() || Types::IsBFloat16<TypeIn>() || Types::Is32BitFloat<TypeIn>() ) {
@@ -3710,32 +3729,32 @@ namespace nn9 {
 				if constexpr ( Types::IsInt8<TypeIn>() ) {
 					return FuncAvx2<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) {
 							return _mm256_adds_epi8( x, _mm256_set1_epi8( static_cast<TypeIn>(_stScalar) ) );
-						}, [](auto x) { return static_cast<int32_t>(x) + x; } );
+						}, [](auto x) { return static_cast<int32_t>(x) + static_cast<TypeIn>(_stScalar); } );
 				}
 				if constexpr ( Types::IsUint8<TypeIn>() ) {
 					return FuncAvx2<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) {
 							return _mm256_adds_epu8( x, _mm256_set1_epi8( static_cast<TypeIn>(_stScalar) ) );
-						}, [](auto x) { return static_cast<uint32_t>(x) + x; } );
+						}, [](auto x) { return static_cast<uint32_t>(x) + static_cast<TypeIn>(_stScalar); } );
 				}
 				if constexpr ( Types::IsInt16<TypeIn>() ) {
 					return FuncAvx2<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) {
 							return _mm256_adds_epi16( x, _mm256_set1_epi16( static_cast<TypeIn>(_stScalar) ) );
-						}, [](auto x) { return static_cast<int32_t>(x) + x; } );
+						}, [](auto x) { return static_cast<int32_t>(x) + static_cast<TypeIn>(_stScalar); } );
 				}
 				if constexpr ( Types::IsUint16<TypeIn>() ) {
 					return FuncAvx2<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) {
 							return _mm256_adds_epi16( x, _mm256_set1_epi16( static_cast<TypeIn>(_stScalar) ) );
-						}, [](auto x) { return static_cast<uint32_t>(x) + x; } );
+						}, [](auto x) { return static_cast<uint32_t>(x) + static_cast<TypeIn>(_stScalar); } );
 				}
 				if constexpr ( Types::IsInt32<TypeIn>() ) {
 					return FuncAvx2<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) {
 							return Intrin::_mm256_adds_epi32( x, _mm256_set1_epi32( static_cast<TypeIn>(_stScalar) ) );
-						}, [](auto x) { return static_cast<int64_t>(x) + x; } );
+						}, [](auto x) { return static_cast<int64_t>(x) + static_cast<TypeIn>(_stScalar); } );
 				}
 				if constexpr ( Types::IsUint32<TypeIn>() ) {
 					return FuncAvx2<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) {
 							return Intrin::_mm256_adds_epu32( x, _mm256_set1_epi32( static_cast<TypeIn>(_stScalar) ) );
-						}, [](auto x) { return static_cast<uint64_t>(x) + x; } );
+						}, [](auto x) { return static_cast<uint64_t>(x) + static_cast<TypeIn>(_stScalar); } );
 				}
 
 				if constexpr ( Types::IsFloat16<TypeIn>() || Types::IsBFloat16<TypeIn>() || Types::Is32BitFloat<TypeIn>() ) {
@@ -3749,8 +3768,11 @@ namespace nn9 {
 			if constexpr ( Types::IsBool<TypeIn>() ) {
 				return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return static_cast<int16_t>( x ) + static_cast<int16_t>(_stScalar); } );
 			}
-			if constexpr ( Types::IsUint64<TypeIn>() || Types::IsInt64<TypeIn>() ) {
-				return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return x + static_cast<TypeIn>(_stScalar); } );
+			if constexpr ( Types::IsUint64<TypeIn>() ) {
+				return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return adds( x, static_cast<TypeIn>(_stScalar) ); } );
+			}
+			if constexpr ( Types::IsInt64<TypeIn>() ) {
+				return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return adds( x, static_cast<TypeIn>(_stScalar) ); } );
 			}
 			if constexpr ( Types::IsInt<TypeIn>() ) {
 				return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return static_cast<int64_t>( x ) + static_cast<int64_t>(_stScalar); } );
@@ -3797,32 +3819,32 @@ namespace nn9 {
 				if constexpr ( Types::IsInt8<Type>() ) {
 					return FuncAvx512<_tType>( _vValues, [](auto x) {
 							return _mm512_subs_epi8( x, _mm512_set1_epi8( static_cast<Type>(_stScalar) ) );
-						}, [](auto x) { return static_cast<int32_t>(x) + x; } );
+						}, [](auto x) { return static_cast<int32_t>(x) + static_cast<Type>(_stScalar); } );
 				}
 				if constexpr ( Types::IsUint8<Type>() ) {
 					return FuncAvx512<_tType>( _vValues, [](auto x) {
 							return _mm512_subs_epu8( x, _mm512_set1_epi8( static_cast<Type>(_stScalar) ) );
-						}, [](auto x) { return static_cast<uint32_t>(x) + x; } );
+						}, [](auto x) { return static_cast<uint32_t>(x) + static_cast<Type>(_stScalar); } );
 				}
 				if constexpr ( Types::IsInt16<Type>() ) {
 					return FuncAvx512<_tType>( _vValues, [](auto x) {
 							return _mm512_subs_epi16( x, _mm512_set1_epi16( static_cast<Type>(_stScalar) ) );
-						}, [](auto x) { return static_cast<int32_t>(x) + x; } );
+						}, [](auto x) { return static_cast<int32_t>(x) + static_cast<Type>(_stScalar); } );
 				}
 				if constexpr ( Types::IsUint16<Type>() ) {
 					return FuncAvx512<_tType>( _vValues, [](auto x) {
 							return _mm512_subs_epi16( x, _mm512_set1_epi16( static_cast<Type>(_stScalar) ) );
-						}, [](auto x) { return static_cast<uint32_t>(x) + x; } );
+						}, [](auto x) { return static_cast<uint32_t>(x) + static_cast<Type>(_stScalar); } );
 				}
 				if constexpr ( Types::IsInt32<Type>() ) {
 					return FuncAvx512<_tType>( _vValues, [](auto x) {
 							return Intrin::_mm512_subs_epi32( x, _mm512_set1_epi32( static_cast<Type>(_stScalar) ) );
-						}, [](auto x) { return static_cast<int64_t>(x) + x; } );
+						}, [](auto x) { return static_cast<int64_t>(x) + static_cast<Type>(_stScalar); } );
 				}
 				if constexpr ( Types::IsUint32<Type>() ) {
 					return FuncAvx512<_tType>( _vValues, [](auto x) {
 							return Intrin::_mm512_subs_epu32( x, _mm512_set1_epi32( static_cast<Type>(_stScalar) ) );
-						}, [](auto x) { return static_cast<uint64_t>(x) + x; } );
+						}, [](auto x) { return static_cast<uint64_t>(x) + static_cast<Type>(_stScalar); } );
 				}
 
 				if constexpr ( Types::IsFloat16<Type>() || Types::IsBFloat16<Type>() || Types::Is32BitFloat<Type>() ) {
@@ -3839,32 +3861,32 @@ namespace nn9 {
 				if constexpr ( Types::IsInt8<Type>() ) {
 					return FuncAvx2<_tType>( _vValues, [](auto x) {
 							return _mm256_subs_epi8( x, _mm256_set1_epi8( static_cast<Type>(_stScalar) ) );
-						}, [](auto x) { return static_cast<int32_t>(x) + x; } );
+						}, [](auto x) { return static_cast<int32_t>(x) + static_cast<Type>(_stScalar); } );
 				}
 				if constexpr ( Types::IsUint8<Type>() ) {
 					return FuncAvx2<_tType>( _vValues, [](auto x) {
 							return _mm256_subs_epu8( x, _mm256_set1_epi8( static_cast<Type>(_stScalar) ) );
-						}, [](auto x) { return static_cast<uint32_t>(x) + x; } );
+						}, [](auto x) { return static_cast<uint32_t>(x) + static_cast<Type>(_stScalar); } );
 				}
 				if constexpr ( Types::IsInt16<Type>() ) {
 					return FuncAvx2<_tType>( _vValues, [](auto x) {
 							return _mm256_subs_epi16( x, _mm256_set1_epi16( static_cast<Type>(_stScalar) ) );
-						}, [](auto x) { return static_cast<int32_t>(x) + x; } );
+						}, [](auto x) { return static_cast<int32_t>(x) + static_cast<Type>(_stScalar); } );
 				}
 				if constexpr ( Types::IsUint16<Type>() ) {
 					return FuncAvx2<_tType>( _vValues, [](auto x) {
 							return _mm256_subs_epi16( x, _mm256_set1_epi16( static_cast<Type>(_stScalar) ) );
-						}, [](auto x) { return static_cast<uint32_t>(x) + x; } );
+						}, [](auto x) { return static_cast<uint32_t>(x) + static_cast<Type>(_stScalar); } );
 				}
 				if constexpr ( Types::IsInt32<Type>() ) {
 					return FuncAvx2<_tType>( _vValues, [](auto x) {
 							return Intrin::_mm256_subs_epi32( x, _mm256_set1_epi32( static_cast<Type>(_stScalar) ) );
-						}, [](auto x) { return static_cast<int64_t>(x) + x; } );
+						}, [](auto x) { return static_cast<int64_t>(x) + static_cast<Type>(_stScalar); } );
 				}
 				if constexpr ( Types::IsUint32<Type>() ) {
 					return FuncAvx2<_tType>( _vValues, [](auto x) {
 							return Intrin::_mm256_subs_epu32( x, _mm256_set1_epi32( static_cast<Type>(_stScalar) ) );
-						}, [](auto x) { return static_cast<uint64_t>(x) + x; } );
+						}, [](auto x) { return static_cast<uint64_t>(x) + static_cast<Type>(_stScalar); } );
 				}
 
 				if constexpr ( Types::IsFloat16<Type>() || Types::IsBFloat16<Type>() || Types::Is32BitFloat<Type>() ) {
@@ -3876,18 +3898,21 @@ namespace nn9 {
 			}
 #endif	// #ifdef __AVX2__
 			if constexpr ( Types::IsBool<Type>() ) {
-				return Func<_tType>( _vValues, [](auto x) { return static_cast<int16_t>( x ) + static_cast<int16_t>(_stScalar); } );
+				return Func<_tType>( _vValues, [](auto x) { return static_cast<int16_t>( x ) - static_cast<int16_t>(_stScalar); } );
 			}
-			if constexpr ( Types::IsUint64<Type>() || Types::IsInt64<Type>() ) {
-				return Func<_tType>( _vValues, [](auto x) { return x + static_cast<Type>(_stScalar); } );
+			if constexpr ( Types::IsUint64<Type>() ) {
+				return Func<_tType>( _vValues, [](auto x) { return subs( x, static_cast<Type>(_stScalar) ); } );
+			}
+			if constexpr ( Types::IsInt64<Type>() ) {
+				return Func<_tType>( _vValues, [](auto x) { return subs( x, static_cast<Type>(_stScalar) ); } );
 			}
 			if constexpr ( Types::IsInt<Type>() ) {
-				return Func<_tType>( _vValues, [](auto x) { return static_cast<int64_t>( x ) + static_cast<int64_t>(_stScalar); } );
+				return Func<_tType>( _vValues, [](auto x) { return static_cast<int64_t>( x ) - static_cast<int64_t>(_stScalar); } );
 			}
 			if constexpr ( Types::Is64BitFloat<Type>() ) {
-				return Func<_tType>( _vValues, [](auto x) { return x + static_cast<Type>(_stScalar); } );
+				return Func<_tType>( _vValues, [](auto x) { return x - static_cast<Type>(_stScalar); } );
 			}
-			return Func<_tType>( _vValues, [](auto x) { return x + static_cast<float>(_stScalar); } );
+			return Func<_tType>( _vValues, [](auto x) { return x - static_cast<float>(_stScalar); } );
 		}
 
 		/**
@@ -3920,39 +3945,39 @@ namespace nn9 {
 				if constexpr ( Types::IsInt8<TypeIn>() ) {
 					return FuncAvx512<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) {
 							return _mm512_subs_epi8( x, _mm512_set1_epi8( static_cast<TypeIn>(_stScalar) ) );
-						}, [](auto x) { return static_cast<int32_t>(x) + x; } );
+						}, [](auto x) { return static_cast<int32_t>(x) - static_cast<TypeIn>(_stScalar); } );
 				}
 				if constexpr ( Types::IsUint8<TypeIn>() ) {
 					return FuncAvx512<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) {
 							return _mm512_subs_epu8( x, _mm512_set1_epi8( static_cast<TypeIn>(_stScalar) ) );
-						}, [](auto x) { return static_cast<uint32_t>(x) + x; } );
+						}, [](auto x) { return static_cast<uint32_t>(x) - static_cast<TypeIn>(_stScalar); } );
 				}
 				if constexpr ( Types::IsInt16<TypeIn>() ) {
 					return FuncAvx512<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) {
 							return _mm512_subs_epi16( x, _mm512_set1_epi16( static_cast<TypeIn>(_stScalar) ) );
-						}, [](auto x) { return static_cast<int32_t>(x) + x; } );
+						}, [](auto x) { return static_cast<int32_t>(x) - static_cast<TypeIn>(_stScalar); } );
 				}
 				if constexpr ( Types::IsUint16<TypeIn>() ) {
 					return FuncAvx512<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) {
 							return _mm512_subs_epi16( x, _mm512_set1_epi16( static_cast<TypeIn>(_stScalar) ) );
-						}, [](auto x) { return static_cast<uint32_t>(x) + x; } );
+						}, [](auto x) { return static_cast<uint32_t>(x) - static_cast<TypeIn>(_stScalar); } );
 				}
 				if constexpr ( Types::IsInt32<TypeIn>() ) {
 					return FuncAvx512<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) {
 							return Intrin::_mm512_subs_epi32( x, _mm512_set1_epi32( static_cast<TypeIn>(_stScalar) ) );
-						}, [](auto x) { return static_cast<int64_t>(x) + x; } );
+						}, [](auto x) { return static_cast<int64_t>(x) - static_cast<TypeIn>(_stScalar); } );
 				}
 				if constexpr ( Types::IsUint32<TypeIn>() ) {
 					return FuncAvx512<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) {
 							return Intrin::_mm512_subs_epu32( x, _mm512_set1_epi32( static_cast<TypeIn>(_stScalar) ) );
-						}, [](auto x) { return static_cast<uint64_t>(x) + x; } );
+						}, [](auto x) { return static_cast<uint64_t>(x) - static_cast<TypeIn>(_stScalar); } );
 				}
 
 				if constexpr ( Types::IsFloat16<TypeIn>() || Types::IsBFloat16<TypeIn>() || Types::Is32BitFloat<TypeIn>() ) {
-					return FuncAvx512<_tTypeIn, _tTypeOut>( _vIn, _vOut, [_stScalar](auto x) { return _mm512_sub_ps( x, _mm512_set1_ps( static_cast<float>(_stScalar) ) ); }, [](auto x) { return x + static_cast<float>(_stScalar); } );
+					return FuncAvx512<_tTypeIn, _tTypeOut>( _vIn, _vOut, [_stScalar](auto x) { return _mm512_sub_ps( x, _mm512_set1_ps( static_cast<float>(_stScalar) ) ); }, [](auto x) { return x - static_cast<float>(_stScalar); } );
 				}
 				if constexpr ( Types::Is64BitFloat<TypeIn>() ) {
-					return FuncAvx512<_tTypeIn, _tTypeOut>( _vIn, _vOut, [_stScalar](auto x) { return _mm512_sub_pd( x, _mm512_set1_pd( static_cast<TypeIn>(_stScalar) ) ); }, [](auto x) { return x + static_cast<TypeIn>(_stScalar); } );
+					return FuncAvx512<_tTypeIn, _tTypeOut>( _vIn, _vOut, [_stScalar](auto x) { return _mm512_sub_pd( x, _mm512_set1_pd( static_cast<TypeIn>(_stScalar) ) ); }, [](auto x) { return x - static_cast<TypeIn>(_stScalar); } );
 				}
 			}
 #endif	// #ifdef __AVX512F__
@@ -3962,55 +3987,58 @@ namespace nn9 {
 				if constexpr ( Types::IsInt8<TypeIn>() ) {
 					return FuncAvx2<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) {
 							return _mm256_subs_epi8( x, _mm256_set1_epi8( static_cast<TypeIn>(_stScalar) ) );
-						}, [](auto x) { return static_cast<int32_t>(x) + x; } );
+						}, [](auto x) { return static_cast<int32_t>(x) - static_cast<TypeIn>(_stScalar); } );
 				}
 				if constexpr ( Types::IsUint8<TypeIn>() ) {
 					return FuncAvx2<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) {
 							return _mm256_subs_epu8( x, _mm256_set1_epi8( static_cast<TypeIn>(_stScalar) ) );
-						}, [](auto x) { return static_cast<uint32_t>(x) + x; } );
+						}, [](auto x) { return static_cast<uint32_t>(x) - static_cast<TypeIn>(_stScalar); } );
 				}
 				if constexpr ( Types::IsInt16<TypeIn>() ) {
 					return FuncAvx2<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) {
 							return _mm256_subs_epi16( x, _mm256_set1_epi16( static_cast<TypeIn>(_stScalar) ) );
-						}, [](auto x) { return static_cast<int32_t>(x) + x; } );
+						}, [](auto x) { return static_cast<int32_t>(x) - static_cast<TypeIn>(_stScalar); } );
 				}
 				if constexpr ( Types::IsUint16<TypeIn>() ) {
 					return FuncAvx2<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) {
 							return _mm256_subs_epi16( x, _mm256_set1_epi16( static_cast<TypeIn>(_stScalar) ) );
-						}, [](auto x) { return static_cast<uint32_t>(x) + x; } );
+						}, [](auto x) { return static_cast<uint32_t>(x) - static_cast<TypeIn>(_stScalar); } );
 				}
 				if constexpr ( Types::IsInt32<TypeIn>() ) {
 					return FuncAvx2<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) {
 							return Intrin::_mm256_subs_epi32( x, _mm256_set1_epi32( static_cast<TypeIn>(_stScalar) ) );
-						}, [](auto x) { return static_cast<int64_t>(x) + x; } );
+						}, [](auto x) { return static_cast<int64_t>(x) - static_cast<TypeIn>(_stScalar); } );
 				}
 				if constexpr ( Types::IsUint32<TypeIn>() ) {
 					return FuncAvx2<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) {
 							return Intrin::_mm256_subs_epu32( x, _mm256_set1_epi32( static_cast<TypeIn>(_stScalar) ) );
-						}, [](auto x) { return static_cast<uint64_t>(x) + x; } );
+						}, [](auto x) { return static_cast<uint64_t>(x) - static_cast<TypeIn>(_stScalar); } );
 				}
 
 				if constexpr ( Types::IsFloat16<TypeIn>() || Types::IsBFloat16<TypeIn>() || Types::Is32BitFloat<TypeIn>() ) {
-					return FuncAvx2<_tTypeIn, _tTypeOut>( _vIn, _vOut, [_stScalar](auto x) { return _mm256_sub_ps( x, _mm256_set1_ps( static_cast<float>(_stScalar) ) ); }, [](auto x) { return x + static_cast<float>(_stScalar); } );
+					return FuncAvx2<_tTypeIn, _tTypeOut>( _vIn, _vOut, [_stScalar](auto x) { return _mm256_sub_ps( x, _mm256_set1_ps( static_cast<float>(_stScalar) ) ); }, [](auto x) { return x - static_cast<float>(_stScalar); } );
 				}
 				if constexpr ( Types::Is64BitFloat<TypeIn>() ) {
-					return FuncAvx2<_tTypeIn, _tTypeOut>( _vIn, _vOut, [_stScalar](auto x) { return _mm256_sub_pd( x, _mm256_set1_pd( static_cast<TypeIn>(_stScalar) ) ); }, [](auto x) { return x + static_cast<TypeIn>(_stScalar); } );
+					return FuncAvx2<_tTypeIn, _tTypeOut>( _vIn, _vOut, [_stScalar](auto x) { return _mm256_sub_pd( x, _mm256_set1_pd( static_cast<TypeIn>(_stScalar) ) ); }, [](auto x) { return x - static_cast<TypeIn>(_stScalar); } );
 				}
 			}
 #endif	// #ifdef __AVX2__
 			if constexpr ( Types::IsBool<TypeIn>() ) {
-				return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return static_cast<int16_t>( x ) + static_cast<int16_t>(_stScalar); } );
+				return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return static_cast<int16_t>( x ) - static_cast<int16_t>(_stScalar); } );
 			}
-			if constexpr ( Types::IsUint64<TypeIn>() || Types::IsInt64<TypeIn>() ) {
-				return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return x + static_cast<TypeIn>(_stScalar); } );
+			if constexpr ( Types::IsUint64<TypeIn>() ) {
+				return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return subs( x, static_cast<TypeIn>(_stScalar) ); } );
+			}
+			if constexpr ( Types::IsInt64<TypeIn>() ) {
+				return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return subs( x, static_cast<TypeIn>(_stScalar) ); } );
 			}
 			if constexpr ( Types::IsInt<TypeIn>() ) {
-				return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return static_cast<int64_t>( x ) + static_cast<int64_t>(_stScalar); } );
+				return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return static_cast<int64_t>( x ) - static_cast<int64_t>(_stScalar); } );
 			}
 			if constexpr ( Types::Is64BitFloat<TypeIn>() ) {
-				return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return x + static_cast<TypeIn>(_stScalar); } );
+				return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return x - static_cast<TypeIn>(_stScalar); } );
 			}
-			return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return x + static_cast<float>(_stScalar); } );
+			return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return x - static_cast<float>(_stScalar); } );
 		}
 
 		/**

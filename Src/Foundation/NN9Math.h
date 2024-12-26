@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Copyright L. Spiro 2024
  *
  * Written by: Shawn (L. Spiro) Wilcoxen
@@ -10,10 +10,8 @@
 
 #include "NN9Macros.h"
 
+#include <cmath>
 #include <cstdint>
-#ifdef __GNUC__
-#include <math.h>
-#endif	// #ifdef __GNUC__
 #include <stdexcept>
 
 #ifdef __AVX2__
@@ -222,3 +220,648 @@ inline void										sincosf( float _fAngle, float * _pfSin, float * _pfCos ) {
 	}
 
 #endif	// #ifdef __AVX2__
+
+
+/**
+ * \brief Performs saturated addition for signed 64-bit integers.
+ * 
+ * This function adds two signed 64-bit integers. If the addition results in an overflow,
+ * the result is saturated to INT64_MAX. If it results in an underflow, the result is
+ * saturated to INT64_MIN.
+ * 
+ * \param _i64A First operand (int64_t).
+ * \param _i64B Second operand (int64_t).
+ * \return int64_t The saturated addition result.
+ */
+static inline int64_t							adds( int64_t _i64A, int64_t _i64B ) {
+    int64_t iSum = _i64A + _i64B;
+
+    // Check for positive overflow.
+    if ( _i64A > 0 && _i64B > 0 && iSum < 0 ) {
+        return std::numeric_limits<int64_t>::max();
+    }
+
+    // Check for negative overflow.
+    if ( _i64A < 0 && _i64B < 0 && iSum > 0 ) {
+        return std::numeric_limits<int64_t>::min();
+    }
+
+    return iSum;
+}
+
+/**
+ * \brief Performs saturated addition for unsigned 64-bit integers.
+ * 
+ * This function adds two unsigned 64-bit integers. If the addition results in an overflow,
+ * the result is saturated to UINT64_MAX.
+ * 
+ * \param _u64A First operand (uint64_t).
+ * \param _u64B Second operand (uint64_t).
+ * \return uint64_t The saturated addition result.
+ */
+static inline uint64_t							adds( uint64_t _u64A, uint64_t _u64B ) {
+    uint64_t uSum = _u64A + _u64B;
+
+    // Check for overflow.
+    if ( uSum < _u64A ) { return std::numeric_limits<uint64_t>::max(); }
+
+    return uSum;
+}
+
+/**
+ * \brief Performs saturated subtraction for signed 64-bit integers.
+ * 
+ * This function subtracts the second signed 64-bit integer from the first. If the subtraction
+ * results in an overflow, the result is saturated to INT64_MAX. If it results in an underflow,
+ * the result is saturated to INT64_MIN.
+ * 
+ * \param _i64A First operand (int64_t).
+ * \param _i64B Second operand (int64_t).
+ * \return int64_t The saturated subtraction result.
+ */
+static inline int64_t							subs( int64_t _i64A, int64_t _i64B ) {
+    int64_t iDiff = _i64A - _i64B;
+
+    // Check for positive overflow.
+    if ( _i64A > 0 && _i64B < 0 && iDiff < 0 ) {
+        return std::numeric_limits<int64_t>::max();
+    }
+
+    // Check for negative overflow.
+    if ( _i64A < 0 && _i64B > 0 && iDiff > 0 ) {
+        return std::numeric_limits<int64_t>::min();
+    }
+
+    return iDiff;
+}
+
+/**
+ * \brief Performs saturated subtraction for unsigned 64-bit integers.
+ * 
+ * This function subtracts the second unsigned 64-bit integer from the first. If the subtraction
+ * results in an underflow (i.e., if the second operand is greater than the first), the result
+ * is saturated to 0.
+ * 
+ * \param _u64A First operand (uint64_t).
+ * \param _u64B Second operand (uint64_t).
+ * \return uint64_t The saturated subtraction result.
+ */
+static inline uint64_t							subs( uint64_t _u64A, uint64_t _u64B ) {
+    // Check for underflow
+    if ( _u64A < _u64B ) { return 0; }
+
+    return _u64A - _u64B;
+}
+
+/**
+ * \brief Performs saturated addition for signed 64-bit integers.
+ * 
+ * This function adds two signed 64-bit integers. If the addition results in an overflow,
+ * the result is saturated to INT64_MAX. If it results in an underflow, the result is
+ * saturated to INT64_MIN.
+ * 
+ * \param _i64A First operand (int32_t).
+ * \param _i64B Second operand (int32_t).
+ * \return int32_t The saturated addition result.
+ */
+static inline int32_t							adds( int32_t _i64A, int32_t _i64B ) {
+    int32_t iSum = _i64A + _i64B;
+
+    // Check for positive overflow.
+    if ( _i64A > 0 && _i64B > 0 && iSum < 0 ) {
+        return std::numeric_limits<int32_t>::max();
+    }
+
+    // Check for negative overflow.
+    if ( _i64A < 0 && _i64B < 0 && iSum > 0 ) {
+        return std::numeric_limits<int32_t>::min();
+    }
+
+    return iSum;
+}
+
+/**
+ * \brief Performs saturated addition for unsigned 64-bit integers.
+ * 
+ * This function adds two unsigned 64-bit integers. If the addition results in an overflow,
+ * the result is saturated to UINT64_MAX.
+ * 
+ * \param _u64A First operand (uint32_t).
+ * \param _u64B Second operand (uint32_t).
+ * \return uint32_t The saturated addition result.
+ */
+static inline uint32_t							adds( uint32_t _u64A, uint32_t _u64B ) {
+    uint32_t uSum = _u64A + _u64B;
+
+    // Check for overflow.
+    if ( uSum < _u64A ) { return std::numeric_limits<uint32_t>::max(); }
+
+    return uSum;
+}
+
+/**
+ * \brief Performs saturated subtraction for signed 64-bit integers.
+ * 
+ * This function subtracts the second signed 64-bit integer from the first. If the subtraction
+ * results in an overflow, the result is saturated to INT64_MAX. If it results in an underflow,
+ * the result is saturated to INT64_MIN.
+ * 
+ * \param _i64A First operand (int32_t).
+ * \param _i64B Second operand (int32_t).
+ * \return int32_t The saturated subtraction result.
+ */
+static inline int32_t							subs( int32_t _i64A, int32_t _i64B ) {
+    int32_t iDiff = _i64A - _i64B;
+
+    // Check for positive overflow.
+    if ( _i64A > 0 && _i64B < 0 && iDiff < 0 ) {
+        return std::numeric_limits<int32_t>::max();
+    }
+
+    // Check for negative overflow.
+    if ( _i64A < 0 && _i64B > 0 && iDiff > 0 ) {
+        return std::numeric_limits<int32_t>::min();
+    }
+
+    return iDiff;
+}
+
+/**
+ * \brief Performs saturated subtraction for unsigned 64-bit integers.
+ * 
+ * This function subtracts the second unsigned 64-bit integer from the first. If the subtraction
+ * results in an underflow (i.e., if the second operand is greater than the first), the result
+ * is saturated to 0.
+ * 
+ * \param _u64A First operand (uint32_t).
+ * \param _u64B Second operand (uint32_t).
+ * \return uint32_t The saturated subtraction result.
+ */
+static inline uint32_t							subs( uint32_t _u64A, uint32_t _u64B ) {
+    // Check for underflow
+    if ( _u64A < _u64B ) { return 0; }
+
+    return _u64A - _u64B;
+}
+
+/**
+ * \brief Performs saturated addition for signed 64-bit integers.
+ * 
+ * This function adds two signed 64-bit integers. If the addition results in an overflow,
+ * the result is saturated to INT64_MAX. If it results in an underflow, the result is
+ * saturated to INT64_MIN.
+ * 
+ * \param _i64A First operand (int16_t).
+ * \param _i64B Second operand (int16_t).
+ * \return int16_t The saturated addition result.
+ */
+static inline int16_t							adds( int16_t _i64A, int16_t _i64B ) {
+    int16_t iSum = _i64A + _i64B;
+
+    // Check for positive overflow.
+    if ( _i64A > 0 && _i64B > 0 && iSum < 0 ) {
+        return std::numeric_limits<int16_t>::max();
+    }
+
+    // Check for negative overflow.
+    if ( _i64A < 0 && _i64B < 0 && iSum > 0 ) {
+        return std::numeric_limits<int16_t>::min();
+    }
+
+    return iSum;
+}
+
+/**
+ * \brief Performs saturated addition for unsigned 64-bit integers.
+ * 
+ * This function adds two unsigned 64-bit integers. If the addition results in an overflow,
+ * the result is saturated to UINT64_MAX.
+ * 
+ * \param _u64A First operand (uint16_t).
+ * \param _u64B Second operand (uint16_t).
+ * \return uint16_t The saturated addition result.
+ */
+static inline uint16_t							adds( uint16_t _u64A, uint16_t _u64B ) {
+    uint16_t uSum = _u64A + _u64B;
+
+    // Check for overflow.
+    if ( uSum < _u64A ) { return std::numeric_limits<uint16_t>::max(); }
+
+    return uSum;
+}
+
+/**
+ * \brief Performs saturated subtraction for signed 64-bit integers.
+ * 
+ * This function subtracts the second signed 64-bit integer from the first. If the subtraction
+ * results in an overflow, the result is saturated to INT64_MAX. If it results in an underflow,
+ * the result is saturated to INT64_MIN.
+ * 
+ * \param _i64A First operand (int16_t).
+ * \param _i64B Second operand (int16_t).
+ * \return int16_t The saturated subtraction result.
+ */
+static inline int16_t							subs( int16_t _i64A, int16_t _i64B ) {
+    int16_t iDiff = _i64A - _i64B;
+
+    // Check for positive overflow.
+    if ( _i64A > 0 && _i64B < 0 && iDiff < 0 ) {
+        return std::numeric_limits<int16_t>::max();
+    }
+
+    // Check for negative overflow.
+    if ( _i64A < 0 && _i64B > 0 && iDiff > 0 ) {
+        return std::numeric_limits<int16_t>::min();
+    }
+
+    return iDiff;
+}
+
+/**
+ * \brief Performs saturated subtraction for unsigned 64-bit integers.
+ * 
+ * This function subtracts the second unsigned 64-bit integer from the first. If the subtraction
+ * results in an underflow (i.e., if the second operand is greater than the first), the result
+ * is saturated to 0.
+ * 
+ * \param _u64A First operand (uint16_t).
+ * \param _u64B Second operand (uint16_t).
+ * \return uint16_t The saturated subtraction result.
+ */
+static inline uint16_t							subs( uint16_t _u64A, uint16_t _u64B ) {
+    // Check for underflow
+    if ( _u64A < _u64B ) { return 0; }
+
+    return _u64A - _u64B;
+}
+
+/**
+ * \brief Performs saturated addition for signed 64-bit integers.
+ * 
+ * This function adds two signed 64-bit integers. If the addition results in an overflow,
+ * the result is saturated to INT64_MAX. If it results in an underflow, the result is
+ * saturated to INT64_MIN.
+ * 
+ * \param _i64A First operand (int8_t).
+ * \param _i64B Second operand (int8_t).
+ * \return int8_t The saturated addition result.
+ */
+static inline int8_t							adds( int8_t _i64A, int8_t _i64B ) {
+    int8_t iSum = _i64A + _i64B;
+
+    // Check for positive overflow.
+    if ( _i64A > 0 && _i64B > 0 && iSum < 0 ) {
+        return std::numeric_limits<int8_t>::max();
+    }
+
+    // Check for negative overflow.
+    if ( _i64A < 0 && _i64B < 0 && iSum > 0 ) {
+        return std::numeric_limits<int8_t>::min();
+    }
+
+    return iSum;
+}
+
+/**
+ * \brief Performs saturated addition for unsigned 64-bit integers.
+ * 
+ * This function adds two unsigned 64-bit integers. If the addition results in an overflow,
+ * the result is saturated to UINT64_MAX.
+ * 
+ * \param _u64A First operand (uint8_t).
+ * \param _u64B Second operand (uint8_t).
+ * \return uint8_t The saturated addition result.
+ */
+static inline uint8_t							adds( uint8_t _u64A, uint8_t _u64B ) {
+    uint8_t uSum = _u64A + _u64B;
+
+    // Check for overflow.
+    if ( uSum < _u64A ) { return std::numeric_limits<uint8_t>::max(); }
+
+    return uSum;
+}
+
+/**
+ * \brief Performs saturated subtraction for signed 64-bit integers.
+ * 
+ * This function subtracts the second signed 64-bit integer from the first. If the subtraction
+ * results in an overflow, the result is saturated to INT64_MAX. If it results in an underflow,
+ * the result is saturated to INT64_MIN.
+ * 
+ * \param _i64A First operand (int8_t).
+ * \param _i64B Second operand (int8_t).
+ * \return int8_t The saturated subtraction result.
+ */
+static inline int8_t							subs( int8_t _i64A, int8_t _i64B ) {
+    int8_t iDiff = _i64A - _i64B;
+
+    // Check for positive overflow.
+    if ( _i64A > 0 && _i64B < 0 && iDiff < 0 ) {
+        return std::numeric_limits<int8_t>::max();
+    }
+
+    // Check for negative overflow.
+    if ( _i64A < 0 && _i64B > 0 && iDiff > 0 ) {
+        return std::numeric_limits<int8_t>::min();
+    }
+
+    return iDiff;
+}
+
+/**
+ * \brief Performs saturated subtraction for unsigned 64-bit integers.
+ * 
+ * This function subtracts the second unsigned 64-bit integer from the first. If the subtraction
+ * results in an underflow (i.e., if the second operand is greater than the first), the result
+ * is saturated to 0.
+ * 
+ * \param _u64A First operand (uint8_t).
+ * \param _u64B Second operand (uint8_t).
+ * \return uint8_t The saturated subtraction result.
+ */
+static inline uint8_t							subs( uint8_t _u64A, uint8_t _u64B ) {
+    // Check for underflow
+    if ( _u64A < _u64B ) { return 0; }
+
+    return _u64A - _u64B;
+}
+
+/**
+ * \brief Performs saturated multiplication of two int64_t values.
+ *        If the result overflows/underflows, it saturates to the maximum/minimum int64_t value.
+ * \param _i64A The first int64_t operand.
+ * \param _i64B The second int64_t operand.
+ * \return The saturated product of _i64A and _i64B.
+ */
+static int64_t									muls( int64_t _i64A, int64_t _i64B ) {
+	if ( _i64A == 0 || _i64B == 0 ) {
+		return 0;
+	}
+
+	if ( _i64A > 0 && _i64B > 0 ) {
+		if ( _i64A > std::numeric_limits<int64_t>::max() / _i64B ) { return std::numeric_limits<int64_t>::max(); }
+	}
+	else if ( _i64A < 0 && _i64B < 0 ) {
+		if ( _i64A < std::numeric_limits<int64_t>::max() / _i64B ) { return std::numeric_limits<int64_t>::max(); }
+	}
+	else if ( _i64A < 0 && _i64B > 0 ) {
+		if ( _i64A < std::numeric_limits<int64_t>::min() / _i64B ) { return std::numeric_limits<int64_t>::min(); }
+	}
+	else if ( _i64A > 0 && _i64B < 0 ) {
+		if ( _i64B < std::numeric_limits<int64_t>::min() / _i64A ) { return std::numeric_limits<int64_t>::min(); }
+	}
+	return _i64A * _i64B;
+}
+
+/**
+ * \brief Performs saturated multiplication of two uint64_t values.
+ *        If the result overflows, it saturates to the maximum uint64_t value.
+ * \param _ui64A The first uint64_t operand.
+ * \param _ui64B The second uint64_t operand.
+ * \return The saturated product of _ui64A and _ui64B.
+ */
+static uint64_t									muls( uint64_t _ui64A, uint64_t _ui64B ) {
+	if ( _ui64A == 0 || _ui64B == 0 ) { return 0; }
+
+	if ( _ui64A > std::numeric_limits<uint64_t>::max() / _ui64B ) { return std::numeric_limits<uint64_t>::max(); }
+	return _ui64A * _ui64B;
+}
+
+/**
+ * \brief Performs saturated multiplication of two int32_t values.
+ *        If the result overflows/underflows, it saturates to the maximum/minimum int32_t value.
+ * \param _i32A The first int32_t operand.
+ * \param _i32B The second int32_t operand.
+ * \return The saturated product of _i32A and _i32B.
+ */
+static int32_t									muls( int32_t _i32A, int32_t _i32B ) {
+	if ( _i32A == 0 || _i32B == 0 ) {
+		return 0;
+	}
+
+	if ( _i32A > 0 && _i32B > 0 ) {
+		if ( _i32A > std::numeric_limits<int32_t>::max() / _i32B ) { return std::numeric_limits<int32_t>::max(); }
+	}
+	else if ( _i32A < 0 && _i32B < 0 ) {
+		if ( _i32A < std::numeric_limits<int32_t>::max() / _i32B ) { return std::numeric_limits<int32_t>::max(); }
+	}
+	else if ( _i32A < 0 && _i32B > 0 ) {
+		if ( _i32A < std::numeric_limits<int32_t>::min() / _i32B ) { return std::numeric_limits<int32_t>::min(); }
+	}
+	else if ( _i32A > 0 && _i32B < 0 ) {
+		if ( _i32B < std::numeric_limits<int32_t>::min() / _i32A ) { return std::numeric_limits<int32_t>::min(); }
+	}
+	return _i32A * _i32B;
+}
+
+/**
+ * \brief Performs saturated multiplication of two uint32_t values.
+ *        If the result overflows, it saturates to the maximum uint32_t value.
+ * \param _ui32A The first uint32_t operand.
+ * \param _ui32B The second uint32_t operand.
+ * \return The saturated product of _ui32A and _ui32B.
+ */
+static uint32_t									muls( uint32_t _ui32A, uint32_t _ui32B ) {
+	if ( _ui32A == 0 || _ui32B == 0 ) { return 0; }
+
+	if ( _ui32A > std::numeric_limits<uint32_t>::max() / _ui32B ) { return std::numeric_limits<uint32_t>::max(); }
+	return _ui32A * _ui32B;
+}
+
+/**
+ * \brief Performs saturated multiplication of two int16_t values.
+ *        If the result overflows/underflows, it saturates to the maximum/minimum int16_t value.
+ * \param _i16A The first int16_t operand.
+ * \param _i16B The second int16_t operand.
+ * \return The saturated product of _i16A and _i16B.
+ */
+static int16_t									muls( int16_t _i16A, int16_t _i16B ) {
+	if ( _i16A == 0 || _i16B == 0 ) {
+		return 0;
+	}
+
+	if ( _i16A > 0 && _i16B > 0 ) {
+		if ( _i16A > std::numeric_limits<int16_t>::max() / _i16B ) { return std::numeric_limits<int16_t>::max(); }
+	}
+	else if ( _i16A < 0 && _i16B < 0 ) {
+		if ( _i16A < std::numeric_limits<int16_t>::max() / _i16B ) { return std::numeric_limits<int16_t>::max(); }
+	}
+	else if ( _i16A < 0 && _i16B > 0 ) {
+		if ( _i16A < std::numeric_limits<int16_t>::min() / _i16B ) { return std::numeric_limits<int16_t>::min(); }
+	}
+	else if ( _i16A > 0 && _i16B < 0 ) {
+		if ( _i16B < std::numeric_limits<int16_t>::min() / _i16A ) { return std::numeric_limits<int16_t>::min(); }
+	}
+	return _i16A * _i16B;
+}
+
+/**
+ * \brief Performs saturated multiplication of two uint16_t values.
+ *        If the result overflows, it saturates to the maximum uint16_t value.
+ * \param _ui16A The first uint16_t operand.
+ * \param _ui16B The second uint16_t operand.
+ * \return The saturated product of _ui16A and _ui16B.
+ */
+static uint16_t									muls( uint16_t _ui16A, uint16_t _ui16B ) {
+	if ( _ui16A == 0 || _ui16B == 0 ) { return 0; }
+
+	if ( _ui16A > std::numeric_limits<uint16_t>::max() / _ui16B ) { return std::numeric_limits<uint16_t>::max(); }
+	return _ui16A * _ui16B;
+}
+
+/**
+ * \brief Performs saturated multiplication of two int8_t values.
+ *        If the result overflows/underflows, it saturates to the maximum/minimum int8_t value.
+ * \param _i8A The first int8_t operand.
+ * \param _i8B The second int8_t operand.
+ * \return The saturated product of _i8A and _i8B.
+ */
+static int8_t									muls( int8_t _i8A, int8_t _i8B ) {
+	if ( _i8A == 0 || _i8B == 0 ) {
+		return 0;
+	}
+
+	if ( _i8A > 0 && _i8B > 0 ) {
+		if ( _i8A > std::numeric_limits<int8_t>::max() / _i8B ) { return std::numeric_limits<int8_t>::max(); }
+	}
+	else if ( _i8A < 0 && _i8B < 0 ) {
+		if ( _i8A < std::numeric_limits<int8_t>::max() / _i8B ) { return std::numeric_limits<int8_t>::max(); }
+	}
+	else if ( _i8A < 0 && _i8B > 0 ) {
+		if ( _i8A < std::numeric_limits<int8_t>::min() / _i8B ) { return std::numeric_limits<int8_t>::min(); }
+	}
+	else if ( _i8A > 0 && _i8B < 0 ) {
+		if ( _i8B < std::numeric_limits<int8_t>::min() / _i8A ) { return std::numeric_limits<int8_t>::min(); }
+	}
+	return _i8A * _i8B;
+}
+
+/**
+ * \brief Performs saturated multiplication of two uint8_t values.
+ *        If the result overflows, it saturates to the maximum uint8_t value.
+ * \param _ui8A The first uint8_t operand.
+ * \param _ui8B The second uint8_t operand.
+ * \return The saturated product of _ui8A and _ui8B.
+ */
+static uint8_t									muls( uint8_t _ui8A, uint8_t _ui8B ) {
+	if ( _ui8A == 0 || _ui8B == 0 ) { return 0; }
+
+	if ( _ui8A > std::numeric_limits<uint8_t>::max() / _ui8B ) { return std::numeric_limits<uint8_t>::max(); }
+	return _ui8A * _ui8B;
+}
+
+/**
+ * \brief Inverse of the standard normal CDF ("probit") using Peter J. Acklam's polynomial/rational approximation.
+ *
+ * Valid for 0 < p < 1. For p <= 0 or p >= 1, this function will return ±∞ or NaN, 
+ * though in practice we only call it with 0 < p < 1.
+ *
+ * Reference: Peter J. Acklam, "An algorithm for computing the inverse normal cumulative 
+ * distribution function," 2010, <http://home.online.no/~pjacklam/notes/invnorm/>
+ *
+ * \param _dP Probability in (0, 1).
+ * \return double The quantile value z satisfying Φ(z) = _dP.
+ */
+inline double									AcklamInverseNormal( double _dP ) {
+    // Coefficients in rational approximations.
+    // For 0 < _dP < 0.5.
+    static const double dA[6] = {
+        -3.969683028665376e+01,
+         2.209460984245205e+02,
+        -2.759285104469687e+02,
+         1.383577518672690e+02,
+        -3.066479806614716e+01,
+         2.506628277459239e+00
+    };
+    static const double dB[5] = {
+        -5.447609879822406e+01,
+         1.615858368580409e+02,
+        -1.556989798598866e+02,
+         6.680131188771972e+01,
+        -1.328068155288572e+01
+    };
+    // For 0.5 <= _dP < 1.
+    static const double dC[6] = {
+        -7.784894002430293e-03,
+        -3.223964580411365e-01,
+        -2.400758277161838e+00,
+        -2.549732539343734e+00,
+         4.374664141464968e+00,
+         2.938163982698783e+00
+    };
+    static const double dD[4] = {
+         7.784695709041462e-03,
+         3.224671290700398e-01,
+         2.445134137142996e+00,
+         3.754408661907416e+00
+    };
+
+    // Constants.
+    constexpr double dPlow  = 0.02425;
+    constexpr double dPHigh = 1.0 - dPlow;
+
+    // For symmetrical reasons, we handle the central region differently from the tails
+    double dQ, dR, dX;
+
+    if ( _dP < 0 || _dP > 1 ) {
+        // Domain error.
+        return std::numeric_limits<double>::quiet_NaN();
+    }
+    else if ( _dP == 0 ) { return -std::numeric_limits<double>::infinity(); }
+    else if ( _dP == 1 ) { return  std::numeric_limits<double>::infinity(); }
+    else if ( _dP < dPlow ) {
+        // Left tail
+        dQ = std::sqrt( -2.0 * std::log( _dP ) );
+        dX = (((((dC[0] * dQ + dC[1]) * dQ + dC[2]) * dQ + dC[3]) * dQ + dC[4]) * dQ + dC[5]) /
+             ((((dD[0] * dQ + dD[1]) * dQ + dD[2]) * dQ + dD[3]) * dQ + 1.0);
+        if ( _dP < 0.5 ) { dX = -dX; }
+    }
+    else if ( _dP > dPHigh ) {
+        // Right tail
+        dQ = std::sqrt( -2.0 * std::log( 1.0 - _dP ) );
+        dX = (((((dC[0] * dQ + dC[1]) * dQ + dC[2]) * dQ + dC[3]) * dQ + dC[4]) * dQ + dC[5]) /
+             ((((dD[0] * dQ + dD[1]) * dQ + dD[2]) * dQ + dD[3]) * dQ + 1.0);
+        if ( _dP > 0.5 ) { dX =  dX; }
+        else             { dX = -dX; }
+    }
+    else {
+        // Central region
+        dQ = _dP - 0.5;
+        dR = dQ * dQ;
+        dX = ((((((dA[0] * dR + dA[1]) * dR + dA[2]) * dR + dA[3]) * dR + dA[4]) * dR + dA[5]) * dQ) /
+             (((((dB[0] * dR + dB[1]) * dR + dB[2]) * dR + dB[3]) * dR + dB[4]) * dR + 1.0);
+    }
+
+    return dX;
+}
+
+/**
+ * \brief Computes the inverse error function Erfinv(x) using Acklam's method + standard normal.
+ *
+ * Erfinv(x) = Φ⁻¹( (x+1)/2 ) / √2,  for -1 < x < 1.
+ *
+ * - Returns NaN if |x| >= 1.
+ * - For x = 0, result is 0 exactly.
+ *
+ * \param _dX Input value, must satisfy -1 < _dX < 1 for a finite result.
+ * \return double Erfinv(_dX).
+ */
+inline double									Erfinv( double _dX ) {
+    // Domain check.
+    if ( std::fabs(_dX) >= 1.0 ) { return std::numeric_limits<double>::quiet_NaN(); }
+    if ( _dX == 0.0 ) { return 0.0; }
+
+	bool bNeg = _dX < 0.0;
+
+    // Transform _dX to a probability for the normal CDF.
+    // dP in (0,1).
+    double dP = 0.5 * (_dX + 1.0);
+
+    // Inverse standard normal of dP.
+    double dZ = AcklamInverseNormal( dP );
+
+    // Scale by 1/sqrt(2).
+    static const double dInvSqrt2 = 0.70710678118654757273731092936941422522068023681640625; // 1/sqrt(2)
+    double dRes = std::fabs( dZ * dInvSqrt2 );
+    return bNeg ? -dRes : dRes;
+}
