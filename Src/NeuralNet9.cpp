@@ -43,7 +43,7 @@ int wmain( int _iArgC, wchar_t const * _wcpArgV[] ) {
 			//	}
 			//}
 
-			auto X = Erfinv( 0.7 );
+			auto X = nn9::Erfinv( 0.7 );
 			auto Y = std::erf( X );
 			// 0.99884394642237073
 			int32_t iVales[64] = {
