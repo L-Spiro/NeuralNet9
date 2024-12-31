@@ -5928,7 +5928,6 @@ namespace nn9 {
 #endif	// #ifdef __AVX2__
 
 
-
 #ifdef __AVX512F__
 		/**
 		 * Multiplies each of the 64 int8 elements in a __m512i by itself.

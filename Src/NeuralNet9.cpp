@@ -45,6 +45,48 @@ int wmain( int _iArgC, wchar_t const * _wcpArgV[] ) {
 
 			auto X = nn9::Erfinv( 0.0 );
 			auto Y = std::lgamma( 1.0 );
+
+			nn9::Timer tTimer;
+			tTimer.Start();
+			int8_t i8Sum = -65;
+			for ( int i = 0; i < 50000; ++i ) {
+				i8Sum = std::abs( i8Sum );
+				i8Sum = std::abs( i8Sum );
+				i8Sum = std::abs( i8Sum );
+				i8Sum = std::abs( i8Sum );
+				i8Sum = std::abs( i8Sum );
+				i8Sum = std::abs( i8Sum );
+				i8Sum = std::abs( i8Sum );
+				i8Sum = std::abs( i8Sum );
+			}
+
+			tTimer.Stop();
+			std::wcout << L"float cast " << tTimer.ElapsedSeconds() << L". " << i8Sum << std::endl;
+			tTimer.Reset();
+
+			tTimer.Start();
+			i8Sum = -65;
+			auto MyAbs = [](auto x) {
+				constexpr size_t sShift = sizeof( x ) * 8 - 1;
+				auto aTmp = x >> sShift;
+				return (x ^ aTmp) + (aTmp & 1);
+			};
+			for ( int i = 0; i < 50000; ++i ) {
+				i8Sum = MyAbs( i8Sum );
+				i8Sum = MyAbs( i8Sum );
+				i8Sum = MyAbs( i8Sum );
+				i8Sum = MyAbs( i8Sum );
+				i8Sum = MyAbs( i8Sum );
+				i8Sum = MyAbs( i8Sum );
+				i8Sum = MyAbs( i8Sum );
+				i8Sum = MyAbs( i8Sum );
+			}
+
+			tTimer.Stop();
+			std::wcout << L"int add " << tTimer.ElapsedSeconds() << L". " << i8Sum << std::endl;
+			tTimer.Reset();
+
+
 			// 0.99884394642237073
 			int32_t iVales[64] = {
 				-1, 2, -INT64_MAX, 0, UINT32_MAX-99, 256, 7, 8,
@@ -77,7 +119,7 @@ int wmain( int _iArgC, wchar_t const * _wcpArgV[] ) {
 
 			nn9::Tensor tBackToFloat = tBFloat16.CopyAs( nn9::NN9_T_FLOAT );
 			auto vViewNewFloat = tBackToFloat.FullView<float>();
-			nn9::Timer tTimer;
+			
 
 
 			double dSum = 0.0;
