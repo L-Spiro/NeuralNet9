@@ -44,7 +44,7 @@ int wmain( int _iArgC, wchar_t const * _wcpArgV[] ) {
 			//}
 
 			auto X = nn9::Erfinv( 0.0 );
-			auto Y = std::lgamma( 1.0 );
+			auto Y = std::tgamma( 1.0 );
 
 			nn9::Timer tTimer;
 			tTimer.Start();

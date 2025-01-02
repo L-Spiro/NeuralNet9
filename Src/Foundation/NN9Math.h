@@ -165,46 +165,56 @@ namespace nn9 {
 	 * \param _dX The input value for which Digamma is to be calculated.
 	 * \return The computed Digamma value, \f$\psi(dX)\f$.
 	 */
-	static inline double						digamma( double _dX ) {
-		// Poles at non-positive integers
-		if ( _dX <= 0.0 && std::floor( _dX ) == _dX ) {
-			// Return +∞ for poles at x = 0, -1, -2, ...
-			return std::numeric_limits<double>::infinity();
-		}
+	extern double								digamma( double _dX );
 
-		// For negative values, use reflection formula:
-		// ψ(x) = ψ(1 - x) - π cot(π x)
-		if ( _dX < 0.0 ) {
-			return digamma( 1.0 - _dX ) - std::numbers::pi * cot( std::numbers::pi * _dX );
-		}
+	/**
+	 * \brief Computes P(a, x) = the lower regularized incomplete gamma function,
+	 *        using a domain split and standard series/continued-fraction expansions.
+	 *
+	 *        P(a, x) = gamma(a, x)/Gamma(a).
+	 *
+	 * \param _dA > 0
+	 * \param _dX >= 0
+	 * \return P(a, x)
+	 */
+	extern double								LowerRegGamma( double _dA, double _dX );
 
-		// Use recurrence relation to shift x up to at least 10
-		double dResult = 0.0;
-		while ( _dX < 10.0 ) {
-			dResult -= 1.0 / _dX;
-			_dX += 1.0;
-		}
+	/**
+	 * \brief Series expansion for the lower regularized incomplete gamma, used if x < a + 1.
+	 *
+	 * \param _dA > 0
+	 * \param _dX >= 0
+	 * \param _dLogGammaA = ln(Gamma(a))
+	 * \return P(a,x)
+	 */
+	extern double								SeriesP( double _dA, double _dX, double _dLogGammaA );
 
-		// Asymptotic expansion
-		double dInvX  = 1.0 / _dX;
-		double dInvX2 = dInvX * dInvX;
-    
-		// 
-		// Standard expansion up to the 1/(x^6) term:
-		// digamma(x) ≈ ln(x) - 1/(2x) - 1/(12x^2) + 1/(120x^4) - 1/(252x^6) ...
-		//
-		constexpr double dC1 = 1.0 / 12.0;
-		constexpr double dC2 = 1.0 / 120.0;
-		constexpr double dC3 = 1.0 / 252.0;
+	/**
+	 * \brief Continued-fraction approach for the *upper* regularized incomplete gamma,
+	 *        used if x >= a + 1 to get Q(a, x).  Then P(a, x) = 1 - Q(a, x).
+	 *
+	 * \param _dA > 0
+	 * \param _dX >= 0
+	 * \param _dLogGammaA = ln(Gamma(a))
+	 * \return Q(a,x)
+	 */
+	extern double								ContFracQ( double _dA, double _dX, double _dLogGammaA );
 
-		dResult += std::log( _dX ) 
-				   - 0.5 * dInvX
-				   - dInvX2 * dC1
-				   + (dInvX2 * dInvX2) * dC2
-				   - (dInvX2 * dInvX2 * dInvX2) * dC3;
-
-		return dResult;
-	}
+	/**
+	 * \brief Computes the **upper regularized** incomplete gamma function:
+	 * 
+	 * \f[
+	 *   Q(a, x) = \frac{\Gamma(a, x)}{\Gamma(a)} = 1 - P(a, x).
+	 * \f]
+	 *
+	 * - For \f$x < a + 1\f$, we compute \f$P(a,x)\) and return \f$1 - P(a,x)\).
+	 * - For \f$x \ge a + 1\f$, we directly compute \f$Q(a,x)\) via the continued fraction.
+	 *
+	 * \param _dA Shape parameter (must be > 0).
+	 * \param _dX Nonnegative real argument (usually \f$x \ge 0\f$).
+	 * \return Q(a, x) in the range [0,1].
+	 */
+	extern double								igammac( double _dA, double _dX );
 
 
 	/**

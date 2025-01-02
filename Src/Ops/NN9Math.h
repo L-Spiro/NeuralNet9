@@ -3546,6 +3546,143 @@ namespace nn9 {
 			return _vOut;
 		}
 
+		/**
+		 * Computes element-wise digamma().
+		 * 
+		 * \tparam _tType The view/container type.
+		 * \param _vValues The input/output view.
+		 * \return Returns _vValues.
+		 */
+		template <typename _tType>
+		static _tType &												Digamma( _tType &_vValues ) {
+			using Type = typename _tType::value_type;
+			if constexpr ( Types::IsBool<Type>() ) {
+				// digamma( 1 ) = -0.57721566494246179.
+				// digamma( 0 ) = +inf.
+				return Func<_tType>( _vValues, [](auto x) { return true; } );
+			}
+			return Func<_tType>( _vValues, [](auto x) { return static_cast<_tType::value_type>(nn9::digamma( static_cast<double>(x) )); } );
+		}
+
+		/**
+		 * Applies Digamma() to an array of inputs.
+		 * 
+		 * \param _tType The view/container type.
+		 * \param _vValues The input/output view to modify.
+		 * \return Returns _vValues.
+		 **/
+		template <typename _tType>
+		static std::vector<_tType> &								Digamma( std::vector<_tType> &_vValues ) {
+			for ( auto & aThis : _vValues ) { Digamma( aThis ); }
+			return _vValues;
+		}
+
+		/**
+		 * Computes element-wise digamma().
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut>
+		static _tTypeOut &											Digamma( const _tTypeIn &_vIn, _tTypeOut &_vOut ) {
+			if constexpr ( Types::IsBool<_tTypeIn>() ) {
+				return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return true; } );
+			}
+			return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return nn9::digamma( static_cast<double>(x) ); } );
+		}
+
+		/**
+		 * Applies Digamma() to an array of inputs and outputs.
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \throw If NN9_SAFETY_CHECK, throws if _vIn and _vOut are not the same lengths.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut>
+		static std::vector<_tTypeOut> &								Digamma( const std::vector<_tTypeIn> &_vIn, std::vector<_tTypeOut> &_vOut ) {
+#ifdef NN9_SAFETY_CHECK
+			if ( _vIn.size() != _vOut.size() ) { throw std::runtime_error( "Math::Digamma: Input and outputs must have the same number of elements." ); }
+#endif	// #ifdef NN9_SAFETY_CHECK
+
+			for ( size_t i = 0; i < _vIn.size(); ++i ) { Digamma( _vIn[i], _vOut[i] ); }
+			return _vOut;
+		}
+
+		/**
+		 * Computes element-wise tgamma().
+		 * 
+		 * \tparam _tType The view/container type.
+		 * \param _vValues The input/output view.
+		 * \return Returns _vValues.
+		 */
+		template <typename _tType>
+		static _tType &												Tgamma( _tType &_vValues ) {
+			using Type = typename _tType::value_type;
+			if constexpr ( Types::IsBool<Type>() ) {
+				// tgamma( 1 ) = 1.0.
+				// tgamma( 0 ) = +inf.
+				return Func<_tType>( _vValues, [](auto x) { return true; } );
+			}
+			return Func<_tType>( _vValues, [](auto x) { return static_cast<_tType::value_type>(std::tgamma( static_cast<double>(x) )); } );
+		}
+
+		/**
+		 * Applies Tgamma() to an array of inputs.
+		 * 
+		 * \param _tType The view/container type.
+		 * \param _vValues The input/output view to modify.
+		 * \return Returns _vValues.
+		 **/
+		template <typename _tType>
+		static std::vector<_tType> &								Tgamma( std::vector<_tType> &_vValues ) {
+			for ( auto & aThis : _vValues ) { Tgamma( aThis ); }
+			return _vValues;
+		}
+
+		/**
+		 * Computes element-wise tgamma().
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut>
+		static _tTypeOut &											Tgamma( const _tTypeIn &_vIn, _tTypeOut &_vOut ) {
+			if constexpr ( Types::IsBool<_tTypeIn>() ) {
+				return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return true; } );
+			}
+			return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return std::tgamma( static_cast<double>(x) ); } );
+		}
+
+		/**
+		 * Applies Tgamma() to an array of inputs and outputs.
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \throw If NN9_SAFETY_CHECK, throws if _vIn and _vOut are not the same lengths.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut>
+		static std::vector<_tTypeOut> &								Tgamma( const std::vector<_tTypeIn> &_vIn, std::vector<_tTypeOut> &_vOut ) {
+#ifdef NN9_SAFETY_CHECK
+			if ( _vIn.size() != _vOut.size() ) { throw std::runtime_error( "Math::Tgamma: Input and outputs must have the same number of elements." ); }
+#endif	// #ifdef NN9_SAFETY_CHECK
+
+			for ( size_t i = 0; i < _vIn.size(); ++i ) { Tgamma( _vIn[i], _vOut[i] ); }
+			return _vOut;
+		}
+
+
 
 		// ===============================
 		// Other Functions
