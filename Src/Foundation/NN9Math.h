@@ -216,6 +216,36 @@ namespace nn9 {
 	 */
 	extern double								igammac( double _dA, double _dX );
 
+	/**
+	 * \brief Performs round-half-to-even (banker's rounding) on a float.
+	 *
+	 * \param _fVal The value to round.
+	 * \return float Returns the rounded values.
+	 */
+	static inline float							RoundToEven( float _fVal ) {
+		float fFloor = std::floor( _fVal );
+		float fDiff = _fVal - fFloor;
+		if ( fDiff > 0.5f || (fDiff == 0.5f && std::fmod( fFloor, 2.0f ) != 0.0f) ) {
+			return fFloor + 1.0f;
+		}
+		return fFloor;
+	}
+
+	/**
+	 * \brief Performs round-half-to-even (banker's rounding) on a double.
+	 *
+	 * \param _dVal The value to round.
+	 * \return double Returns the rounded values.
+	 */
+	static inline double						RoundToEven( double _dVal ) {
+		double dFloor = std::floor( _dVal );
+		double dDiff = _dVal - dFloor;
+		if ( dDiff > 0.5 || (dDiff == 0.5 && std::fmod( dFloor, 2.0 ) != 0.0) ) {
+			return dFloor + 1.0;
+		}
+		return dFloor;
+	}
+
 
 	/**
 	 * \brief Performs saturated addition for signed 64-bit integers.
@@ -942,5 +972,3 @@ inline void										sincosf( float _fAngle, float * _pfSin, float * _pfCos ) {
 	}
 
 #endif	// #ifdef __AVX2__
-
-

@@ -3684,6 +3684,319 @@ namespace nn9 {
 
 
 		// ===============================
+		// Rounding and Remainder Functions
+		// ===============================
+		/**
+		 * Computes element-wise ceil().
+		 * 
+		 * \tparam _tType The view/container type.
+		 * \param _vValues The input/output view.
+		 * \return Returns _vValues.
+		 */
+		template <typename _tType>
+		static _tType &												Ceil( _tType &_vValues ) {
+			using Type = typename _tType::value_type;
+#ifdef __AVX512F__
+			if ( Utilities::IsAvx512FSupported() ) {
+				if constexpr ( Types::IsFloat16<Type>() || Types::IsBFloat16<Type>() || Types::Is32BitFloat<Type>() ) {
+					return FuncAvx512<_tType>( _vValues, [](auto x) { return _mm512_ceil_ps( x ); }, [](auto x) { return static_cast<Type>(std::ceil( static_cast<float>(x) )); } );
+				}
+				if constexpr ( Types::Is64BitFloat<Type>() ) {
+					return FuncAvx512<_tType>( _vValues, [](auto x) { return _mm512_ceil_pd( x ); }, [](auto x) { return static_cast<Type>(std::ceil( x )); } );
+				}
+			}
+#endif	// #ifdef __AVX512F__
+
+#ifdef __AVX2__
+			if ( Utilities::IsAvx2Supported() ) {
+				if constexpr ( Types::IsFloat16<Type>() || Types::IsBFloat16<Type>() || Types::Is32BitFloat<Type>() ) {
+					return FuncAvx2<_tType>( _vValues, [](auto x) { return _mm256_ceil_ps( x ); }, [](auto x) { return static_cast<Type>(std::ceil( static_cast<float>(x) )); } );
+				}
+				if constexpr ( Types::Is64BitFloat<Type>() ) {
+					return FuncAvx2<_tType>( _vValues, [](auto x) { return _mm256_ceil_pd( x ); }, [](auto x) { return static_cast<Type>(std::ceil( x )); } );
+				}
+			}
+#endif	// #ifdef __AVX2__
+			return _vValues;
+		}
+
+		/**
+		 * Applies Ceil() to an array of inputs.
+		 * 
+		 * \param _tType The view/container type.
+		 * \param _vValues The input/output view to modify.
+		 * \return Returns _vValues.
+		 **/
+		template <typename _tType>
+		static std::vector<_tType> &								Ceil( std::vector<_tType> &_vValues ) {
+			for ( auto & aThis : _vValues ) { Ceil( aThis ); }
+			return _vValues;
+		}
+
+		/**
+		 * Computes element-wise ceil().
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut>
+		static _tTypeOut &											Ceil( const _tTypeIn &_vIn, _tTypeOut &_vOut ) {
+			using TypeIn = typename _tTypeIn::value_type;
+#ifdef __AVX512F__
+			if ( Utilities::IsAvx512FSupported() ) {
+				if constexpr ( Types::IsFloat16<TypeIn>() || Types::IsBFloat16<TypeIn>() || Types::Is32BitFloat<TypeIn>() ) {
+					return FuncAvx512<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return _mm512_ceil_ps( x ); }, [](auto x) { return static_cast<TypeIn>(std::ceil( static_cast<float>(x) )); } );
+				}
+				if constexpr ( Types::Is64BitFloat<TypeIn>() ) {
+					return FuncAvx512<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return _mm512_ceil_pd( x ); }, [](auto x) { return static_cast<TypeIn>(std::ceil( x )); } );
+				}
+			}
+#endif	// #ifdef __AVX512F__
+
+#ifdef __AVX2__
+			if ( Utilities::IsAvx2Supported() ) {
+				if constexpr ( Types::IsFloat16<TypeIn>() || Types::IsBFloat16<TypeIn>() || Types::Is32BitFloat<TypeIn>() ) {
+					return FuncAvx2<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return _mm256_ceil_ps( x ); }, [](auto x) { return static_cast<TypeIn>(std::ceil( static_cast<float>(x) )); } );
+				}
+				if constexpr ( Types::Is64BitFloat<TypeIn>() ) {
+					return FuncAvx2<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return _mm256_ceil_pd( x ); }, [](auto x) { return static_cast<TypeIn>(std::ceil( x )); } );
+				}
+			}
+#endif	// #ifdef __AVX2__
+			return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return x; } );
+		}
+
+		/**
+		 * Applies Ceil() to an array of inputs and outputs.
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \throw If NN9_SAFETY_CHECK, throws if _vIn and _vOut are not the same lengths.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut>
+		static std::vector<_tTypeOut> &								Ceil( const std::vector<_tTypeIn> &_vIn, std::vector<_tTypeOut> &_vOut ) {
+#ifdef NN9_SAFETY_CHECK
+			if ( _vIn.size() != _vOut.size() ) { throw std::runtime_error( "Math::Ceil: Input and outputs must have the same number of elements." ); }
+#endif	// #ifdef NN9_SAFETY_CHECK
+
+			for ( size_t i = 0; i < _vIn.size(); ++i ) { Ceil( _vIn[i], _vOut[i] ); }
+			return _vOut;
+		}
+
+		/**
+		 * Computes element-wise floor().
+		 * 
+		 * \tparam _tType The view/container type.
+		 * \param _vValues The input/output view.
+		 * \return Returns _vValues.
+		 */
+		template <typename _tType>
+		static _tType &												Floor( _tType &_vValues ) {
+			using Type = typename _tType::value_type;
+#ifdef __AVX512F__
+			if ( Utilities::IsAvx512FSupported() ) {
+				if constexpr ( Types::IsFloat16<Type>() || Types::IsBFloat16<Type>() || Types::Is32BitFloat<Type>() ) {
+					return FuncAvx512<_tType>( _vValues, [](auto x) { return _mm512_floor_ps( x ); }, [](auto x) { return static_cast<Type>(std::floor( static_cast<float>(x) )); } );
+				}
+				if constexpr ( Types::Is64BitFloat<Type>() ) {
+					return FuncAvx512<_tType>( _vValues, [](auto x) { return _mm512_floor_pd( x ); }, [](auto x) { return static_cast<Type>(std::floor( x )); } );
+				}
+			}
+#endif	// #ifdef __AVX512F__
+
+#ifdef __AVX2__
+			if ( Utilities::IsAvx2Supported() ) {
+				if constexpr ( Types::IsFloat16<Type>() || Types::IsBFloat16<Type>() || Types::Is32BitFloat<Type>() ) {
+					return FuncAvx2<_tType>( _vValues, [](auto x) { return _mm256_floor_ps( x ); }, [](auto x) { return static_cast<Type>(std::floor( static_cast<float>(x) )); } );
+				}
+				if constexpr ( Types::Is64BitFloat<Type>() ) {
+					return FuncAvx2<_tType>( _vValues, [](auto x) { return _mm256_floor_pd( x ); }, [](auto x) { return static_cast<Type>(std::floor( x )); } );
+				}
+			}
+#endif	// #ifdef __AVX2__
+			return _vValues;
+		}
+
+		/**
+		 * Applies Floor() to an array of inputs.
+		 * 
+		 * \param _tType The view/container type.
+		 * \param _vValues The input/output view to modify.
+		 * \return Returns _vValues.
+		 **/
+		template <typename _tType>
+		static std::vector<_tType> &								Floor( std::vector<_tType> &_vValues ) {
+			for ( auto & aThis : _vValues ) { Floor( aThis ); }
+			return _vValues;
+		}
+
+		/**
+		 * Computes element-wise floor().
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut>
+		static _tTypeOut &											Floor( const _tTypeIn &_vIn, _tTypeOut &_vOut ) {
+			using TypeIn = typename _tTypeIn::value_type;
+#ifdef __AVX512F__
+			if ( Utilities::IsAvx512FSupported() ) {
+				if constexpr ( Types::IsFloat16<TypeIn>() || Types::IsBFloat16<TypeIn>() || Types::Is32BitFloat<TypeIn>() ) {
+					return FuncAvx512<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return _mm512_floor_ps( x ); }, [](auto x) { return static_cast<TypeIn>(std::floor( static_cast<float>(x) )); } );
+				}
+				if constexpr ( Types::Is64BitFloat<TypeIn>() ) {
+					return FuncAvx512<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return _mm512_floor_pd( x ); }, [](auto x) { return static_cast<TypeIn>(std::floor( x )); } );
+				}
+			}
+#endif	// #ifdef __AVX512F__
+
+#ifdef __AVX2__
+			if ( Utilities::IsAvx2Supported() ) {
+				if constexpr ( Types::IsFloat16<TypeIn>() || Types::IsBFloat16<TypeIn>() || Types::Is32BitFloat<TypeIn>() ) {
+					return FuncAvx2<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return _mm256_floor_ps( x ); }, [](auto x) { return static_cast<TypeIn>(std::floor( static_cast<float>(x) )); } );
+				}
+				if constexpr ( Types::Is64BitFloat<TypeIn>() ) {
+					return FuncAvx2<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return _mm256_floor_pd( x ); }, [](auto x) { return static_cast<TypeIn>(std::floor( x )); } );
+				}
+			}
+#endif	// #ifdef __AVX2__
+			return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return x; } );
+		}
+
+		/**
+		 * Applies Floor() to an array of inputs and outputs.
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \throw If NN9_SAFETY_CHECK, throws if _vIn and _vOut are not the same lengths.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut>
+		static std::vector<_tTypeOut> &								Floor( const std::vector<_tTypeIn> &_vIn, std::vector<_tTypeOut> &_vOut ) {
+#ifdef NN9_SAFETY_CHECK
+			if ( _vIn.size() != _vOut.size() ) { throw std::runtime_error( "Math::Floor: Input and outputs must have the same number of elements." ); }
+#endif	// #ifdef NN9_SAFETY_CHECK
+
+			for ( size_t i = 0; i < _vIn.size(); ++i ) { Floor( _vIn[i], _vOut[i] ); }
+			return _vOut;
+		}
+
+		/**
+		 * Computes element-wise round().
+		 * 
+		 * \tparam _tType The view/container type.
+		 * \param _vValues The input/output view.
+		 * \return Returns _vValues.
+		 */
+		template <typename _tType>
+		static _tType &												Round( _tType &_vValues ) {
+			using Type = typename _tType::value_type;
+#ifdef __AVX512F__
+			if ( Utilities::IsAvx512FSupported() ) {
+				if constexpr ( Types::IsFloat16<Type>() || Types::IsBFloat16<Type>() || Types::Is32BitFloat<Type>() ) {
+					return FuncAvx512<_tType>( _vValues, [](auto x) { return _mm512_roundscale_ps( x, _MM_FROUND_TO_NEAREST_INT | _MM_FROUND_NO_EXC ); }, [](auto x) { return static_cast<Type>(std::round( static_cast<float>(x) )); } );
+				}
+				if constexpr ( Types::Is64BitFloat<Type>() ) {
+					return FuncAvx512<_tType>( _vValues, [](auto x) { return _mm512_roundscale_pd( x, _MM_FROUND_TO_NEAREST_INT | _MM_FROUND_NO_EXC ); }, [](auto x) { return static_cast<Type>(std::round( x )); } );
+				}
+			}
+#endif	// #ifdef __AVX512F__
+
+#ifdef __AVX2__
+			if ( Utilities::IsAvx2Supported() ) {
+				if constexpr ( Types::IsFloat16<Type>() || Types::IsBFloat16<Type>() || Types::Is32BitFloat<Type>() ) {
+					return FuncAvx2<_tType>( _vValues, [](auto x) { return _mm256_round_ps( x, _MM_FROUND_TO_NEAREST_INT | _MM_FROUND_NO_EXC ); }, [](auto x) { return static_cast<Type>(std::round( static_cast<float>(x) )); } );
+				}
+				if constexpr ( Types::Is64BitFloat<Type>() ) {
+					return FuncAvx2<_tType>( _vValues, [](auto x) { return _mm256_round_pd( x, _MM_FROUND_TO_NEAREST_INT | _MM_FROUND_NO_EXC ); }, [](auto x) { return static_cast<Type>(std::round( x )); } );
+				}
+			}
+#endif	// #ifdef __AVX2__
+			return _vValues;
+		}
+
+		/**
+		 * Applies Round() to an array of inputs.
+		 * 
+		 * \param _tType The view/container type.
+		 * \param _vValues The input/output view to modify.
+		 * \return Returns _vValues.
+		 **/
+		template <typename _tType>
+		static std::vector<_tType> &								Round( std::vector<_tType> &_vValues ) {
+			for ( auto & aThis : _vValues ) { Round( aThis ); }
+			return _vValues;
+		}
+
+		/**
+		 * Computes element-wise round().
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut>
+		static _tTypeOut &											Round( const _tTypeIn &_vIn, _tTypeOut &_vOut ) {
+			using TypeIn = typename _tTypeIn::value_type;
+#ifdef __AVX512F__
+			if ( Utilities::IsAvx512FSupported() ) {
+				if constexpr ( Types::IsFloat16<TypeIn>() || Types::IsBFloat16<TypeIn>() || Types::Is32BitFloat<TypeIn>() ) {
+					return FuncAvx512<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return _mm512_roundscale_ps( x, _MM_FROUND_TO_NEAREST_INT | _MM_FROUND_NO_EXC ); }, [](auto x) { return static_cast<TypeIn>(std::round( static_cast<float>(x) )); } );
+				}
+				if constexpr ( Types::Is64BitFloat<TypeIn>() ) {
+					return FuncAvx512<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return _mm512_roundscale_pd( x, _MM_FROUND_TO_NEAREST_INT | _MM_FROUND_NO_EXC ); }, [](auto x) { return static_cast<TypeIn>(std::round( x )); } );
+				}
+			}
+#endif	// #ifdef __AVX512F__
+
+#ifdef __AVX2__
+			if ( Utilities::IsAvx2Supported() ) {
+				if constexpr ( Types::IsFloat16<TypeIn>() || Types::IsBFloat16<TypeIn>() || Types::Is32BitFloat<TypeIn>() ) {
+					return FuncAvx2<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return _mm256_round_ps( x, _MM_FROUND_TO_NEAREST_INT | _MM_FROUND_NO_EXC ); }, [](auto x) { return static_cast<TypeIn>(std::round( static_cast<float>(x) )); } );
+				}
+				if constexpr ( Types::Is64BitFloat<TypeIn>() ) {
+					return FuncAvx2<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return _mm256_round_pd( x, _MM_FROUND_TO_NEAREST_INT | _MM_FROUND_NO_EXC ); }, [](auto x) { return static_cast<TypeIn>(std::round( x )); } );
+				}
+			}
+#endif	// #ifdef __AVX2__
+			return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return x; } );
+		}
+
+		/**
+		 * Applies Round() to an array of inputs and outputs.
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \throw If NN9_SAFETY_CHECK, throws if _vIn and _vOut are not the same lengths.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut>
+		static std::vector<_tTypeOut> &								Round( const std::vector<_tTypeIn> &_vIn, std::vector<_tTypeOut> &_vOut ) {
+#ifdef NN9_SAFETY_CHECK
+			if ( _vIn.size() != _vOut.size() ) { throw std::runtime_error( "Math::Round: Input and outputs must have the same number of elements." ); }
+#endif	// #ifdef NN9_SAFETY_CHECK
+
+			for ( size_t i = 0; i < _vIn.size(); ++i ) { Round( _vIn[i], _vOut[i] ); }
+			return _vOut;
+		}
+
+
+		// ===============================
 		// Other Functions
 		// ===============================
 		/**
