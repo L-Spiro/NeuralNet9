@@ -61,10 +61,10 @@ namespace nn9 {
 		constexpr double dC3 = 1.0 / 252.0;
 
 		dResult += std::log( _dX ) 
-				   - 0.5 * dInvX
-				   - dInvX2 * dC1
-				   + (dInvX2 * dInvX2) * dC2
-				   - (dInvX2 * dInvX2 * dInvX2) * dC3;
+			- 0.5 * dInvX
+			- dInvX2 * dC1
+			+ (dInvX2 * dInvX2) * dC2
+			- (dInvX2 * dInvX2 * dInvX2) * dC3;
 
 		return dResult;
 	}
@@ -147,20 +147,20 @@ namespace nn9 {
 		// This computes Q(a,x) = Gamma(a,x)/Gamma(a) directly via a continued fraction.
 		// Reference: "Numerical Recipes" or other standard references, function 'gcf'.
 
-		const double dEpsilon  = 1e-14;
-		const int    iMaxIter  = 200;
+		const double dEpsilon	= 1e-14;
+		const int    iMaxIter	= 200;
 
 		// prefactor = e^( a ln x - x - lnGamma(a) ), dimensionless.
-		double dLogPrefactor = _dA * std::log( _dX ) - _dX - _dLogGammaA;
-		double dPrefactor    = std::exp( dLogPrefactor );
+		double dLogPrefactor	= _dA * std::log( _dX ) - _dX - _dLogGammaA;
+		double dPrefactor		= std::exp( dLogPrefactor );
 
-		double dFrac = 0.0;  // Will hold CF result.
+		double dFrac = 0.0;		// Will hold CF result.
 		// We'll do Lentz's method or something similar.  
 		// As a simpler approach here, let's do the standard "gcf" from references:
     
 		double dC = 0.0;
 		double dD = 0.0;
-		double dH = 1.0; // Start value for CF.
+		double dH = 1.0;		// Start value for CF.
 		for ( int iN = 1; iN <= iMaxIter; iN++ ) {
 			double dAn = static_cast<double>(iN);
 			// Usually we define some recursion:

@@ -3995,6 +3995,103 @@ namespace nn9 {
 			return _vOut;
 		}
 
+		/**
+		 * Computes element-wise round().
+		 * 
+		 * \tparam _tType The view/container type.
+		 * \param _vValues The input/output view.
+		 * \return Returns _vValues.
+		 */
+		template <typename _tType>
+		static _tType &												RoundToEven( _tType &_vValues ) {
+			using Type = typename _tType::value_type;
+#ifdef __AVX512F__
+			if ( Utilities::IsAvx512FSupported() ) {
+				if constexpr ( Types::IsFloat16<Type>() || Types::IsBFloat16<Type>() || Types::Is32BitFloat<Type>() ) {
+					return FuncAvx512<_tType>( _vValues, [](auto x) { return nn9::Intrin::RoundToEven( x ); }, [](auto x) { return static_cast<Type>(nn9::RoundToEven( static_cast<float>(x) )); } );
+				}
+			}
+#endif	// #ifdef __AVX512F__
+
+#ifdef __AVX2__
+			if ( Utilities::IsAvx2Supported() ) {
+				if constexpr ( Types::IsFloat16<Type>() || Types::IsBFloat16<Type>() || Types::Is32BitFloat<Type>() ) {
+					return FuncAvx2<_tType>( _vValues, [](auto x) { return nn9::Intrin::RoundToEven( x ); }, [](auto x) { return static_cast<Type>(nn9::RoundToEven( static_cast<float>(x) )); } );
+				}
+			}
+#endif	// #ifdef __AVX2__
+			if constexpr ( Types::Is64BitFloat<Type>() ) {
+				return Func<_tType>( _vValues, [](auto x) { return static_cast<_tType::value_type>(nn9::RoundToEven( static_cast<double>(x) )); } );
+			}
+			return _vValues;
+		}
+
+		/**
+		 * Applies RoundToEven() to an array of inputs.
+		 * 
+		 * \param _tType The view/container type.
+		 * \param _vValues The input/output view to modify.
+		 * \return Returns _vValues.
+		 **/
+		template <typename _tType>
+		static std::vector<_tType> &								RoundToEven( std::vector<_tType> &_vValues ) {
+			for ( auto & aThis : _vValues ) { RoundToEven( aThis ); }
+			return _vValues;
+		}
+
+		/**
+		 * Computes element-wise round().
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut>
+		static _tTypeOut &											RoundToEven( const _tTypeIn &_vIn, _tTypeOut &_vOut ) {
+			using TypeIn = typename _tTypeIn::value_type;
+#ifdef __AVX512F__
+			if ( Utilities::IsAvx512FSupported() ) {
+				if constexpr ( Types::IsFloat16<TypeIn>() || Types::IsBFloat16<TypeIn>() || Types::Is32BitFloat<TypeIn>() ) {
+					return FuncAvx512<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return nn9::Intrin::RoundToEven( x ); }, [](auto x) { return nn9::RoundToEven( x ); } );
+				}
+			}
+#endif	// #ifdef __AVX512F__
+
+#ifdef __AVX2__
+			if ( Utilities::IsAvx2Supported() ) {
+				if constexpr ( Types::IsFloat16<TypeIn>() || Types::IsBFloat16<TypeIn>() || Types::Is32BitFloat<TypeIn>() ) {
+					return FuncAvx2<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return nn9::Intrin::RoundToEven( x ); }, [](auto x) { return nn9::RoundToEven( x ); } );
+				}
+			}
+#endif	// #ifdef __AVX2__
+			if constexpr ( Types::Is64BitFloat<TypeIn>() ) {
+				return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return nn9::RoundToEven( static_cast<double>(x) ); } );
+			}
+			return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return x; } );
+		}
+
+		/**
+		 * Applies RoundToEven() to an array of inputs and outputs.
+		 * 
+		 * \tparam _tTypeIn The input view/container type.
+		 * \tparam _tTypeOut The output view/container type.
+		 * \param _vIn The input view.
+		 * \param _vOut The output view.
+		 * \throw If NN9_SAFETY_CHECK, throws if _vIn and _vOut are not the same lengths.
+		 * \return Returns _vOut.
+		 */
+		template <typename _tTypeIn, typename _tTypeOut>
+		static std::vector<_tTypeOut> &								RoundToEven( const std::vector<_tTypeIn> &_vIn, std::vector<_tTypeOut> &_vOut ) {
+#ifdef NN9_SAFETY_CHECK
+			if ( _vIn.size() != _vOut.size() ) { throw std::runtime_error( "Math::RoundToEven: Input and outputs must have the same number of elements." ); }
+#endif	// #ifdef NN9_SAFETY_CHECK
+
+			for ( size_t i = 0; i < _vIn.size(); ++i ) { RoundToEven( _vIn[i], _vOut[i] ); }
+			return _vOut;
+		}
+
 
 		// ===============================
 		// Other Functions

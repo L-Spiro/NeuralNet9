@@ -6431,15 +6431,30 @@ namespace nn9 {
 		 * \return __m512 Returns the rounded values.
 		 */
 		static inline __m512									RoundToEven( __m512 _fVal ) {
-			// Perform baker's rounding (round half to even).
 			__m512 vFloor = _mm512_floor_ps( _fVal );
+			__m512 vDiff = _mm512_sub_ps( _fVal, vFloor );
+			__m512 vHalf = _mm512_set1_ps( 0.5f );
+			__m512 vOne = _mm512_set1_ps( 1.0f );
+
+			__mmask16 mMask1 = _mm512_cmp_ps_mask( vDiff, vHalf, _CMP_GT_OQ );				// vDiff > 0.5.
+			
+			// fmod().
+			__m512i vFloorInt = _mm512_cvttps_epi32( vFloor );
+			__m512i vMod2 = _mm512_and_si512( vFloorInt, _mm512_set1_epi32( 1 ) );			// vFloor % 2.
+			__mmask16 vMask2 = _mm512_mask_cmp_ps_mask( _mm512_cmp_ps_mask( vDiff, vHalf, _CMP_EQ_OQ ), _mm512_cvtepi32_ps( vMod2 ), _mm512_setzero_ps(), _CMP_NEQ_OQ );
+
+			__mmask16 vMask = _mm512_kor( mMask1, vMask2 );
+			return _mm512_mask_add_ps( vFloor, vMask, vFloor, vOne );
+
+			// Perform baker's rounding (round vHalf to even).
+			/*__m512 vFloor = _mm512_floor_ps( _fVal );
 			__m512 vDiff = _mm512_sub_ps( _fVal, vFloor );
 			__m512 vHalf = _mm512_set1_ps( 0.5f );
 			__mmask16 vCmp = _mm512_cmp_ps_mask( vDiff, vHalf, _CMP_EQ_OQ );
 			__m512 vEven = _mm512_maskz_mov_ps( vCmp, _mm512_set1_ps( 1.0f ) );
 
 			auto vRes = _mm512_add_ps( vFloor, vEven );
-			return _mm512_mask_blend_ps( _mm512_cmp_ps_mask( vDiff, vHalf, _CMP_LT_OS ), vRes, _mm512_roundscale_ps( _fVal, _MM_FROUND_TO_NEAREST_INT | _MM_FROUND_NO_EXC ) );
+			return _mm512_mask_blend_ps( _mm512_cmp_ps_mask( vDiff, vHalf, _CMP_LT_OS ), vRes, _mm512_roundscale_ps( _fVal, _MM_FROUND_TO_NEAREST_INT | _MM_FROUND_NO_EXC ) );*/
 		}
 #endif	// #ifdef __AVX512F__
 
@@ -6456,17 +6471,17 @@ namespace nn9 {
 			__m256 vHalf = _mm256_set1_ps( 0.5f );
 			__m256 vOne = _mm256_set1_ps( 1.0f );
 
-			__m256 vMask1 = _mm256_cmp_ps( vDiff, vHalf, _CMP_GT_OQ );				// vDiff > 0.5.
+			__m256 vMask1 = _mm256_cmp_ps( vDiff, vHalf, _CMP_GT_OQ );						// vDiff > 0.5.
 
 			// fmod():
 			__m256i vFloorInt = _mm256_cvttps_epi32( vFloor );
-			__m256i vMod2 = _mm256_and_si256( vFloorInt, _mm256_set1_epi32( 1 ) );	// vFloor % 2.
+			__m256i vMod2 = _mm256_and_si256( vFloorInt, _mm256_set1_epi32( 1 ) );			// vFloor % 2.
 			__m256 vMod2AsFloat = _mm256_cvtepi32_ps( vMod2 );
 			__m256 vMask2 = _mm256_and_ps(
-				_mm256_cmp_ps( vDiff, vHalf, _CMP_EQ_OQ	),							// vDiff == 0.5.
-				_mm256_cmp_ps( vMod2AsFloat, _mm256_setzero_ps(), _CMP_NEQ_OQ ) );	// fmod(vFloor, 2) != 0.
+				_mm256_cmp_ps( vDiff, vHalf, _CMP_EQ_OQ	),									// vDiff == 0.5.
+				_mm256_cmp_ps( vMod2AsFloat, _mm256_setzero_ps(), _CMP_NEQ_OQ ) );			// fmod(vFloor, 2) != 0.
 
-			__m256 vMask = _mm256_or_ps(vMask1, vMask2);
+			__m256 vMask = _mm256_or_ps( vMask1, vMask2 );
 			return _mm256_add_ps( vFloor, _mm256_and_ps( vMask, vOne ) );
 		}
 #endif	// #ifdef __AVX2__
@@ -6564,7 +6579,6 @@ namespace nn9 {
 
 			return _mm512_mask_blend_epi32( mCmpAB, mDifference, mSatMin );
 		}
-
 #endif	// #ifdef __AVX512F__
 
 #ifdef __AVX2__

@@ -88,8 +88,8 @@ int wmain( int _iArgC, wchar_t const * _wcpArgV[] ) {
 
 
 			// 0.99884394642237073
-			int32_t iVales[64] = {
-				-1, 2, -INT64_MAX, 0, UINT32_MAX-99, 256, 7, 8,
+			float iVales[64] = {
+				-0.5, 0.5, -2.5, 2.5f, 3.5f, 3.500001f, 8589934080.5f, 8,
 				9, 10, 120, 221, 322, 423, 124, 10,
 				9, 8, 7, 6, 0x7F, -1, 77, -0x7F,
 				1, 64, 254, -500, -500, 500, 0x7F, INT16_MIN,
@@ -99,12 +99,16 @@ int wmain( int _iArgC, wchar_t const * _wcpArgV[] ) {
 				45, 66
 			};
 			//__m512i mVal = _mm512_loadu_si512( reinterpret_cast<const __m512i *>(iVales) );
-			__m256i mVal = _mm256_loadu_si256( reinterpret_cast<const __m256i *>(iVales) );
+			//__m256i mVal = _mm256_loadu_si256( reinterpret_cast<const __m256i *>(iVales) );
 			//__m512 mVal = _mm512_loadu_ps( iVales );
 			//__m512d mVal = _mm512_loadu_pd( iVales );
+			__m256 mVal = _mm256_loadu_ps( iVales );
+			//__m256d mVal = _mm256_loadu_pd( iVales );
 			//float ui16Dst[64];
 			//nn9::Intrin::double_scast( mVal, ui16Dst );
-			auto aMul = nn9::Intrin::_mm256_subs_epu32( mVal, _mm256_set1_epi32( 100 ) );
+			auto aMul = nn9::Intrin::RoundToEven( mVal );
+
+			float fVal = nn9::RoundToEven( -3.5 );
 
 			/*nn9::Tensor tBFloat16 = tTensorTest.CopyAs( nn9::NN9_T_FLOAT16 );
 			auto vViewBf16 = tBFloat16.FullView<nn9::float16>();*/
