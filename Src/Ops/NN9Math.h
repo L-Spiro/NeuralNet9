@@ -4020,8 +4020,12 @@ namespace nn9 {
 				}
 			}
 #endif	// #ifdef __AVX2__
+
+			if constexpr ( Types::IsFloat16<Type>() || Types::IsBFloat16<Type>() || Types::Is32BitFloat<Type>() ) {
+				return Func<_tType>( _vValues, [](auto x) { return nn9::RoundToEven( static_cast<float>(x) ); } );
+			}
 			if constexpr ( Types::Is64BitFloat<Type>() ) {
-				return Func<_tType>( _vValues, [](auto x) { return static_cast<_tType::value_type>(nn9::RoundToEven( static_cast<double>(x) )); } );
+				return Func<_tType>( _vValues, [](auto x) { return nn9::RoundToEven( static_cast<double>(x) ); } );
 			}
 			return _vValues;
 		}
@@ -4066,6 +4070,10 @@ namespace nn9 {
 				}
 			}
 #endif	// #ifdef __AVX2__
+
+			if constexpr ( Types::IsFloat16<TypeIn>() || Types::IsBFloat16<TypeIn>() || Types::Is32BitFloat<TypeIn>() ) {
+				return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return nn9::RoundToEven( static_cast<float>(x) ); } );
+			}
 			if constexpr ( Types::Is64BitFloat<TypeIn>() ) {
 				return Func<_tTypeIn, _tTypeOut>( _vIn, _vOut, [](auto x) { return nn9::RoundToEven( static_cast<double>(x) ); } );
 			}

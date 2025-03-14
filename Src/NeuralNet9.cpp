@@ -89,7 +89,7 @@ int wmain( int _iArgC, wchar_t const * _wcpArgV[] ) {
 
 			// 0.99884394642237073
 			float iVales[64] = {
-				-0.5, 0.5, -2.5, 2.5f, 3.5f, 3.500001f, 8589934080.5f, 8,
+				-0.5, 0.5, -2.5, 2.5f, 3.5f, 3.500001f, INT32_MAX + 3.5f, -8589934081.5f,
 				9, 10, 120, 221, 322, 423, 124, 10,
 				9, 8, 7, 6, 0x7F, -1, 77, -0x7F,
 				1, 64, 254, -500, -500, 500, 0x7F, INT16_MIN,
@@ -100,9 +100,9 @@ int wmain( int _iArgC, wchar_t const * _wcpArgV[] ) {
 			};
 			//__m512i mVal = _mm512_loadu_si512( reinterpret_cast<const __m512i *>(iVales) );
 			//__m256i mVal = _mm256_loadu_si256( reinterpret_cast<const __m256i *>(iVales) );
-			//__m512 mVal = _mm512_loadu_ps( iVales );
+			__m512 mVal = _mm512_loadu_ps( iVales );
 			//__m512d mVal = _mm512_loadu_pd( iVales );
-			__m256 mVal = _mm256_loadu_ps( iVales );
+			//__m256 mVal = _mm256_loadu_ps( iVales );
 			//__m256d mVal = _mm256_loadu_pd( iVales );
 			//float ui16Dst[64];
 			//nn9::Intrin::double_scast( mVal, ui16Dst );
