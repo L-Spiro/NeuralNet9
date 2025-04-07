@@ -80,7 +80,7 @@ inline uint64_t                                 bswap_64( uint64_t _ui64Val ) { 
 	((_ui64Val << 24) & 0x0000FF0000000000ULL) |
 	((_ui64Val << 40) & 0x00FF000000000000ULL) |
 	(_ui64Val << 56); }
-#endif	// #if defined( __APPLE__ )
+#endif	// #if defined( _MSC_VER )
 
 
 // ===============================
