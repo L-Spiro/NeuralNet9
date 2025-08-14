@@ -3415,7 +3415,7 @@ namespace nn9 {
 
 #ifdef __AVX2__
 		/**
-		 * \brief Converts 8 floats in a __m512 to 8 int8_t's with saturation using AVX2.
+		 * \brief Converts 8 floats in a __m256 to 8 int8_t's with saturation using AVX2.
 		 * 
 		 * \param _mFloat Input vector with 8 floats.
 		 * \param _pi8Dst Output array of 8 int8_t's.
@@ -3429,7 +3429,7 @@ namespace nn9 {
 		}
 
 		/**
-		 * \brief Converts 8 floats in a __m512 to 8 uint8_t's with saturation using AVX2.
+		 * \brief Converts 8 floats in a __m256 to 8 uint8_t's with saturation using AVX2.
 		 * 
 		 * \param _mFloat Input vector with 8 floats.
 		 * \param _pu8Dst Output array of 8 uint8_t's.
@@ -3442,7 +3442,7 @@ namespace nn9 {
 		}
 
 		/**
-		 * \brief Converts 8 floats in a __m512 to 8 int16_t's with saturation using AVX2.
+		 * \brief Converts 8 floats in a __m256 to 8 int16_t's with saturation using AVX2.
 		 * 
 		 * \param _mFloat Input vector with 8 floats.
 		 * \param _pi16Dst Output array of 8 int16_t's.
@@ -3456,7 +3456,7 @@ namespace nn9 {
 		}
 
 		/**
-		 * \brief Converts 8 floats in a __m512 to 8 uint16_t's with saturation using AVX2.
+		 * \brief Converts 8 floats in a __m256 to 8 uint16_t's with saturation using AVX2.
 		 * 
 		 * \param _mFloat Input vector with 8 floats.
 		 * \param _pu16Dst Output array of 8 uint16_t's.
@@ -3469,7 +3469,7 @@ namespace nn9 {
 		}
 
 		/**
-		 * \brief Converts 8 floats in a __m512 to 8 int32_t's with saturation using AVX2.
+		 * \brief Converts 8 floats in a __m256 to 8 int32_t's with saturation using AVX2.
 		 * 
 		 * \param _mFloat Input vector with 8 floats.
 		 * \param _pi32Dst Output array of 8 int32_t's.
@@ -3483,7 +3483,7 @@ namespace nn9 {
 		}
 
 		/**
-		 * \brief Converts 8 floats in a __m512 to 8 uint32_t's with saturation using AVX2.
+		 * \brief Converts 8 floats in a __m256 to 8 uint32_t's with saturation using AVX2.
 		 * 
 		 * \param _mFloat Input vector with 8 floats.
 		 * \param _pu32Dst Output array of 8 uint32_t's.
@@ -3506,7 +3506,7 @@ namespace nn9 {
 		}
 
 		/**
-		 * \brief Converts 8 floats in a __m512 to 8 int64_t's with saturation using AVX2.
+		 * \brief Converts 8 floats in a __m256 to 8 int64_t's with saturation using AVX2.
 		 * 
 		 * \param _mFloat Input vector with 8 floats.
 		 * \param _pi64Dst Output array of 8 int64_t's.
@@ -3526,7 +3526,7 @@ namespace nn9 {
 		}
 
 		/**
-		 * \brief Converts 8 floats in a __m512 to 8 uint64_t's with saturation using AVX2.
+		 * \brief Converts 8 floats in a __m256 to 8 uint64_t's with saturation using AVX2.
 		 * 
 		 * \param _mFloat Input vector with 8 floats.
 		 * \param _pu64Dst Output array of 8 uint64_t's.
@@ -3545,7 +3545,7 @@ namespace nn9 {
 		}
 
 		/**
-		 * \brief Converts 8 floats in a __m512 to 8 double's with saturation using AVX2.
+		 * \brief Converts 8 floats in a __m256 to 8 double's with saturation using AVX2.
 		 * 
 		 * \param _mFloat Input vector with 8 floats.
 		 * \param _pdDst Output array of 8 double's.
