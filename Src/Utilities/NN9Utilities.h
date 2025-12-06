@@ -23,12 +23,8 @@
 
 
 
-#ifndef NN9_ELEMENTS
-#define NN9_ELEMENTS( X )									((sizeof( X ) / sizeof( 0[X] )) / (static_cast<size_t>(!(sizeof( X ) % sizeof(0[X])))))
-#endif	// #ifndef NN9_ELEMENTS
-
 #ifndef NN9_PI
-#define NN9_PI												3.14159265358979323846264338327950288419716939937510
+#define NN9_PI												3.141592653589793115997963468544185161590576171875	// 3.14159265358979323846264338327950288419716939937510 rounded to the nearest representable double.
 #endif	// #ifndef NN9_PI
 
 #ifndef NN9_ROUND_UP

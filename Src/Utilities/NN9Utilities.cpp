@@ -539,7 +539,7 @@ namespace nn9 {
 			std::filesystem::create_directories( pPath );
 			if ( !std::filesystem::exists( pPath ) ) { return NN9_E_FOLDER_NOT_FOUND; }
 
-			for ( size_t I = 0; I < NN9_ELEMENTS( sUrls ); ++I ) {
+			for ( size_t I = 0; I < std::size( sUrls ); ++I ) {
 				std::filesystem::path pThisPath = pPath;
 				pThisPath /= sFileNames[I];
 
