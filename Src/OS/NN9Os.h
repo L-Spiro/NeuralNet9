@@ -130,7 +130,6 @@ inline void                                     SetThreadNormalPriority() {
 #endif  // #ifdef _WIN32
 
 
-
 #ifdef _WIN32
 inline void                                     SetThreadAffinity( HANDLE _hHandle, size_t sCoreId ) {
 	// Set thread affinity to the specified core on Windows.

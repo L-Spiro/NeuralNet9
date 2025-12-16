@@ -246,7 +246,6 @@ namespace nn9 {
 		return dFloor;
 	}
 
-
 	/**
 	 * \brief Performs saturated addition for signed 64-bit integers.
 	 * 

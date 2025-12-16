@@ -199,7 +199,7 @@ namespace nn9 {
 		 * \return Returns true if T is a type suitable for a 64-bit foating-point SIMD register, false otherwise.
 		 */
 		template <typename T>
-		static constexpr bool											SimdDouble() { return IsFloat16<T>() || IsBFloat16<T>() || Is32BitFloat<T>(); }
+		static constexpr bool											SimdDouble() { return std::is_same<T, double>::value; }
 
 		/**
 		 * A constexpr function that checks if T is an integer type.

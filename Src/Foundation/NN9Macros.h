@@ -16,27 +16,34 @@
 	#define NN9_PREFETCH_LINE_WRITE( ADDR )
 
 	// Microsoft Visual Studio Compiler
-	#define														NN9_ALIGN( N ) 						__declspec( align( N ) )
-	#define														NN9_FALLTHROUGH						[[fallthrough]];
+	#define NN9_ALIGN( N ) 										__declspec( align( N ) )
+	#define NN9_FALLTHROUGH										[[fallthrough]];
+	#define NN9_LIKELY( x )										( x ) [[likely]]
+	#define NN9_UNLIKELY( x )									( x ) [[unlikely]]
 
 	#define NN9_ASM_BEGIN										__asm {
 	#define NN9_ASM_END											}
-	#ifdef _M_IX86
-		#define NN9_X86											1
-	#elif defined( _M_X64 )
-		#define NN9_X64											1
-	#endif	// #ifdef _M_IX86
 #elif defined( __GNUC__ ) || defined( __clang__ )
-	#ifndef NN9_FASTCALL
 	#define NN9_FASTCALL
-	#endif	// NN9_FASTCALL
+	#define NN9_EXPECT( COND, VAL )								__builtin_expect( !!(COND), (VAL) )
+	#define NN9_PREFETCH_LINE( ADDR )							__builtin_prefetch( reinterpret_cast<const void *>(ADDR), 0, 3 )
+	#define NN9_PREFETCH_LINE_WRITE( ADDR )						__builtin_prefetch( reinterpret_cast<const void *>(ADDR), 1, 3 )
 
 	// GNU Compiler Collection (GCC) or Clang
-	#define														NN9_ALIGN( N ) 						__attribute__( (aligned( N )) )
-	#define														NN9_FALLTHROUGH
+	#define NN9_ALIGN( N ) 										__attribute__( (aligned( N )) )
+	#define NN9_FALLTHROUGH
+	#define NN9_LIKELY( x )										( __builtin_expect( !!(x), 1 ) )
+	#define NN9_UNLIKELY( x )									( __builtin_expect( !!(x), 0 ) )
 #else
 	#error "Unsupported compiler"
 #endif	// #if defined( _MSC_VER )
+
+
+#if defined( _M_IX86 ) || defined( __i386__ )
+	#define NN9_X86												1
+#elif defined( _M_X64 ) || defined( __x86_64__ ) || defined( __amd64__ )
+	#define NN9_X64												1
+#endif	// #if defined( _M_IX86 ) || defined( __i386__ )
 
 
 #ifdef _DEBUG

@@ -60,11 +60,11 @@ namespace nn9 {
 		constexpr double dC2 = 1.0 / 120.0;
 		constexpr double dC3 = 1.0 / 252.0;
 
-		dResult += std::log( _dX ) 
-			- 0.5 * dInvX
-			- dInvX2 * dC1
-			+ (dInvX2 * dInvX2) * dC2
-			- (dInvX2 * dInvX2 * dInvX2) * dC3;
+		dResult += std::log( _dX ) -
+			0.5 * dInvX -
+			dInvX2 * dC1 +
+			(dInvX2 * dInvX2) * dC2 -
+			(dInvX2 * dInvX2 * dInvX2) * dC3;
 
 		return dResult;
 	}
@@ -81,9 +81,9 @@ namespace nn9 {
 	 */
 	double								LowerRegGamma( double _dA, double _dX ) {
 		// Domain checks
-		if ( _dA <= 0.0 ) { return std::numeric_limits<double>::quiet_NaN(); }
-		if ( _dX < 0.0 ) { return std::numeric_limits<double>::quiet_NaN(); }
-		if ( _dX == 0.0 ) { return 0.0; }
+		if NN9_UNLIKELY( _dA <= 0.0 ) { return std::numeric_limits<double>::quiet_NaN(); }
+		if NN9_UNLIKELY( _dX < 0.0 ) { return std::numeric_limits<double>::quiet_NaN(); }
+		if NN9_UNLIKELY( _dX == 0.0 ) { return 0.0; }
 
 		double dLogGammaA = std::lgamma( _dA );
 
@@ -122,9 +122,7 @@ namespace nn9 {
 		for ( int iN = 1; iN <= static_cast<int>(dMaxIter); iN++ ) {
 			dTerm *= (_dX / (dAp + static_cast<double>(iN)));
 			dSum  += dTerm;
-			if ( std::fabs( dTerm ) < std::fabs( dSum ) * dEpsilon ) {
-				break;
-			}
+			if NN9_UNLIKELY( std::fabs( dTerm ) < std::fabs( dSum ) * dEpsilon ) { break; }
 		}
 
 		double dLogPrefactor = _dA*std::log( _dX ) - _dX - _dLogGammaA;
@@ -174,16 +172,16 @@ namespace nn9 {
 
 			// Lentz iteration:
 			dD = 1.0 + dCterm * dD;
-			if ( std::fabs( dD ) < 1e-30 ) { dD = 1e-30; }
+			if NN9_UNLIKELY( std::fabs( dD ) < 1e-30 ) { dD = 1e-30; }
 			dD = 1.0 / dD;
 
 			dC = 1.0 + dCterm / ( (iN==1) ? 1.0 : dC );
-			if ( std::fabs( dC ) < 1e-30 ) { dC = 1e-30; }
+			if NN9_UNLIKELY( std::fabs( dC ) < 1e-30 ) { dC = 1e-30; }
 
 			double dDelta = dC * dD;
 			dH *= dDelta;
 
-			if ( std::fabs( dDelta - 1.0 ) < dEpsilon ) { break; }
+			if NN9_UNLIKELY( std::fabs( dDelta - 1.0 ) < dEpsilon ) { break; }
 		}
 
 		dFrac = dH; 
@@ -208,15 +206,15 @@ namespace nn9 {
 	 */
 	double								igammac( double _dA, double _dX ) {
 		// Basic domain checks.
-		if ( _dA <= 0.0 ) {
+		if NN9_UNLIKELY( _dA <= 0.0 ) {
 			// Q(a,x) not defined for a <= 0 in this standard sense.
 			return std::numeric_limits<double>::quiet_NaN();
 		}
-		if ( _dX < 0.0 ) {
+		if NN9_UNLIKELY( _dX < 0.0 ) {
 			// Usually Q(a,x)=1 for x<0 is not standard, or undefined. Return NaN for safety.
 			return std::numeric_limits<double>::quiet_NaN();
 		}
-		if ( _dX == 0.0 ) {
+		if NN9_UNLIKELY( _dX == 0.0 ) {
 			// Q(a,0) = 1 if a>0.
 			return 1.0;
 		}
