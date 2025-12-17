@@ -13,6 +13,7 @@
 #include "../Foundation/NN9FeatureSet.h"
 #include "../OS/NN9Os.h"
 
+#include <cassert>
 #include <cmath>
 #include <curl/curl.h>
 #include <filesystem>
@@ -121,40 +122,131 @@ namespace nn9 {
 		/**
 		 * Converts a UTF-8 string to a UTF-16 string.  The resulting string may have allocated more characters than necessary but will be terminated with a NULL.
 		 *
-		 * \param _pcString String to convert.
-		 * \param _sLen The number of char8_t's to which _pcString points.
+		 * \tparam _tInType The input character type.
+		 * \tparam _tOutType The output string type.
+		 * \param _pitString String to convert.
+		 * \param _sLen The number of _tInType's to which _pitString points.
 		 * \param _pbErrored If not nullptr, holds a returned boolean indicating success or failure of the conversion.
 		 * \return Returns the converted UTF-16 string.
 		 */
-		static std::u16string								Utf8ToUtf16( const char8_t * _pcString, size_t _sLen, bool * _pbErrored = nullptr );
+		template <typename _tInType = char8_t, typename _tOutType = std::u16string>
+		static _tOutType									Utf8ToUtf16( const _tInType * _pitString, size_t _sLen, bool * _pbErrored = nullptr ) {
+			static_assert( sizeof( _tInType ) == sizeof( char8_t ), "CUtilities::Utf8ToUtf16: sizeof( _tInType ) must equal sizeof( char8_t )." );
+			_tOutType otTmp;
+			if ( _pbErrored ) { (*_pbErrored) = false; }
+			const char8_t * pc16In = reinterpret_cast<const char8_t *>(_pitString);
+			for ( size_t I = 0; I < _sLen; ) {
+				size_t sThisSize = 0;
+				uint32_t ui32This = NextUtf8Char( &pc16In[I], _sLen - I, &sThisSize );
+				if ( ui32This == NN9_UTF_INVALID ) {
+					for ( size_t J = 0; J < sThisSize; ++J ) {
+						otTmp.push_back( static_cast<_tOutType::value_type>(pc16In[I+J]) );
+					}
+					if ( _pbErrored ) { (*_pbErrored) = true; }
+					I += sThisSize;
+					continue;
+				}
+				I += sThisSize;
+				uint32_t ui32Len;
+				uint32_t ui32Converted = Utf32ToUtf16( ui32This, ui32Len );
+				for ( uint32_t J = 0; J < ui32Len; ++J ) {
+					otTmp.push_back( static_cast<_tOutType::value_type>(ui32Converted & 0xFFFFU) );
+					ui32Converted >>= 16;
+				}
+			}
+			return otTmp;
+		}
+
+		/**
+		 * Converts a UTF-8 string to a UTF-16 string (NULL-terminated).  The resulting string may have allocated more characters than necessary but will be terminated with a NULL.
+		 *
+		 * \tparam _tInType The input character type.
+		 * \tparam _tOutType The output string type.
+		 * \param _pitString String to convert.
+		 * \param _pbErrored If not nullptr, holds a returned boolean indicating success or failure of the conversion.
+		 * \return Returns the converted UTF-16 string.
+		 */
+		template <typename _tInType = char8_t, typename _tOutType = std::u16string>
+		static inline _tOutType								Utf8ToUtf16( const _tInType * _pitString, bool * _pbErrored = nullptr ) {
+			size_t I = 0;
+			while ( _pitString[I] ) { ++I; }
+			return Utf8ToUtf16<_tInType, _tOutType>( _pitString, I, _pbErrored );
+		}
 
 		/**
 		 * Converts a UTF-8 string to a UTF-16 string.  The resulting string may have allocated more characters than necessary but will be terminated with a NULL.
 		 *
-		 * \param _sString String to convert.
+		 * \tparam _tInType The input string type.
+		 * \tparam _tOutType The output string type.
+		 * \param _pitString String to convert.
 		 * \param _pbErrored If not nullptr, holds a returned boolean indicating success or failure of the conversion.
 		 * \return Returns the converted UTF-16 string.
 		 */
-		static inline std::u16string						Utf8ToUtf16( const std::u8string &_sString, bool * _pbErrored = nullptr ) { return Utf8ToUtf16( _sString.c_str(), _sString.size(), _pbErrored ); }
+		template <typename _tInType = char8_t, typename _tOutType = std::u16string>
+		static inline _tOutType								Utf8ToUtf16( const _tInType &_pitString, bool * _pbErrored = nullptr ) { return Utf8ToUtf16<typename _tInType::value_type, _tOutType>( _pitString.c_str(), _pitString.size(), _pbErrored ); }
 
 		/**
 		 * Converts a UTF-16 string to a UTF-8 string.  The resulting string may have allocated more characters than necessary but will be terminated with a NULL.
 		 *
-		 * \param _pcString String to convert.
-		 * \param _sLen The number of char16_t's to which _pcString points.
+		 * \tparam _tInType The input character type.
+		 * \tparam _tOutType The output string type.
+		 * \param _pitString String to convert.
+		 * \param _sLen The number of _tInType's to which _pitString points.
 		 * \param _pbErrored If not nullptr, holds a returned boolean indicating success or failure of the conversion.
 		 * \return Returns the converted UTF-8 string.
 		 */
-		static std::u8string								Utf16ToUtf8( const char16_t * _pcString, size_t _sLen, bool * _pbErrored = nullptr );
+		template <typename _tInType = char16_t, typename _tOutType = std::u8string>
+		static _tOutType									Utf16ToUtf8( const _tInType * _pitString, size_t _sLen, bool * _pbErrored = nullptr ) {
+			static_assert( sizeof( _tInType ) == sizeof( char16_t ), "CUtilities::Utf16ToUtf8: sizeof( _tInType ) must equal sizeof( char16_t )." );
+
+			_tOutType sRet;
+			if ( _pbErrored ) { (*_pbErrored) = false; }
+			const char16_t * pc16In = reinterpret_cast<const char16_t *>(_pitString);
+			for ( size_t I = 0; I < _sLen; ) {
+				size_t sThisSize = 0;
+				uint32_t ui32Char = NextUtf16Char( &pc16In[I], _sLen - I, &sThisSize );
+				if ( ui32Char == NN9_UTF_INVALID ) {
+					ui32Char = pc16In[I];
+					if ( _pbErrored ) { (*_pbErrored) = true; }
+				}
+				I += sThisSize;
+				uint32_t ui32Len = 0;
+				uint32_t ui32BackToUtf8 = Utf32ToUtf8( ui32Char, ui32Len );
+				for ( uint32_t J = 0; J < ui32Len; ++J ) {
+					sRet.push_back( static_cast<_tOutType::value_type>(ui32BackToUtf8) );
+					ui32BackToUtf8 >>= 8;
+				}
+			}
+			return sRet;
+		}
+
+		/**
+		 * Converts a UTF-16 string to a UTF-8 string (NULL-terminated).  The resulting string may have allocated more characters than necessary but will be terminated with a NULL.
+		 *
+		 * \tparam _tInType The input character type.
+		 * \tparam _tOutType The output string type.
+		 * \param _pitString String to convert.
+		 * \param _pbErrored If not nullptr, holds a returned boolean indicating success or failure of the conversion.
+		 * \return Returns the converted UTF-8 string.
+		 */
+		template <typename _tInType = char16_t, typename _tOutType = std::u8string>
+		static inline _tOutType								Utf16ToUtf8( const _tInType * _pitString, bool * _pbErrored = nullptr ) {
+			size_t I = 0;
+			while ( _pitString[I] ) { ++I; }
+			return Utf16ToUtf8<_tInType, _tOutType>( _pitString, I, _pbErrored );
+		}
 
 		/**
 		 * Converts a UTF-16 string to a UTF-8 string.  The resulting string may have allocated more characters than necessary but will be terminated with a NULL.
 		 *
-		 * \param _s16String String to convert.
+		 * \tparam _tInType The input string type.
+		 * \tparam _tOutType The output string type.
+		 * \param _pitString String to convert.
 		 * \param _pbErrored If not nullptr, holds a returned boolean indicating success or failure of the conversion.
 		 * \return Returns the converted UTF-8 string.
 		 */
-		static inline std::u8string							Utf16ToUtf8( const std::u16string &_s16String, bool * _pbErrored = nullptr ) { return Utf16ToUtf8( _s16String.c_str(), _s16String.size(), _pbErrored ); }
+		template <typename _tInType = std::u16string, typename _tOutType = std::u8string>
+		static inline _tOutType								Utf16ToUtf8( const _tInType &_pitString, bool * _pbErrored = nullptr ) { return Utf16ToUtf8<typename _tInType::value_type, _tOutType>( _pitString.c_str(), _pitString.size(), _pbErrored ); }
 
 
 		// ===============================
@@ -214,7 +306,7 @@ namespace nn9 {
 		}
 
 		/**
-		 * Converts any string to an std::u16string.  Call inside try{}catch(...){}.
+		 * Converts any string to an std::u16string.  Call inside try/catch block.
 		 * 
 		 * \param _pctStr The string to convert.
 		 * \param _sLen The length of the string or 0.
@@ -233,7 +325,7 @@ namespace nn9 {
 		}
 
 		/**
-		 * Converts any string to an std::u16string.  Call inside try{}catch(...){}.
+		 * Converts any string to an std::u16string.  Call inside try/catch block.
 		 * 
 		 * \param _sStr The string to convert.
 		 * \return Returns the converted string.
@@ -251,7 +343,7 @@ namespace nn9 {
 		}
 
 		/**
-		 * Converts any string to an std::wstring.  Call inside try{}catch(...){}.
+		 * Converts any string to an std::wstring.  Call inside try/catch block.
 		 * 
 		 * \param _pctStr The string to convert.
 		 * \param _sLen The length of the string or 0.
@@ -270,7 +362,7 @@ namespace nn9 {
 		}
 
 		/**
-		 * Converts any string to an std::wstring.  Call inside try{}catch(...){}.
+		 * Converts any string to an std::wstring.  Call inside try/catch block.
 		 * 
 		 * \param _sStr The string to convert.
 		 * \return Returns the converted string.
@@ -358,11 +450,13 @@ namespace nn9 {
 		/**
 		 * Gets the last character in a string or std::u16string::traits_type::char_type( 0 ).
 		 * 
-		 * \param _s16Str The string whose last character is to be returned, if it has any characters.
+		 * \tparam _tType The string (or array) type.
+		 * \param _tStr The string whose last character is to be returned, if it has any characters.
 		 * \return Returns the last character in the given string or std::u16string::traits_type::char_type( 0 ).
 		 **/
-		static std::u16string::traits_type::char_type		LastChar( const std::u16string &_s16Str ) {
-			return _s16Str.size() ? _s16Str[_s16Str.size()-1] : std::u16string::traits_type::char_type( 0 );
+		template <typename _tType = std::u16string>
+		static _tType::traits_type::char_type				LastChar( const _tType &_tStr ) {
+			return _tStr.size() ? _tStr[_tStr.size()-1] : _tType::traits_type::char_type( 0 );
 		}
 
 		/**
@@ -500,7 +594,7 @@ namespace nn9 {
 		 * \param _pvFile Pointer to a StdFile object used for the write process.
 		 * \return Returns the number of bytes actually writtem.
 		 **/
-		static size_t										WriteCurlData( void * _pvPtr, size_t _sSize, size_t _sMem, void * _pvFile );
+		static size_t NN9_CDECL								WriteCurlData( void * _pvPtr, size_t _sSize, size_t _sMem, void * _pvFile );
 
 		/**
 		 * Downloads the MNIST files to the given folder.
@@ -1165,7 +1259,7 @@ namespace nn9 {
 	struct NN9_HMODULE {
 		NN9_HMODULE() : hHandle( NULL ) {}
 		NN9_HMODULE( LPCSTR _sPath ) :
-			hHandle( ::LoadLibraryW( nn9::Utilities::XStringToWString( _sPath ).c_str() ) ) {
+			hHandle( ::LoadLibraryW( nn9::Utilities::Utf8ToUtf16<CHAR, std::wstring>( _sPath ).c_str() ) ) {
 		}
 		NN9_HMODULE( LPCWSTR _wsPath ) :
 			hHandle( ::LoadLibraryW( _wsPath ) ) {
@@ -1181,7 +1275,7 @@ namespace nn9 {
 		// == Functions.
 		BOOL												LoadLib( LPCSTR _sPath ) {
 			Reset();
-			hHandle = ::LoadLibraryW( nn9::Utilities::XStringToWString( _sPath ).c_str() );
+			hHandle = ::LoadLibraryW( nn9::Utilities::Utf8ToUtf16<CHAR, std::wstring>( _sPath ).c_str() );
 			return hHandle != NULL;
 		}
 

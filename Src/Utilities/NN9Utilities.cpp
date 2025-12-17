@@ -273,68 +273,6 @@ namespace nn9 {
 	}
 
 	/**
-	 * Converts a UTF-8 string to a UTF-16 string.  The resulting string may have allocated more characters than necessary but will be terminated with a NULL.
-	 *
-	 * \param _pcString String to convert.
-	 * \param _sLen The number of char8_t's to which _pcString points.
-	 * \param _pbErrored If not nullptr, holds a returned boolean indicating success or failure of the conversion.
-	 * \return Returns the converted UTF-16 string.
-	 */
-	std::u16string Utilities::Utf8ToUtf16( const char8_t * _pcString, size_t _sLen, bool * _pbErrored ) {
-		std::u16string swsTemp;
-		if ( _pbErrored ) { (*_pbErrored) = false; }
-		for ( size_t I = 0; I < _sLen; ) {
-			size_t sThisSize = 0;
-			uint32_t ui32This = NextUtf8Char( &_pcString[I], _sLen - I, &sThisSize );
-			if ( ui32This == NN9_UTF_INVALID ) {
-				for ( size_t J = 0; J < sThisSize; ++J ) {
-					swsTemp.push_back( static_cast<uint8_t>(_pcString[I+J]) );
-				}
-				if ( _pbErrored ) { (*_pbErrored) = true; }
-				I += sThisSize;
-				continue;
-			}
-			I += sThisSize;
-			uint32_t ui32Len;
-			uint32_t ui32Converted = Utf32ToUtf16( ui32This, ui32Len );
-			for ( uint32_t J = 0; J < ui32Len; ++J ) {
-				swsTemp.push_back( static_cast<std::u16string::value_type>(ui32Converted & 0xFFFFU) );
-				ui32Converted >>= 16;
-			}
-		}
-		return swsTemp;
-	}
-
-	/**
-	 * Converts a UTF-16 string to a UTF-8 string.  The resulting string may have allocated more characters than necessary but will be terminated with a NULL.
-	 *
-	 * \param _pcString String to convert.
-	 * \param _sLen The number of char16_t's to which _pcString points.
-	 * \param _pbErrored If not nullptr, holds a returned boolean indicating success or failure of the conversion.
-	 * \return Returns the converted UTF-8 string.
-	 */
-	std::u8string Utilities::Utf16ToUtf8( const char16_t * _pcString, size_t _sLen, bool * _pbErrored ) {
-		std::u8string sRet;
-		if ( _pbErrored ) { (*_pbErrored) = false; }
-		for ( size_t I = 0; I < _sLen; ) {
-			size_t sThisSize = 0;
-			uint32_t ui32Char = NextUtf16Char( &_pcString[I], _sLen - I, &sThisSize );
-			if ( ui32Char == NN9_UTF_INVALID ) {
-				ui32Char = _pcString[I];
-				if ( _pbErrored ) { (*_pbErrored) = true; }
-			}
-			I += sThisSize;
-			uint32_t ui32Len = 0;
-			uint32_t ui32BackToUtf8 = Utf32ToUtf8( ui32Char, ui32Len );
-			for ( uint32_t J = 0; J < ui32Len; ++J ) {
-				sRet.push_back( static_cast<std::u8string::value_type>(ui32BackToUtf8) );
-				ui32BackToUtf8 >>= 8;
-			}
-		}
-		return sRet;
-	}
-
-	/**
 	 * Reads a line from a buffer.
 	 * 
 	 * \param _vBuffer The buffer from which to read a line.
@@ -401,9 +339,9 @@ namespace nn9 {
 			const char cCharSet[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 			std::random_device rdDevice;
 			std::mt19937 mGenerator( rdDevice() );
-			std::uniform_int_distribution<> uidDist( 0, sizeof( cCharSet ) - 2 );
+			std::uniform_int_distribution<> uidDist( 0, std::size( cCharSet ) - 2 );
 
-			for ( size_t i = 0; i < 8; ++i ) {
+			for ( size_t I = 0; I < 8; ++I ) {
 				_pAsciiPath += cCharSet[uidDist(mGenerator)];
 			}
 
@@ -478,7 +416,7 @@ namespace nn9 {
 			}
 
         
-			::curl_easy_cleanup( cCurl.pcCurl );
+			//::curl_easy_cleanup( cCurl.pcCurl );	// Called by NN9_CURL::~NN9_CURL().
 		}
 
 
@@ -497,7 +435,7 @@ namespace nn9 {
 	 * \param _pvFile Pointer to a StdFile object used for the write process.
 	 * \return Returns the number of bytes actually writtem.
 	 **/
-	size_t Utilities::WriteCurlData( void * _pvPtr, size_t _sSize, size_t _sMem, void * _pvFile ) {
+	size_t NN9_CDECL Utilities::WriteCurlData( void * _pvPtr, size_t _sSize, size_t _sMem, void * _pvFile ) {
 		StdFile * psfFile = reinterpret_cast<StdFile *>(_pvFile);
 		size_t sTotal = _sSize * _sMem;
 		if ( psfFile->WriteToFile( static_cast<uint8_t *>(_pvPtr), sTotal ) == NN9_E_SUCCESS ) {

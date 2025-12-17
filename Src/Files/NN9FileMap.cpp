@@ -33,58 +33,64 @@ namespace nn9 {
 	/**
 	 * Opens a file.  The path is given in UTF-16.
 	 *
-	 * \param _pcPath Path to the file to open.
+	 * \param _pFile Path to the file to open.
 	 * \return Returns an error code indicating the result of the operation.
 	 */
-	NN9_ERRORS FileMap::Open( const char16_t * _pcFile ) {
+	NN9_ERRORS FileMap::Open( const std::filesystem::path &_pFile ) {
 		Close();
-		m_hFile = ::CreateFileW( reinterpret_cast<LPCWSTR>(_pcFile),
-			GENERIC_READ | GENERIC_WRITE,
-			0,
-			NULL,
-			OPEN_EXISTING,
-			FILE_ATTRIBUTE_NORMAL,
-			NULL );
+		try {
+			m_hFile = ::CreateFileW( _pFile.native().c_str(),
+				GENERIC_READ | GENERIC_WRITE,
+				0,
+				NULL,
+				OPEN_EXISTING,
+				FILE_ATTRIBUTE_NORMAL,
+				NULL );
 
 #ifdef NN9_USE_WINDOWS
-		if ( !m_hFile.Valid() ) {
+			if ( !m_hFile.Valid() ) {
 #else
-		if ( !(m_hFile && m_hFile != INVALID_HANDLE_VALUE) ) {
+			if ( !(m_hFile && m_hFile != INVALID_HANDLE_VALUE) ) {
 #endif	// #ifdef NN9_USE_WINDOWS
-			auto aCode = Errors::GetLastError_To_Native();
-			Close();
-			return aCode;
+				auto aCode = Errors::GetLastError_To_Native();
+				Close();
+				return aCode;
+			}
+			m_bWritable = true;
 		}
-		m_bWritable = true;
+		catch ( ... ) { return NN9_E_OUT_OF_MEMORY; }		// _pFile.native() fails if out of memory.
 		return CreateFileMap();
 	}
 
 	/**
 	 * Creates a file.  The path is given in UTF-16.
 	 *
-	 * \param _pcPath Path to the file to create.
+	 * \param _pFile Path to the file to create.
 	 * \return Returns an error code indicating the result of the operation.
 	 */
-	NN9_ERRORS FileMap::Create( const char16_t * _pcFile ) {
+	NN9_ERRORS FileMap::Create( const std::filesystem::path &_pFile ) {
 		Close();
-		m_hFile = ::CreateFileW( reinterpret_cast<LPCWSTR>(_pcFile),
-			GENERIC_READ | GENERIC_WRITE,
-			0,
-			NULL,
-			CREATE_ALWAYS,
-			FILE_ATTRIBUTE_NORMAL,
-			NULL );
+		try {
+			m_hFile = ::CreateFileW( _pFile.native().c_str(),
+				GENERIC_READ | GENERIC_WRITE,
+				0,
+				NULL,
+				CREATE_ALWAYS,
+				FILE_ATTRIBUTE_NORMAL,
+				NULL );
 
 #ifdef NN9_USE_WINDOWS
-		if ( !m_hFile.Valid() ) {
+			if ( !m_hFile.Valid() ) {
 #else
-		if ( !(m_hFile && m_hFile != INVALID_HANDLE_VALUE) ) {
+			if ( !(m_hFile && m_hFile != INVALID_HANDLE_VALUE) ) {
 #endif	// #ifdef NN9_USE_WINDOWS
-			auto aCode = Errors::GetLastError_To_Native();
-			Close();
-			return aCode;
+				auto aCode = Errors::GetLastError_To_Native();
+				Close();
+				return aCode;
+			}
+			m_bWritable = true;
 		}
-		m_bWritable = true;
+		catch ( ... ) { return NN9_E_OUT_OF_MEMORY; }		// _pFile.native() fails if out of memory.
 
 
 		LARGE_INTEGER largeSize;
@@ -205,7 +211,7 @@ namespace nn9 {
 	 * \param _pcFile Path to the file to open.
 	 * \return Returns an error code indicating the result of the operation.
 	 */
-	NN9_ERRORS FileMap::Open( const char8_t * _pcFile ) {
+	NN9_ERRORS FileMap::Open( const std::filesystem::path &_pFile ) {
 		return NN9_E_NOT_IMPLEMENTED;
 	}
 
@@ -215,7 +221,7 @@ namespace nn9 {
 	 * \param _pcFile Path to the file to create.
 	 * \return Returns an error code indicating the result of the operation.
 	 */
-	NN9_ERRORS FileMap::Create( const char8_t * _pcFile ) {
+	NN9_ERRORS FileMap::Create( const std::filesystem::path &_pFile ) {
 		return NN9_E_NOT_IMPLEMENTED;
 	}
 #endif	// #ifdef _WIN32

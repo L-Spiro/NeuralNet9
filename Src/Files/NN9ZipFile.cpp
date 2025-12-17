@@ -40,7 +40,7 @@ namespace nn9 {
 	bool ZipFile::IsArchive() const { return m_zaArchive.m_zip_mode != MZ_ZIP_MODE_INVALID; }
 
 	/**
-	 * Gathers the file names in the archive into an array.
+	 * Gathers the file names in the archive into an array.  Call within try/catch block.
 	 *
 	 * \param _vResult The location where to store the file names.
 	 * \return Returns an error code indicating the result of the operation.
@@ -54,7 +54,7 @@ namespace nn9 {
 				if ( !::mz_zip_reader_file_stat( const_cast<mz_zip_archive *>(&m_zaArchive), I, &zafsStat ) ) {
 					return Errors::ZipError_To_Native( ::mz_zip_get_last_error( const_cast<mz_zip_archive *>(&m_zaArchive) ) );
 				}
-				_vResult.push_back( Utilities::Utf8ToUtf16( reinterpret_cast<const char8_t *>(zafsStat.m_filename) ) );
+				_vResult.push_back( Utilities::Utf8ToUtf16<char, std::u16string>( zafsStat.m_filename ) );
 			}
 			return NN9_E_SUCCESS;
 		}

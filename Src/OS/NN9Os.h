@@ -24,17 +24,14 @@
 #ifdef _WIN32
 
 inline std::filesystem::path					GetThisPath() {
-	DWORD dwBufSize = 32768; // Start with a large enough buffer.
+	DWORD dwBufSize = 0x8000;
 	std::vector<wchar_t> vBuffer;
 
 	while ( true ) {
 		vBuffer.resize( dwBufSize );
 		DWORD dwLen = ::GetModuleFileNameW( NULL, vBuffer.data(), dwBufSize );
 
-		if ( dwLen == 0 ) {
-			// Handle error.
-			throw std::runtime_error( "GetThisPath: Error getting executable path." );
-		}
+		if ( dwLen == 0 ) { throw std::runtime_error( "GetThisPath: Error getting executable path." ); }
 		else if ( dwLen < dwBufSize ) {
 			// Successfully retrieved the path.
 			return std::wstring( vBuffer.data(), dwLen );
@@ -55,7 +52,7 @@ inline std::filesystem::path					GetThisPath() {
 #include <errno.h>
 
 inline std::filesystem::path					GetThisPath() {
-	size_t sBufferSize = 1024; // Start with 1 KB buffer.
+	size_t sBufferSize = 1024;
 	std::vector<char> vBuffer;
 
 	while ( true ) {
@@ -79,8 +76,8 @@ inline std::filesystem::path					GetThisPath() {
 }
 
 #elif defined( __APPLE__ )
-#include <mach-o/dyld.h>
 #include <limits.h>
+#include <mach-o/dyld.h>
 #include <sched.h>
 #include <stdlib.h>
 #include <vector>
@@ -131,37 +128,37 @@ inline void                                     SetThreadNormalPriority() {
 
 
 #ifdef _WIN32
-inline void                                     SetThreadAffinity( HANDLE _hHandle, size_t sCoreId ) {
+inline void										SetThreadAffinity( HANDLE _hHandle, size_t _sCoreId ) {
 	// Set thread affinity to the specified core on Windows.
-	DWORD_PTR dwptrMask = DWORD_PTR( 1 ) << sCoreId;
+	DWORD_PTR dwptrMask = DWORD_PTR( 1 ) << _sCoreId;
 	::SetThreadAffinityMask( _hHandle, dwptrMask );
 }
 #elif defined( __linux__ )
-inline void                                     SetThreadAffinity( pthread_t _tHandle, size_t sCoreId ) {
+inline void										SetThreadAffinity( pthread_t _tHandle, size_t _sCoreId ) {
 	// Set thread affinity on Linux
 	cpu_set_t csCpuSet;
 	CPU_ZERO( &csCpuSet );
-	CPU_SET( sCoreId, &csCpuSet );
+	CPU_SET( _sCoreId, &csCpuSet );
 	::pthread_setaffinity_np( _tHandle, sizeof( cpu_set_t ), &csCpuSet );
 }
 #elif defined( __APPLE__ )
-#include <pthread.h>
-#include <mach/thread_policy.h>
 #include <mach/mach.h>
+#include <mach/thread_policy.h>
+#include <pthread.h>
 
-inline void 									SetThreadAffinity( pthread_t _tHandle, size_t sCoreId ) {
+inline void 									SetThreadAffinity( pthread_t _tHandle, size_t _sCoreId ) {
 	// Set thread affinity on macOS
-	::thread_affinity_policy_data_t tapdPolicy = { static_cast<integer_t>(sCoreId) };
+	::thread_affinity_policy_data_t tapdPolicy = { static_cast<integer_t>(_sCoreId) };
 	::thread_port_t mach_thread = ::pthread_mach_thread_np( _tHandle );
 	::thread_policy_set( mach_thread, THREAD_AFFINITY_POLICY, reinterpret_cast<::thread_policy_t>(&tapdPolicy), 1 );
 }
 #endif	// #ifdef _WIN32
 
-inline void                                     SetThreadAffinity( size_t sCoreId ) {
+inline void										SetThreadAffinity( size_t _sCoreId ) {
 #ifdef _WIN32
-	::SetThreadAffinity( ::GetCurrentThread(), sCoreId );
+	::SetThreadAffinity( ::GetCurrentThread(), _sCoreId );
 #elif defined( __APPLE__ ) || defined( __linux__ )
-	::SetThreadAffinity( ::pthread_self(), sCoreId );
+	::SetThreadAffinity( ::pthread_self(), _sCoreId );
 #endif	// #ifdef _WIN32
 }
 

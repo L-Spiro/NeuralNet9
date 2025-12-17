@@ -24,115 +24,130 @@ namespace nn9 {
 	/**
 	 * Opens a file.  The path is given in UTF-16.
 	 *
-	 * \param _pcPath Path to the file to open.
+	 * \param _pFile Path to the file to open.
 	 * \return Returns an error code indicating the result of the operation.
 	 */
-	NN9_ERRORS StdFile::Open( const char16_t * _pcFile ) {
+	NN9_ERRORS StdFile::Open( const std::filesystem::path &_pFile ) {
 		Close();
+		try {
+			FILE * pfFile = nullptr;
+			errno_t enOpenResult = ::_wfopen_s( &pfFile, _pFile.generic_wstring().c_str(), L"rb" );
+			if ( nullptr == pfFile || enOpenResult != 0 ) { return Errors::ErrNo_T_To_Native( enOpenResult ); }
 
-		FILE * pfFile = nullptr;
-		errno_t enOpenResult = ::_wfopen_s( &pfFile, reinterpret_cast<const wchar_t *>(_pcFile), L"rb" );
-		if ( nullptr == pfFile || enOpenResult != 0 ) { return Errors::ErrNo_T_To_Native( enOpenResult ); }
+			::_fseeki64( pfFile, 0, SEEK_END );
+			m_ui64Size = ::_ftelli64( pfFile );
+			std::rewind( pfFile );
 
-		::_fseeki64( pfFile, 0, SEEK_END );
-		m_ui64Size = ::_ftelli64( pfFile );
-		std::rewind( pfFile );
-
-		m_pfFile = pfFile;
-		PostLoad();
+			m_pfFile = pfFile;
+			PostLoad();
+		}
+		catch ( ... ) { return NN9_E_OUT_OF_MEMORY; }	// _pFile.generic_wstring() failed due to memory.
 		return NN9_E_SUCCESS;
 	}
 
 	/**
 	 * Creates a file.  The path is given in UTF-16.
 	 *
-	 * \param _pcPath Path to the file to create.
+	 * \param _pFile Path to the file to create.
 	 * \return Returns an error code indicating the result of the operation.
 	 */
-	NN9_ERRORS StdFile::Create( const char16_t * _pcFile ) {
+	NN9_ERRORS StdFile::Create( const std::filesystem::path &_pFile ) {
 		Close();
+		try {
+			FILE * pfFile = nullptr;
+			errno_t enOpenResult = ::_wfopen_s( &pfFile, _pFile.generic_wstring().c_str(), L"wb" );
+			if ( nullptr == pfFile || enOpenResult != 0 ) { return Errors::ErrNo_T_To_Native( enOpenResult ); }
 
-		FILE * pfFile = nullptr;
-		errno_t enOpenResult = ::_wfopen_s( &pfFile, reinterpret_cast<const wchar_t *>(_pcFile), L"wb" );
-		if ( nullptr == pfFile || enOpenResult != 0 ) { return Errors::ErrNo_T_To_Native( enOpenResult ); }
+			m_ui64Size = 0;
 
-		m_ui64Size = 0;
-
-		m_pfFile = pfFile;
-		PostLoad();
+			m_pfFile = pfFile;
+			PostLoad();
+		}
+		catch ( ... ) { return NN9_E_OUT_OF_MEMORY; }	// _pFile.generic_wstring() failed due to memory.
 		return NN9_E_SUCCESS;
 	}
 
 	/**
 	 * Opens a file for appending.  If it does not exist it is created.  The path is given in UTF-16.
 	 *
-	 * \param _pcPath Path to the file to open for appending.
+	 * \param _pFile Path to the file to open for appending.
 	 * \return Returns an error code indicating the result of the operation.
 	 */
-	NN9_ERRORS StdFile::Append( const char16_t * _pcFile ) {
+	NN9_ERRORS StdFile::Append( const std::filesystem::path &_pFile ) {
 		Close();
+		try {
+			FILE * pfFile = nullptr;
+			errno_t enOpenResult = ::_wfopen_s( &pfFile, _pFile.generic_wstring().c_str(), L"ab" );
+			if ( nullptr == pfFile || enOpenResult != 0 ) { return Errors::ErrNo_T_To_Native( enOpenResult ); }
 
-		FILE * pfFile = nullptr;
-		errno_t enOpenResult = ::_wfopen_s( &pfFile, reinterpret_cast<const wchar_t *>(_pcFile), L"ab" );
-		if ( nullptr == pfFile || enOpenResult != 0 ) { return Errors::ErrNo_T_To_Native( enOpenResult ); }
+			m_ui64Size = 0;
 
-		m_ui64Size = 0;
-
-		m_pfFile = pfFile;
-		PostLoad();
+			m_pfFile = pfFile;
+			PostLoad();
+		}
+		catch ( ... ) { return NN9_E_OUT_OF_MEMORY; }	// _pFile.generic_wstring() failed due to memory.
 		return NN9_E_SUCCESS;
 	}
 #else
 	/**
 	 * Opens a file.  The path is given in UTF-8.
 	 *
-	 * \param _pcFile Path to the file to open.
+	 * \param _pFile Path to the file to open.
 	 * \return Returns an error code indicating the result of the operation.
 	 */
-	NN9_ERRORS StdFile::Open( const char8_t * _pcFile ) {
-		FILE * pfFile = std::fopen( reinterpret_cast<const char *>(_pcFile), "rb" );
-		if ( nullptr == pfFile ) { return Errors::ErrNo_T_To_Native( errno ); }
+	NN9_ERRORS StdFile::Open( const std::filesystem::path &_pFile ) {
+		try {
+			FILE * pfFile = std::fopen( _pFile.generic_string().c_str(), "rb" );
+			if ( nullptr == pfFile ) { return Errors::ErrNo_T_To_Native( errno ); }
 
-		std::fseek( pfFile, 0, SEEK_END );
-		m_ui64Size = std::ftell( pfFile );
-		std::rewind( pfFile );
+			std::fseek( pfFile, 0, SEEK_END );
+			m_ui64Size = std::ftell( pfFile );
+			std::rewind( pfFile );
 
-		m_pfFile = pfFile;
-		PostLoad();
+			m_pfFile = pfFile;
+			PostLoad();
+		}
+		catch ( ... ) { return NN9_E_OUT_OF_MEMORY; }	// _pFile.generic_string() failed due to memory.
 		return NN9_E_SUCCESS;
 	}
 
 	/**
 	 * Creates a file.  The path is given in UTF-8.
 	 *
-	 * \param _pcFile Path to the file to create.
+	 * \param _pFile Path to the file to create.
 	 * \return Returns an error code indicating the result of the operation.
 	 */
-	NN9_ERRORS StdFile::Create( const char8_t * _pcFile ) {
-		FILE * pfFile = std::fopen( reinterpret_cast<const char *>(_pcFile), "wb" );
-		if ( nullptr == pfFile ) { return Errors::ErrNo_T_To_Native( errno ); }
+	NN9_ERRORS StdFile::Create( const std::filesystem::path &_pFile ) {
+		try {
+			FILE * pfFile = std::fopen( _pFile.generic_string().c_str(), "wb" );
+			if ( nullptr == pfFile ) { return Errors::ErrNo_T_To_Native( errno ); }
 
-		m_ui64Size = 0;
+			m_ui64Size = 0;
 
-		m_pfFile = pfFile;
-		PostLoad();
+			m_pfFile = pfFile;
+			PostLoad();
+		}
+		catch ( ... ) { return NN9_E_OUT_OF_MEMORY; }	// _pFile.generic_string() failed due to memory.
 		return NN9_E_SUCCESS;
 	}
 
 	/**
 	 * Opens a file for appending.  If it does not exist it is created.  The path is given in UTF-8.
 	 *
-	 * \param _pcFile Path to the file to open for appending.
+	 * \param _pFile Path to the file to open for appending.
 	 * \return Returns an error code indicating the result of the operation.
 	 */
-	NN9_ERRORS StdFile::Append( const char8_t * _pcFile ) {
-		FILE * pfFile = std::fopen( reinterpret_cast<const char *>(_pcFile), "ab" );
-		if ( nullptr == pfFile ) { return Errors::ErrNo_T_To_Native( errno ); }
+	NN9_ERRORS StdFile::Append( const std::filesystem::path &_pFile ) {
+		try {
+			FILE * pfFile = std::fopen( _pFile.generic_string().c_str(), "ab" );
+			if ( nullptr == pfFile ) { return Errors::ErrNo_T_To_Native( errno ); }
 
-		m_ui64Size = 0;
+			m_ui64Size = 0;
 
-		m_pfFile = pfFile;
-		PostLoad();
+			m_pfFile = pfFile;
+			PostLoad();
+		}
+		catch ( ... ) { return NN9_E_OUT_OF_MEMORY; }	// _pFile.generic_string() failed due to memory.
 		return NN9_E_SUCCESS;
 	}
 #endif	// #ifdef _WIN32

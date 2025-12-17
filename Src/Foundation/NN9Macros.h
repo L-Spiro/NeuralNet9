@@ -11,6 +11,7 @@
 
 #if defined( _MSC_VER )
 	#define NN9_FASTCALL										__fastcall
+	#define NN9_CDECL											__cdecl
 	#define NN9_EXPECT( COND, VAL )								(COND)
 	#define NN9_PREFETCH_LINE( ADDR )							_mm_prefetch( reinterpret_cast<const char *>(ADDR), _MM_HINT_T0 )
 	#define NN9_PREFETCH_LINE_WRITE( ADDR )
@@ -25,6 +26,11 @@
 	#define NN9_ASM_END											}
 #elif defined( __GNUC__ ) || defined( __clang__ )
 	#define NN9_FASTCALL
+	#if defined( __i386__ ) || defined( __x86_64__ ) || defined( __amd64__ )
+		#define NN9_CDECL										__attribute__( (cdecl) )
+	#else
+		#define NN9_CDECL
+	#endif
 	#define NN9_EXPECT( COND, VAL )								__builtin_expect( !!(COND), (VAL) )
 	#define NN9_PREFETCH_LINE( ADDR )							__builtin_prefetch( reinterpret_cast<const void *>(ADDR), 0, 3 )
 	#define NN9_PREFETCH_LINE_WRITE( ADDR )						__builtin_prefetch( reinterpret_cast<const void *>(ADDR), 1, 3 )

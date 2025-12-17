@@ -28,103 +28,29 @@ namespace nn9 {
 
 
 		// == Functions.
-#ifdef _WIN32
 		/**
 		 * Opens a file.  The path is given in UTF-8.
 		 *
-		 * \param _pcPath Path to the file to open.
+		 * \param _pFile Path to the file to open.
 		 * \return Returns an error code indicating the result of the operation.
 		 */
-		virtual NN9_ERRORS									Open( const char8_t * _pcFile ) { return FileBase::Open( _pcFile ); }
-
-		/**
-		 * Opens a file.  The path is given in UTF-16.
-		 *
-		 * \param _pcPath Path to the file to open.
-		 * \return Returns an error code indicating the result of the operation.
-		 */
-		virtual NN9_ERRORS									Open( const char16_t * _pcFile );
+		virtual NN9_ERRORS									Open( const std::filesystem::path &_pFile );
 
 		/**
 		 * Creates a file.  The path is given in UTF-8.
 		 *
-		 * \param _pcPath Path to the file to create.
+		 * \param _pFile Path to the file to create.
 		 * \return Returns an error code indicating the result of the operation.
 		 */
-		virtual NN9_ERRORS									Create( const char8_t * _pcFile ) { return FileBase::Create( _pcFile ); }
-
-		/**
-		 * Creates a file.  The path is given in UTF-16.
-		 *
-		 * \param _pcPath Path to the file to create.
-		 * \return Returns an error code indicating the result of the operation.
-		 */
-		virtual NN9_ERRORS									Create( const char16_t * _pcFile );
+		virtual NN9_ERRORS									Create( const std::filesystem::path &_pFile );
 
 		/**
 		 * Opens a file for appending.  If it does not exist it is created.  The path is given in UTF-8.
 		 *
-		 * \param _pcPath Path to the file to open for appending.
+		 * \param _pFile Path to the file to open for appending.
 		 * \return Returns an error code indicating the result of the operation.
 		 */
-		virtual NN9_ERRORS									Append( const char8_t * _pcFile ) { return FileBase::Append( _pcFile ); }
-
-		/**
-		 * Opens a file for appending.  If it does not exist it is created.  The path is given in UTF-16.
-		 *
-		 * \param _pcPath Path to the file to open for appending.
-		 * \return Returns an error code indicating the result of the operation.
-		 */
-		virtual NN9_ERRORS									Append( const char16_t * _pcFile );
-#else
-		/**
-		 * Opens a file.  The path is given in UTF-8.
-		 *
-		 * \param _pcFile Path to the file to open.
-		 * \return Returns an error code indicating the result of the operation.
-		 */
-		virtual NN9_ERRORS									Open( const char8_t * _pcFile );
-
-		/**
-		 * Opens a file.  The path is given in UTF-16.
-		 *
-		 * \param _pcFile Path to the file to open.
-		 * \return Returns an error code indicating the result of the operation.
-		 */
-		virtual NN9_ERRORS									Open( const char16_t * _pcFile ) { return FileBase::Open( _pcFile ); }
-
-		/**
-		 * Creates a file.  The path is given in UTF-8.
-		 *
-		 * \param _pcFile Path to the file to create.
-		 * \return Returns an error code indicating the result of the operation.
-		 */
-		virtual NN9_ERRORS									Create( const char8_t * _pcFile );
-
-		/**
-		 * Creates a file.  The path is given in UTF-16.
-		 *
-		 * \param _pcFile Path to the file to create.
-		 * \return Returns an error code indicating the result of the operation.
-		 */
-		virtual NN9_ERRORS									Create( const char16_t * _pcFile ) { return FileBase::Create( _pcFile ); }
-
-		/**
-		 * Opens a file for appending.  If it does not exist it is created.  The path is given in UTF-8.
-		 *
-		 * \param _pcFile Path to the file to open for appending.
-		 * \return Returns an error code indicating the result of the operation.
-		 */
-		virtual NN9_ERRORS									Append( const char8_t * _pcFile );
-
-		/**
-		 * Opens a file for appending.  If it does not exist it is created.  The path is given in UTF-16.
-		 *
-		 * \param _pcFile Path to the file to open for appending.
-		 * \return Returns an error code indicating the result of the operation.
-		 */
-		virtual NN9_ERRORS									Append( const char16_t * _pcFile ) { return FileBase::Append( _pcFile ); }
-#endif	// #ifdef _WIN32
+		virtual NN9_ERRORS									Append( const std::filesystem::path &_pFile );
 
 		/**
 		 * Closes the opened file.

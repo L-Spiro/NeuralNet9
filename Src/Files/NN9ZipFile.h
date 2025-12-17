@@ -40,7 +40,7 @@ namespace nn9 {
 		virtual bool										IsArchive() const;
 
 		/**
-		 * Gathers the file names in the archive into an array.
+		 * Gathers the file names in the archive into an array.  Call within try/catch block.
 		 *
 		 * \param _vResult The location where to store the file names.
 		 * \return Returns an error code indicating the result of the operation.
