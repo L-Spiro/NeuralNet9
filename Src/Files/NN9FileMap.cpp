@@ -11,22 +11,11 @@
 
 namespace nn9 {
 
-#ifdef _WIN32
-	FileMap::FileMap() :
-		m_hFile( INVALID_HANDLE_VALUE ),
-		m_hMap( INVALID_HANDLE_VALUE ),
-		m_pbMapBuffer( nullptr ),
-		m_bIsEmpty( TRUE ),
-		m_bWritable( TRUE ),
-		m_ui64Size( 0 ),
-		m_ui64MapStart( MAXUINT64 ),
-		m_dwMapSize( 0 ) {
+	FileMap::FileMap() {
 	}
 	FileMap::~FileMap() {
 		Close();
 	}
-#else
-#endif	// #ifdef _WIN32
 
 	// == Functions.
 #ifdef _WIN32
@@ -47,11 +36,7 @@ namespace nn9 {
 				FILE_ATTRIBUTE_NORMAL,
 				NULL );
 
-#ifdef NN9_USE_WINDOWS
-			if ( !m_hFile.Valid() ) {
-#else
-			if ( !(m_hFile && m_hFile != INVALID_HANDLE_VALUE) ) {
-#endif	// #ifdef NN9_USE_WINDOWS
+			if ( m_hFile == INVALID_HANDLE_VALUE ) {
 				auto aCode = Errors::GetLastError_To_Native();
 				Close();
 				return aCode;
@@ -79,11 +64,7 @@ namespace nn9 {
 				FILE_ATTRIBUTE_NORMAL,
 				NULL );
 
-#ifdef NN9_USE_WINDOWS
-			if ( !m_hFile.Valid() ) {
-#else
-			if ( !(m_hFile && m_hFile != INVALID_HANDLE_VALUE) ) {
-#endif	// #ifdef NN9_USE_WINDOWS
+			if ( m_hFile == INVALID_HANDLE_VALUE ) {
 				auto aCode = Errors::GetLastError_To_Native();
 				Close();
 				return aCode;
@@ -95,19 +76,8 @@ namespace nn9 {
 
 		LARGE_INTEGER largeSize;
 		largeSize.QuadPart = 4 * 1024;
-		if ( !::SetFilePointerEx(
-#ifdef NN9_USE_WINDOWS
-			m_hFile.hHandle
-#else
-			m_hFile
-#endif	// #ifdef NN9_USE_WINDOWS
-			, largeSize, NULL, FILE_BEGIN ) || !::SetEndOfFile(
-#ifdef NN9_USE_WINDOWS
-			m_hFile.hHandle
-#else
-			m_hFile
-#endif	// #ifdef NN9_USE_WINDOWS
-			) ) {
+		if ( !::SetFilePointerEx( m_hFile, largeSize, NULL, FILE_BEGIN ) ||
+			!::SetEndOfFile( m_hFile ) ) {
 			auto aCode = Errors::GetLastError_To_Native();
 			Close();
 			return aCode;
@@ -124,19 +94,14 @@ namespace nn9 {
 			::UnmapViewOfFile( m_pbMapBuffer );
 			m_pbMapBuffer = nullptr;
 		}
-#ifdef NN9_USE_WINDOWS
-		m_hMap.Reset();
-		m_hFile.Reset();
-#else
-		if ( (m_hMap && m_hMap != INVALID_HANDLE_VALUE) ) {
+		if ( m_hFile != INVALID_HANDLE_VALUE ) {
 			::CloseHandle( m_hMap );
-			m_hMap = NULL;
+			m_hMap = FileMap_Null;
 		}
-		if ( (m_hFile && m_hFile != INVALID_HANDLE_VALUE) ) {
+		if ( m_hFile != INVALID_HANDLE_VALUE ) {
 			::CloseHandle( m_hFile );
-			m_hFile = NULL;
+			m_hFile = FileMap_Null;
 		}
-#endif	// #ifdef NN9_USE_WINDOWS
 		m_bIsEmpty = TRUE;
 		m_ui64Size = 0;
 		m_ui64MapStart = MAXUINT64;
@@ -151,13 +116,7 @@ namespace nn9 {
 	uint64_t FileMap::Size() const {
 		if ( !m_ui64Size ) {
 			LARGE_INTEGER liInt;
-			if ( ::GetFileSizeEx(
-#ifdef NN9_USE_WINDOWS
-				m_hFile.hHandle
-#else
-				m_hFile
-#endif	// #ifdef NN9_USE_WINDOWS
-				, &liInt ) ) { m_ui64Size = liInt.QuadPart; }
+			if ( ::GetFileSizeEx( m_hFile, &liInt ) ) { m_ui64Size = liInt.QuadPart; }
 		}
 		return m_ui64Size;
 	}
@@ -168,34 +127,20 @@ namespace nn9 {
 	 * \return Returns true if the file mapping was successfully created.
 	 **/
 	NN9_ERRORS FileMap::CreateFileMap() {
-#ifdef NN9_USE_WINDOWS
-		if ( !m_hFile.Valid() ) {
-#else
-		if ( !(m_hFile && m_hFile != INVALID_HANDLE_VALUE) ) {
-#endif	// #ifdef NN9_USE_WINDOWS
+		if ( m_hFile == INVALID_HANDLE_VALUE ) {
 			return NN9_E_INVALID_HANDLE;
 		}
-		// Can't open 0-sized files.  Emulate the successful mapping of such a file.
+		// Can't open 0-sized files.
 		m_bIsEmpty = Size() == 0;
 		if ( m_bIsEmpty ) { return NN9_E_FILE_TOO_SMALL; }
-		m_hMap = ::CreateFileMappingW(
-#ifdef NN9_USE_WINDOWS
-			m_hFile.hHandle
-#else
-			m_hFile
-#endif	// #ifdef NN9_USE_WINDOWS
-			,
+		m_hMap = ::CreateFileMappingW( m_hFile,
 			NULL,
 			m_bWritable ? PAGE_READWRITE : PAGE_READONLY,
 			0,
 			0,
 			NULL );
 
-#ifdef NN9_USE_WINDOWS
-		if ( !m_hMap.Valid() ) {
-#else
-		if ( !(m_hMap && m_hMap != INVALID_HANDLE_VALUE) ) {
-#endif	// #ifdef NN9_USE_WINDOWS
+		if ( m_hFile == INVALID_HANDLE_VALUE ) {
 			auto aCode = Errors::GetLastError_To_Native();
 			Close();
 			return aCode;

@@ -32,6 +32,14 @@ namespace nn9 {
 		virtual ~FileMap();
 
 
+		// == Types.
+#ifdef _WIN32
+		typedef HANDLE										Handle;
+#define FileMap_Null										INVALID_HANDLE_VALUE
+#else
+#endif	// #ifdef _WIN32
+
+
 		// == Functions.
 		/**
 		 * Opens a file.  The path is given in UTF-8.
@@ -65,19 +73,14 @@ namespace nn9 {
 	protected :
 		// == Members.
 #ifdef _WIN32
-#ifdef NN9_USE_WINDOWS
-		lsw::LSW_HANDLE										m_hFile;						/**< The file handle. */
-		lsw::LSW_HANDLE										m_hMap;							/**< The file-mapping handle. */
-#else
-		HANDLE												m_hFile = NULL;					/**< The file handle. */
-		HANDLE												m_hMap = NULL;					/**< The file-mapping handle. */
-#endif	// #ifdef SBN_USE_WINDOWS
-		mutable PBYTE										m_pbMapBuffer;					/**< Mapped bytes. */
-		bool												m_bIsEmpty;						/**< Is the file 0-sized? */
-		bool												m_bWritable;					/**< Read-only or read-write? */
-		mutable uint64_t									m_ui64Size;						/**< Size of the file. */
-		mutable uint64_t									m_ui64MapStart;					/**< Map start. */
-		mutable DWORD										m_dwMapSize;					/**< Mapped size. */
+		Handle												m_hFile = FileMap_Null;						/**< The file handle. */
+		Handle												m_hMap = FileMap_Null;						/**< The file-mapping handle. */
+		mutable PBYTE										m_pbMapBuffer = nullptr;					/**< Mapped bytes. */
+		bool												m_bIsEmpty = true;							/**< Is the file 0-sized? */
+		bool												m_bWritable = false;						/**< Read-only or read-write? */
+		mutable uint64_t									m_ui64Size = 0;								/**< Size of the file. */
+		mutable uint64_t									m_ui64MapStart = MAXUINT64;					/**< Map start. */
+		mutable DWORD										m_dwMapSize = 0;							/**< Mapped size. */
 #else
 #endif	// #ifdef _WIN32
 

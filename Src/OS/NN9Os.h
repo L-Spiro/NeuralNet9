@@ -23,6 +23,13 @@
 
 #ifdef _WIN32
 
+/**
+ * Gets the path to this executable.  Must be called within try/catch block.
+ * 
+ * \return Returns the path to this executable file or throws on error.
+ * \throw std::runtime_error Thrown if the path to the file is either 0 characters long or more than 1 megabyte long.
+ * \throw std::bad_alloc Thrown if there is not enough memory to handle the internal allocations necessary to store and return the string.
+ **/
 inline std::filesystem::path					GetThisPath() {
 	DWORD dwBufSize = 0x8000;
 	std::vector<wchar_t> vBuffer;
@@ -51,6 +58,13 @@ inline std::filesystem::path					GetThisPath() {
 #include <unistd.h>
 #include <errno.h>
 
+/**
+ * Gets the path to this executable.  Must be called within try/catch block.
+ * 
+ * \return Returns the path to this executable file or throws on error.
+ * \throw std::runtime_error Thrown if the path to the file is either 0 characters long or more than 1 megabyte long.
+ * \throw std::bad_alloc Thrown if there is not enough memory to handle the internal allocations necessary to store and return the string.
+ **/
 inline std::filesystem::path					GetThisPath() {
 	size_t sBufferSize = 1024;
 	std::vector<char> vBuffer;
@@ -82,6 +96,13 @@ inline std::filesystem::path					GetThisPath() {
 #include <stdlib.h>
 #include <vector>
 
+/**
+ * Gets the path to this executable.  Must be called within try/catch block.
+ * 
+ * \return Returns the path to this executable file or throws on error.
+ * \throw std::runtime_error Thrown if the path to the file is either 0 characters long or more than 1 megabyte long.
+ * \throw std::bad_alloc Thrown if there is not enough memory to handle the internal allocations necessary to store and return the string.
+ **/
 inline std::filesystem::path					GetThisPath() {
 	uint32_t ui32BufferSize = 0;
 	// Get the required buffer size.
@@ -107,18 +128,30 @@ inline std::filesystem::path					GetThisPath() {
 
 
 #ifdef _WIN32
+/**
+ * Sets the current thread to its highest priority.
+ **/
 inline void                                     SetThreadHighPriority() {
     ::SetThreadPriority( ::GetCurrentThread(), THREAD_PRIORITY_HIGHEST );
 }
+/**
+ * Sets the current thread to its normal priority.
+ **/
 inline void                                     SetThreadNormalPriority() {
     ::SetThreadPriority( ::GetCurrentThread(), THREAD_PRIORITY_NORMAL );
 }
 #else
+/**
+ * Sets the current thread to its highest priority.
+ **/
 inline void                                     SetThreadHighPriority() {
     sched_param spSchParms;
     spSchParms.sched_priority = ::sched_get_priority_max( SCHED_FIFO );
     ::pthread_setschedparam( ::pthread_self(), SCHED_FIFO, &spSchParms );
 }
+/**
+ * Sets the current thread to its normal priority.
+ **/
 inline void                                     SetThreadNormalPriority() {
     sched_param spSchParms;
     spSchParms.sched_priority = 0;  // Normal priority
@@ -128,12 +161,24 @@ inline void                                     SetThreadNormalPriority() {
 
 
 #ifdef _WIN32
+/**
+ * Assigns thread affinity to a given core.
+ * 
+ * \param _hHandle A handle to the thread whose core affinity is to be updated.
+ * \param _sCoreId The index of the core to which to set the thread’s affinity.
+ **/
 inline void										SetThreadAffinity( HANDLE _hHandle, size_t _sCoreId ) {
 	// Set thread affinity to the specified core on Windows.
 	DWORD_PTR dwptrMask = DWORD_PTR( 1 ) << _sCoreId;
 	::SetThreadAffinityMask( _hHandle, dwptrMask );
 }
 #elif defined( __linux__ )
+/**
+ * Assigns thread affinity to a given core.
+ * 
+ * \param _tHandle A handle to the thread whose core affinity is to be updated.
+ * \param _sCoreId The index of the core to which to set the thread’s affinity.
+ **/
 inline void										SetThreadAffinity( pthread_t _tHandle, size_t _sCoreId ) {
 	// Set thread affinity on Linux
 	cpu_set_t csCpuSet;
@@ -146,6 +191,12 @@ inline void										SetThreadAffinity( pthread_t _tHandle, size_t _sCoreId ) {
 #include <mach/thread_policy.h>
 #include <pthread.h>
 
+/**
+ * Assigns thread affinity to a given core.
+ * 
+ * \param _tHandle A handle to the thread whose core affinity is to be updated.
+ * \param _sCoreId The index of the core to which to set the thread’s affinity.
+ **/
 inline void 									SetThreadAffinity( pthread_t _tHandle, size_t _sCoreId ) {
 	// Set thread affinity on macOS
 	::thread_affinity_policy_data_t tapdPolicy = { static_cast<integer_t>(_sCoreId) };
@@ -154,6 +205,11 @@ inline void 									SetThreadAffinity( pthread_t _tHandle, size_t _sCoreId ) {
 }
 #endif	// #ifdef _WIN32
 
+/**
+ * Assigns current thread’s affinity to a given core.
+ * 
+ * \param _sCoreId The index of the core to which to set the current thread’s affinity.
+ **/
 inline void										SetThreadAffinity( size_t _sCoreId ) {
 #ifdef _WIN32
 	::SetThreadAffinity( ::GetCurrentThread(), _sCoreId );

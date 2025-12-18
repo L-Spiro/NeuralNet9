@@ -134,13 +134,13 @@ namespace nn9 {
 			static_assert( sizeof( _tInType ) == sizeof( char8_t ), "CUtilities::Utf8ToUtf16: sizeof( _tInType ) must equal sizeof( char8_t )." );
 			_tOutType otTmp;
 			if ( _pbErrored ) { (*_pbErrored) = false; }
-			const char8_t * pc16In = reinterpret_cast<const char8_t *>(_pitString);
+			const char8_t * pc8In = reinterpret_cast<const char8_t *>(_pitString);
 			for ( size_t I = 0; I < _sLen; ) {
 				size_t sThisSize = 0;
-				uint32_t ui32This = NextUtf8Char( &pc16In[I], _sLen - I, &sThisSize );
+				uint32_t ui32This = NextUtf8Char( &pc8In[I], _sLen - I, &sThisSize );
 				if ( ui32This == NN9_UTF_INVALID ) {
 					for ( size_t J = 0; J < sThisSize; ++J ) {
-						otTmp.push_back( static_cast<_tOutType::value_type>(pc16In[I+J]) );
+						otTmp.push_back( static_cast<_tOutType::value_type>(pc8In[I+J]) );
 					}
 					if ( _pbErrored ) { (*_pbErrored) = true; }
 					I += sThisSize;
