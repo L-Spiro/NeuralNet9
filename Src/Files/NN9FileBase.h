@@ -31,7 +31,7 @@ namespace nn9 {
 
 		// == Functions.
 		/**
-		 * Opens a file.  The path is given in UTF-8.
+		 * Opens a file.
 		 *
 		 * \param _pFile Path to the file to open.
 		 * \return Returns an error code indicating the result of the operation.
@@ -39,7 +39,7 @@ namespace nn9 {
 		virtual NN9_ERRORS									Open( const std::filesystem::path &_pFile ) { return NN9_E_NOT_IMPLEMENTED; }
 
 		/**
-		 * Creates a file.  The path is given in UTF-8.
+		 * Creates a file.
 		 *
 		 * \param _pFile Path to the file to create.
 		 * \return Returns an error code indicating the result of the operation.
@@ -47,7 +47,7 @@ namespace nn9 {
 		virtual NN9_ERRORS									Create( const std::filesystem::path &_pFile ) { return NN9_E_NOT_IMPLEMENTED; }
 
 		/**
-		 * Opens a file for appending.  If it does not exist it is created.  The path is given in UTF-8.
+		 * Opens a file for appending.  If it does not exist it is created.
 		 *
 		 * \param _pFile Path to the file to open for appending.
 		 * \return Returns an error code indicating the result of the operation.

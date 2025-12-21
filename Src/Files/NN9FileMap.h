@@ -42,7 +42,7 @@ namespace nn9 {
 
 		// == Functions.
 		/**
-		 * Opens a file.  The path is given in UTF-8.
+		 * Opens a file.
 		 *
 		 * \param _pFile Path to the file to open.
 		 * \return Returns an error code indicating the result of the operation.
@@ -50,7 +50,7 @@ namespace nn9 {
 		virtual NN9_ERRORS									Open( const std::filesystem::path &_pFile );
 
 		/**
-		 * Creates a file.  The path is given in UTF-8.
+		 * Creates a file.
 		 *
 		 * \param _pFile Path to the file to create.
 		 * \return Returns an error code indicating the result of the operation.

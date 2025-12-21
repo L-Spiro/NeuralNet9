@@ -90,12 +90,13 @@ namespace nn9 {
 	}
 #else
 	/**
-	 * Opens a file.  The path is given in UTF-8.
+	 * Opens a file.
 	 *
 	 * \param _pFile Path to the file to open.
 	 * \return Returns an error code indicating the result of the operation.
 	 */
 	NN9_ERRORS StdFile::Open( const std::filesystem::path &_pFile ) {
+		Close();
 		try {
 			FILE * pfFile = std::fopen( _pFile.generic_string().c_str(), "rb" );
 			if ( nullptr == pfFile ) { return Errors::ErrNo_T_To_Native( errno ); }
@@ -112,12 +113,13 @@ namespace nn9 {
 	}
 
 	/**
-	 * Creates a file.  The path is given in UTF-8.
+	 * Creates a file.
 	 *
 	 * \param _pFile Path to the file to create.
 	 * \return Returns an error code indicating the result of the operation.
 	 */
 	NN9_ERRORS StdFile::Create( const std::filesystem::path &_pFile ) {
+		Close();
 		try {
 			FILE * pfFile = std::fopen( _pFile.generic_string().c_str(), "wb" );
 			if ( nullptr == pfFile ) { return Errors::ErrNo_T_To_Native( errno ); }
@@ -132,12 +134,13 @@ namespace nn9 {
 	}
 
 	/**
-	 * Opens a file for appending.  If it does not exist it is created.  The path is given in UTF-8.
+	 * Opens a file for appending.  If it does not exist it is created.
 	 *
 	 * \param _pFile Path to the file to open for appending.
 	 * \return Returns an error code indicating the result of the operation.
 	 */
 	NN9_ERRORS StdFile::Append( const std::filesystem::path &_pFile ) {
+		Close();
 		try {
 			FILE * pfFile = std::fopen( _pFile.generic_string().c_str(), "ab" );
 			if ( nullptr == pfFile ) { return Errors::ErrNo_T_To_Native( errno ); }

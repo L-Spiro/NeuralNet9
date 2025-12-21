@@ -151,7 +151,7 @@ namespace nn9 {
 	}
 #else
 	/**
-	 * Opens a file.  The path is given in UTF-8.
+	 * Opens a file.
 	 *
 	 * \param _pcFile Path to the file to open.
 	 * \return Returns an error code indicating the result of the operation.
@@ -161,7 +161,7 @@ namespace nn9 {
 	}
 
 	/**
-	 * Creates a file.  The path is given in UTF-8.
+	 * Creates a file.
 	 *
 	 * \param _pcFile Path to the file to create.
 	 * \return Returns an error code indicating the result of the operation.
