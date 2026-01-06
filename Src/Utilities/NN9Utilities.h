@@ -846,12 +846,14 @@ namespace nn9 {
 		 * \param _dChromaY The output chromaticity Y.
 		 **/
 		static inline void									XYZtoChromaticity( double _dX, double _dY, double _dZ, double &_dChromaX, double &_dChromaY ) {
-			double dX = _dX / _dY;
-			constexpr double dY = 1.0;
-			double dZ = _dZ / _dY;
-
-			_dChromaX = dX / (dX + dY + dZ);
-			_dChromaY = dY / (dX + dY + dZ);
+			const double dSum = _dX + _dY + _dZ;
+			if NN9_UNLIKELY( dSum == 0.0 ) {
+				_dChromaX = 0.0;
+				_dChromaY = 0.0;
+				return;
+			}
+			_dChromaX = _dX / dSum;
+			_dChromaY = _dY / dSum;
 		}
 
 		/**
@@ -860,12 +862,18 @@ namespace nn9 {
 		 * \param _dChromaX The input chromaticity X.
 		 * \param _dChromaY The input chromaticity Y.
 		 * \param _dY0 The input XYZ Y value.
-		 * \param _dX0 The output XYZ Z value.
+		 * \param _dX0 The output XYZ X value.
 		 * \param _dZ0 The output XYZ Z value.
 		 **/
 		static void											ChromaticityToXYZ( double _dChromaX, double _dChromaY, double _dY0, double &_dX0, double &_dZ0 ) {
-			_dX0 = _dChromaX * (_dY0 / _dChromaY);
-			_dZ0 = (1.0 - _dChromaX - _dChromaY) * (_dY0 / _dChromaY);
+			if NN9_UNLIKELY( _dChromaY == 0.0 ) {
+				_dX0 = 0.0;
+				_dZ0 = 0.0;
+				return;
+			}
+			const double dScale = _dY0 / _dChromaY;
+			_dX0 = _dChromaX * dScale;
+			_dZ0 = (1.0 - _dChromaX - _dChromaY) * dScale;
 		}
 
 

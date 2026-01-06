@@ -10,6 +10,7 @@
 
 #include "NN9Macros.h"
 
+#include <cassert>
 #include <cmath>
 #include <cstdint>
 #include <numbers>
@@ -829,13 +830,13 @@ inline void										sincosf( float _fAngle, float * _pfSin, float * _pfCos ) {
 // ===============================
 #if defined( _MSC_VER )
     #ifdef _WIN64
+		#include <intrin.h>
 		#pragma intrinsic( _udiv128 )
 		#pragma intrinsic( _div128 )
 		#pragma intrinsic( _umul128 )
 		#pragma intrinsic( _mul128 )
     #else
 		#include <bit>
-		#include <cassert>
 		#include <intrin.h>
 
 		/**

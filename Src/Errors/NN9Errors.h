@@ -148,6 +148,7 @@ namespace nn9 {
 	 **/
 	inline NN9_ERRORS Errors::ErrNo_T_To_Native( errno_t _eCode ) {
 		switch ( _eCode ) {
+			case 0 : { return NN9_E_SUCCESS; }
 			case EINVAL : { return NN9_E_INVALID_PARAMETER; }
 			case EACCES : { return NN9_E_INVALID_PERMISSIONS; }
 			case ENOENT : { return NN9_E_FILE_NOT_FOUND; }
@@ -156,6 +157,75 @@ namespace nn9 {
 			case EEXIST : { return NN9_E_FILES_EXISTS; }
 			case EOVERFLOW : { return NN9_E_FILE_ATTRIBUTE_TOO_LARGE; }
 			case EPERM : { return NN9_E_OPERATION_NOT_PERMITTED; }
+				
+#ifdef EBADF
+			case EBADF : { return NN9_E_INVALID_HANDLE; }
+#endif
+
+#ifdef ENFILE
+			case ENFILE : { return NN9_E_TOO_MANY_FILES; }
+#endif
+
+#ifdef ENOSPC
+			case ENOSPC : { return NN9_E_DISK_FULL; }
+#endif
+
+#ifdef EFBIG
+			case EFBIG : { return NN9_E_FILE_TOO_LARGE; }
+#endif
+
+#ifdef ENAMETOOLONG
+			case ENAMETOOLONG : { return NN9_E_INVALID_NAME; }
+#endif
+
+#ifdef ENOTDIR
+			case ENOTDIR : { return NN9_E_INVALID_NAME; }
+#endif
+
+#ifdef EISDIR
+			case EISDIR : { return NN9_E_INVALID_NAME; }
+#endif
+
+#ifdef ELOOP
+			case ELOOP : { return NN9_E_INVALID_NAME; }
+#endif
+
+#ifdef EROFS
+			case EROFS : { return NN9_E_INVALID_PERMISSIONS; }
+#endif
+
+#ifdef EBUSY
+			case EBUSY : { return NN9_E_LOCK_VIOLATION; }
+#endif
+
+#ifdef ETXTBSY
+			case ETXTBSY : { return NN9_E_LOCK_VIOLATION; }
+#endif
+
+#ifdef ENODEV
+			case ENODEV : { return NN9_E_NO_SUCH_DEVICE; }
+#endif
+
+#ifdef ENXIO
+			case ENXIO : { return NN9_E_NO_SUCH_DEVICE; }
+#endif
+
+#ifdef EAGAIN
+			case EAGAIN : { return NN9_E_TIMEOUT; }
+#endif
+
+#ifdef EINTR
+			case EINTR : { return NN9_E_TIMEOUT; }
+#endif
+
+#ifdef EIO
+			case EIO : { return NN9_E_READ_FAILED; }
+#endif
+
+#ifdef EPIPE
+			case EPIPE : { return NN9_E_WRITE_FAILED; }
+#endif
+				
 			default : { return NN9_E_OTHER; }
 		}
 	}
